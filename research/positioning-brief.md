@@ -1,6 +1,6 @@
 # PuhuScribe — Positioning Brief
 
-*Synthesised from competitor-reviews.md, reddit-voice.md, pricing-matrix.md, and finland-apps.html. May 2026.*
+*Source files: competitor-reviews.md, reddit-voice.md, pricing-matrix.md, finland-apps.html. May 2026.*
 
 ---
 
