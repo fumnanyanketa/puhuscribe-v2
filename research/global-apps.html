@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top 20 Global Language Learning Apps — Competitive Intelligence 2026</title>
+  <style>
+    /* ─── CSS Custom Properties ───────────────────────────────────────── */
+    :root {
+      --clr-ai:        #7c3aed;
+      --clr-gamified:  #ea580c;
+      --clr-immersion: #0d9488;
+      --clr-classroom: #2563eb;
+      --clr-srs:       #16a34a;
+      --clr-audio:     #dc2626;
+
+      --bg-page:     #0f172a;
+      --bg-surface:  #1e293b;
+      --bg-surface2: #263045;
+      --bg-stripe:   #1a2540;
+      --border:      #334155;
+
+      --txt-primary:   #f1f5f9;
+      --txt-secondary: #94a3b8;
+      --txt-muted:     #64748b;
+      --txt-accent:    #38bdf8;
+
+      --sp-xs: 0.25rem;
+      --sp-sm: 0.5rem;
+      --sp-md: 1rem;
+      --sp-lg: 1.5rem;
+      --sp-xl: 2.5rem;
+      --sp-2xl: 4rem;
+
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", "Fira Code", "Consolas", monospace;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+
+      --shadow-card: 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-hover: 0 8px 28px rgba(0,0,0,0.5);
+      --transition: 180ms ease;
+    }
+
+    /* ─── Reset & Base ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg-page);
+      color: var(--txt-primary);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--txt-accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { list-style: none; }
+
+    /* ─── Layout Primitives ───────────────────────────────────────────── */
+    .container {
+      max-width: 1240px;
+      margin-inline: auto;
+      padding-inline: var(--sp-lg);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-lg);
+    }
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--txt-primary);
+      margin-bottom: var(--sp-xl);
+      padding-left: var(--sp-md);
+      border-left: 4px solid var(--txt-accent);
+      line-height: 1.2;
+    }
+    .section-title small {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--txt-secondary);
+      margin-top: 0.2rem;
+    }
+    section { padding: var(--sp-2xl) 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ─── Jump Navigation ─────────────────────────────────────────────── */
+    .jump-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,23,42,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: var(--sp-sm) 0;
+    }
+    .jump-nav__inner {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      overflow-x: auto;
+      padding-inline: var(--sp-lg);
+      scrollbar-width: none;
+    }
+    .jump-nav__inner::-webkit-scrollbar { display: none; }
+    .jump-nav__label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--txt-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .jump-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border-radius: 99px;
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      color: var(--accent);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background var(--transition);
+      text-decoration: none;
+    }
+    .jump-link:hover {
+      background: color-mix(in srgb, var(--accent) 22%, transparent);
+      text-decoration: none;
+    }
+    .jump-link .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── Hero ────────────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #0f172a 100%);
+      padding: var(--sp-2xl) 0 calc(var(--sp-2xl) + var(--sp-lg));
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero__eyebrow {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--txt-accent);
+      background: rgba(56,189,248,0.1);
+      border: 1px solid rgba(56,189,248,0.25);
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      margin-bottom: var(--sp-md);
+    }
+    .hero__title {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--sp-md);
+    }
+    .hero__title-accent { color: var(--txt-accent); }
+    .hero__sub {
+      font-size: 1.1rem;
+      color: var(--txt-secondary);
+      max-width: 640px;
+      margin-bottom: var(--sp-xl);
+      line-height: 1.7;
+    }
+    .hero__pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      margin-bottom: var(--sp-xl);
+    }
+    .hero__pill {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      color: var(--txt-primary);
+    }
+    .hero__pill--accent {
+      background: rgba(124,58,237,0.2);
+      border-color: rgba(124,58,237,0.4);
+      color: #c4b5fd;
+    }
+    .hero__meta {
+      font-size: 0.8rem;
+      color: var(--txt-muted);
+    }
+    .hero__legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      margin-top: var(--sp-lg);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--txt-secondary);
+    }
+    .legend-item .swatch {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    /* ─── Market Overview ─────────────────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--sp-md);
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+    }
+    .stat-card__value {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--accent);
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+    .stat-card__label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--txt-secondary);
+      font-weight: 500;
+    }
+    .stat-card__sub {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--txt-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* ─── Ranking Table ───────────────────────────────────────────────── */
+    .table-controls {
+      display: flex;
+      gap: var(--sp-sm);
+      margin-bottom: var(--sp-md);
+      flex-wrap: wrap;
+    }
+    .sort-btn {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--txt-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .sort-btn:hover, .sort-btn.active {
+      background: var(--bg-surface2);
+      color: var(--txt-primary);
+      border-color: var(--txt-muted);
+    }
+    .sort-btn.active { color: var(--txt-accent); border-color: var(--txt-accent); }
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+    }
+    .ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .ranking-table thead tr {
+      background: var(--bg-page);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .ranking-table th {
+      padding: var(--sp-md) var(--sp-md);
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--txt-muted);
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .ranking-table th[data-sort] { cursor: pointer; user-select: none; }
+    .ranking-table th[data-sort]:hover { color: var(--txt-secondary); }
+    .ranking-table th .sort-icon { margin-left: 4px; opacity: 0.5; font-style: normal; }
+    .ranking-table td {
+      padding: 0.75rem var(--sp-md);
+      border-bottom: 1px solid rgba(51,65,85,0.5);
+      vertical-align: middle;
+    }
+    .ranking-table tbody tr:last-child td { border-bottom: none; }
+    .ranking-table tbody tr:nth-child(even) { background: var(--bg-stripe); }
+    .ranking-table tbody tr:hover {
+      background: color-mix(in srgb, var(--accent,#38bdf8) 8%, var(--bg-surface2));
+    }
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 20%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .app-name-cell { font-weight: 600; color: var(--txt-primary); white-space: nowrap; }
+    .cat-chip {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 99px;
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      white-space: nowrap;
+    }
+    .model-text { color: var(--txt-secondary); font-size: 0.8rem; }
+    .users-text { font-family: var(--font-mono); font-size: 0.82rem; color: var(--txt-primary); }
+    .price-text { font-family: var(--font-mono); font-size: 0.82rem; }
+    .free-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+    .free-badge--yes { background: rgba(22,163,74,0.2); color: #4ade80; border: 1px solid rgba(22,163,74,0.35); }
+    .free-badge--no  { background: rgba(100,116,139,0.15); color: var(--txt-muted); border: 1px solid rgba(100,116,139,0.3); }
+    .strength-text { font-size: 0.78rem; color: var(--txt-secondary); }
+
+    /* ─── Category Sections ───────────────────────────────────────────── */
+    .categories-wrapper { display: flex; flex-direction: column; gap: var(--sp-2xl); }
+    .category-block { }
+    .category-block__header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      margin-bottom: var(--sp-lg);
+      padding-bottom: var(--sp-md);
+      border-bottom: 1px solid var(--border);
+    }
+    .category-block__swatch {
+      width: 18px; height: 18px;
+      border-radius: var(--radius-sm);
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .category-block__name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--txt-primary);
+    }
+    .category-block__count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.6rem;
+      border-radius: 99px;
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+    .category-block__desc {
+      font-size: 0.875rem;
+      color: var(--txt-secondary);
+      margin-bottom: var(--sp-lg);
+      max-width: 760px;
+      line-height: 1.6;
+    }
+
+    /* ─── App Card ────────────────────────────────────────────────────── */
+    .app-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      box-shadow: var(--shadow-card);
+    }
+    .app-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover), 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    }
+    .app-card--full { grid-column: 1 / -1; max-width: 640px; }
+    .app-card__top-bar {
+      height: 4px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .app-card__body { padding: var(--sp-lg); display: flex; flex-direction: column; flex: 1; gap: var(--sp-md); }
+    .app-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-sm);
+    }
+    .app-card__rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 20%, transparent);
+      border: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .app-card__title-group { flex: 1; }
+    .app-card__name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--txt-primary);
+      line-height: 1.2;
+    }
+    .app-card__category-chip {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: 99px;
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      margin-top: 0.2rem;
+    }
+    .app-card__meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      align-items: center;
+    }
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--txt-secondary);
+      font-family: var(--font-mono);
+    }
+    .meta-pill__icon { font-style: normal; font-size: 0.8rem; }
+    .app-card__features ul {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .app-card__features li {
+      font-size: 0.82rem;
+      color: var(--txt-secondary);
+      padding-left: 1.1rem;
+      position: relative;
+      line-height: 1.45;
+    }
+    .app-card__features li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 0.7rem;
+      top: 0.1rem;
+    }
+    .app-card__audience {
+      font-size: 0.78rem;
+      color: var(--txt-muted);
+      font-style: italic;
+    }
+    .app-card__audience strong { color: var(--txt-secondary); font-style: normal; }
+    .app-card__badges {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-xs);
+    }
+    .badge {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-sm);
+      line-height: 1.4;
+    }
+    .badge__icon { font-style: normal; flex-shrink: 0; font-size: 0.85rem; }
+    .badge--strength {
+      background: rgba(22,163,74,0.1);
+      border: 1px solid rgba(22,163,74,0.25);
+      color: #86efac;
+    }
+    .badge--weakness {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #fca5a5;
+    }
+    .app-card__reasoning {
+      font-size: 0.82rem;
+      color: var(--txt-secondary);
+      line-height: 1.7;
+      padding-top: var(--sp-sm);
+      border-top: 1px solid var(--border);
+      flex: 1;
+    }
+
+    /* ─── Footer ──────────────────────────────────────────────────────── */
+    .report-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: var(--sp-xl) 0;
+    }
+    .report-footer .container { display: flex; flex-direction: column; gap: var(--sp-md); }
+    .footer__methodology {
+      font-size: 0.8rem;
+      color: var(--txt-secondary);
+      line-height: 1.6;
+      max-width: 820px;
+    }
+    .footer__sources {
+      font-size: 0.75rem;
+      color: var(--txt-muted);
+      line-height: 1.8;
+    }
+    .footer__sources strong { color: var(--txt-secondary); }
+    .footer__copy {
+      font-size: 0.72rem;
+      color: var(--txt-muted);
+      padding-top: var(--sp-sm);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .app-card--full { max-width: 100%; }
+      .hero__title { font-size: 1.9rem; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .ranking-table { font-size: 0.78rem; }
+      .ranking-table th, .ranking-table td { padding: 0.6rem 0.75rem; }
+      .section-title { font-size: 1.35rem; }
+    }
+    @media (max-width: 480px) {
+      .stat-grid { grid-template-columns: 1fr; }
+      .hero__pills { flex-direction: column; align-items: flex-start; }
+      .ranking-table th:nth-child(4),
+      .ranking-table td:nth-child(4) { display: none; }
+    }
+
+    /* ─── Print ───────────────────────────────────────────────────────── */
+    @media print {
+      :root {
+        --bg-page: #fff;
+        --bg-surface: #f8fafc;
+        --bg-surface2: #f1f5f9;
+        --bg-stripe: #f8fafc;
+        --border: #cbd5e1;
+        --txt-primary: #0f172a;
+        --txt-secondary: #475569;
+        --txt-muted: #94a3b8;
+      }
+      body { background: #fff; color: #0f172a; }
+      .jump-nav { display: none; }
+      .hero { background: #fff; border-bottom: 2px solid #0f172a; }
+      .hero::before { display: none; }
+      .hero__title-accent { color: #2563eb; }
+      .hero__eyebrow { border-color: #2563eb; color: #2563eb; background: none; }
+      .app-card { break-inside: avoid; page-break-inside: avoid; }
+      .category-block { break-inside: avoid; page-break-inside: avoid; }
+      table { font-size: 9pt; }
+      .ranking-table thead tr { background: #f1f5f9 !important; }
+      .ranking-table th { color: #475569 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════════ -->
+<header class="hero" id="top">
+  <div class="container">
+    <span class="hero__eyebrow">Competitive Intelligence Report · May 2026</span>
+    <h1 class="hero__title">
+      Top 20 Global Language Learning Apps<br>
+      <span class="hero__title-accent">2026 Edition</span>
+    </h1>
+    <p class="hero__sub">
+      A data-driven ranking of the world's leading language learning platforms — covering pricing, business models, estimated user bases, headline features, target audiences, and a critical analysis of each app's core strength and strategic weakness.
+    </p>
+    <div class="hero__pills">
+      <span class="hero__pill hero__pill--accent">~$85B Global Market</span>
+      <span class="hero__pill">20 Apps Analyzed</span>
+      <span class="hero__pill">6 Categories</span>
+      <span class="hero__pill">18.7% CAGR</span>
+      <span class="hero__pill">133M Duolingo MAU (Q4 2025)</span>
+    </div>
+    <p class="hero__meta">Data sourced from Sensor Tower, data.ai, company investor relations, Similarweb, and App Store rankings · Q1–Q2 2026</p>
+    <div class="hero__legend">
+      <span class="legend-item" style="--accent: var(--clr-ai)"><span class="swatch"></span> AI-Tutor Based</span>
+      <span class="legend-item" style="--accent: var(--clr-gamified)"><span class="swatch"></span> Gamified / Streak-Driven</span>
+      <span class="legend-item" style="--accent: var(--clr-immersion)"><span class="swatch"></span> Immersion-Based</span>
+      <span class="legend-item" style="--accent: var(--clr-classroom)"><span class="swatch"></span> Classroom-Supplement</span>
+      <span class="legend-item" style="--accent: var(--clr-srs)"><span class="swatch"></span> SRS-Based</span>
+      <span class="legend-item" style="--accent: var(--clr-audio)"><span class="swatch"></span> Audio-First</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JUMP NAV
+═══════════════════════════════════════════════════════════════ -->
+<nav class="jump-nav" aria-label="Section navigation">
+  <div class="jump-nav__inner">
+    <span class="jump-nav__label">Jump to:</span>
+    <a class="jump-link" href="#overview" style="--accent:#38bdf8"><span class="dot"></span>Overview</a>
+    <a class="jump-link" href="#rankings" style="--accent:#38bdf8"><span class="dot"></span>Rankings</a>
+    <a class="jump-link" href="#cat-ai" style="--accent: var(--clr-ai)"><span class="dot"></span>AI-Tutor</a>
+    <a class="jump-link" href="#cat-gamified" style="--accent: var(--clr-gamified)"><span class="dot"></span>Gamified</a>
+    <a class="jump-link" href="#cat-immersion" style="--accent: var(--clr-immersion)"><span class="dot"></span>Immersion</a>
+    <a class="jump-link" href="#cat-classroom" style="--accent: var(--clr-classroom)"><span class="dot"></span>Classroom</a>
+    <a class="jump-link" href="#cat-srs" style="--accent: var(--clr-srs)"><span class="dot"></span>SRS</a>
+    <a class="jump-link" href="#cat-audio" style="--accent: var(--clr-audio)"><span class="dot"></span>Audio-First</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MARKET OVERVIEW
+═══════════════════════════════════════════════════════════════ -->
+<section id="overview">
+  <div class="container">
+    <h2 class="section-title">Market Overview<small>Global language learning app market, 2026</small></h2>
+    <div class="stat-grid">
+      <div class="stat-card" style="--accent: var(--clr-classroom)">
+        <span class="stat-card__value">$85B</span>
+        <span class="stat-card__label">Total Market Value (2026)</span>
+        <span class="stat-card__sub">Projected $101.5B in 2027</span>
+      </div>
+      <div class="stat-card" style="--accent: var(--clr-gamified)">
+        <span class="stat-card__value">18.7%</span>
+        <span class="stat-card__label">5-Year CAGR</span>
+        <span class="stat-card__sub">Driven by mobile + AI adoption</span>
+      </div>
+      <div class="stat-card" style="--accent: var(--clr-gamified)">
+        <span class="stat-card__value">133M</span>
+        <span class="stat-card__label">Duolingo Monthly Active Users (Q4 2025)</span>
+        <span class="stat-card__sub">Peak 135.3M (Q3 2025) · FY2025 annual report</span>
+      </div>
+      <div class="stat-card" style="--accent: var(--clr-ai)">
+        <span class="stat-card__value">AI-Tutor</span>
+        <span class="stat-card__label">Fastest-Growing Segment</span>
+        <span class="stat-card__sub">60%+ of leading platforms now integrate AI</span>
+      </div>
+      <div class="stat-card" style="--accent: var(--clr-immersion)">
+        <span class="stat-card__value">$1.04B</span>
+        <span class="stat-card__label">Duolingo FY2025 Revenue</span>
+        <span class="stat-card__sub">+39% YoY · First $1B year</span>
+      </div>
+      <div class="stat-card" style="--accent: var(--clr-srs)">
+        <span class="stat-card__value">73%</span>
+        <span class="stat-card__label">Mobile-First Learners (under 30)</span>
+        <span class="stat-card__sub">Self-learning apps: 56% of market revenue</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RANKING TABLE
+═══════════════════════════════════════════════════════════════ -->
+<section id="rankings">
+  <div class="container">
+    <h2 class="section-title">Full Rankings<small>Click column headers to sort</small></h2>
+    <div class="table-controls">
+      <button class="sort-btn active" data-col="0">Sort by Rank</button>
+      <button class="sort-btn" data-col="4">Sort by Users</button>
+      <button class="sort-btn" data-col="5">Sort by Price</button>
+    </div>
+    <div class="table-wrapper">
+      <table class="ranking-table" id="rankingTable">
+        <thead>
+          <tr>
+            <th data-sort="rank">#<i class="sort-icon">↕</i></th>
+            <th>App</th>
+            <th>Category</th>
+            <th>Business Model</th>
+            <th data-sort="users">Est. Users<i class="sort-icon">↕</i></th>
+            <th data-sort="price">Paid From<i class="sort-icon">↕</i></th>
+            <th>Free Tier</th>
+            <th>Notable Strength</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="--accent: var(--clr-gamified)">
+            <td><span class="rank-badge">1</span></td>
+            <td class="app-name-cell"><a href="#app-duolingo">Duolingo</a></td>
+            <td><span class="cat-chip">Gamified</span></td>
+            <td class="model-text">Freemium + Ads + Sub</td>
+            <td class="users-text" data-raw="900000000">900M+ registered</td>
+            <td class="price-text" data-raw="699">$6.99/mo</td>
+            <td><span class="free-badge free-badge--yes">Yes</span></td>
+            <td class="strength-text">Unmatched retention engine &amp; scale</td>
+          </tr>
+          <tr style="--accent: var(--clr-classroom)">
+            <td><span class="rank-badge">2</span></td>
+            <td class="app-name-cell"><a href="#app-babbel">Babbel</a></td>
+            <td><span class="cat-chip">Classroom</span></td>
+            <td class="model-text">Pure Subscription</td>
+            <td class="users-text" data-raw="15000000">15M+ subscribers</td>
+            <td class="price-text" data-raw="1395">$13.95/mo</td>
+            <td><span class="free-badge free-badge--no">Trial only</span></td>
+            <td class="strength-text">Expert-crafted linguist curriculum</td>
+          </tr>
+          <tr style="--accent: var(--clr-immersion)">
+            <td><span class="rank-badge">3</span></td>
+            <td class="app-name-cell"><a href="#app-rosetta">Rosetta Stone</a></td>
+            <td><span class="cat-chip">Immersion</span></td>
+            <td class="model-text">Subscription / Lifetime</td>
+            <td class="users-text" data-raw="25000000">25M+ lifetime</td>
+            <td class="price-text" data-raw="1199">$11.99/mo (annual)</td>
+            <td><span class="free-badge free-badge--no">Trial only</span></td>
+            <td class="strength-text">TruAccent + enterprise trust</td>
+          </tr>
+          <tr style="--accent: var(--clr-ai)">
+            <td><span class="rank-badge">4</span></td>
+            <td class="app-name-cell"><a href="#app-busuu">Busuu</a></td>
+            <td><span class="cat-chip">AI-Tutor</span></td>
+            <td class="model-text">Freemium + B2B</td>
+            <td class="users-text" data-raw="120000000">120M+ registered</td>
+            <td class="price-text" data-raw="583">$5.83/mo (annual)</td>
+            <td><span class="free-badge free-badge--yes">Yes (limited)</span></td>
+            <td class="strength-text">Native speaker community corrections</td>
+          </tr>
+          <tr style="--accent: var(--clr-ai)">
+            <td><span class="rank-badge">5</span></td>
+            <td class="app-name-cell"><a href="#app-speak">Speak</a></td>
+            <td><span class="cat-chip">AI-Tutor</span></td>
+            <td class="model-text">Freemium + Subscription</td>
+            <td class="users-text" data-raw="10000000">10M+</td>
+            <td class="price-text" data-raw="825">$8.25/mo (annual)</td>
+            <td><span class="free-badge free-badge--yes">Free trial</span></td>
+            <td class="strength-text">Best-in-class GPT-4o conversation AI</td>
+          </tr>
+          <tr style="--accent: var(--clr-audio)">
+            <td><span class="rank-badge">6</span></td>
+            <td class="app-name-cell"><a href="#app-pimsleur">Pimsleur</a></td>
+            <td><span class="cat-chip">Audio-First</span></td>
+            <td class="model-text">Subscription / Per-course</td>
+            <td class="users-text" data-raw="10000000">10M+</td>
+            <td class="price-text" data-raw="2100">$21/mo (full catalog)</td>
+            <td><span class="free-badge free-badge--yes">1 free lesson</span></td>
+            <td class="strength-text">Screen-free spoken fluency building</td>
+          </tr>
+          <tr style="--accent: var(--clr-gamified)">
+            <td><span class="rank-badge">7</span></td>
+            <td class="app-name-cell"><a href="#app-memrise">Memrise</a></td>
+            <td><span class="cat-chip">Gamified</span></td>
+            <td class="model-text">Freemium + Subscription</td>
+            <td class="users-text" data-raw="65000000">65M+</td>
+            <td class="price-text" data-raw="750">$7.50/mo (annual)</td>
+            <td><span class="free-badge free-badge--yes">Yes</span></td>
+            <td class="strength-text">Native video "Learn with Locals"</td>
+          </tr>
+          <tr style="--accent: var(--clr-classroom)">
+            <td><span class="rank-badge">8</span></td>
+            <td class="app-name-cell"><a href="#app-italki">italki</a></td>
+            <td><span class="cat-chip">Classroom</span></td>
+            <td class="model-text">Marketplace Commission</td>
+            <td class="users-text" data-raw="10000000">10M+ learners</td>
+            <td class="price-text" data-raw="500">From $5/hr</td>
+            <td><span class="free-badge free-badge--yes">Browse free</span></td>
+            <td class="strength-text">150+ langs, $5/hr community tutors</td>
+          </tr>
+          <tr style="--accent: var(--clr-ai)">
+            <td><span class="rank-badge">9</span></td>
+            <td class="app-name-cell"><a href="#app-elsa">ELSA Speak</a></td>
+            <td><span class="cat-chip">AI-Tutor</span></td>
+            <td class="model-text">Freemium + B2B</td>
+            <td class="users-text" data-raw="50000000">50M+</td>
+            <td class="price-text" data-raw="1200">$12/mo</td>
+            <td><span class="free-badge free-badge--yes">Yes (limited)</span></td>
+            <td class="strength-text">Phoneme-level pronunciation AI</td>
+          </tr>
+          <tr style="--accent: var(--clr-audio)">
+            <td><span class="rank-badge">10</span></td>
+            <td class="app-name-cell"><a href="#app-hellotalk">HelloTalk</a></td>
+            <td><span class="cat-chip">Audio-First</span></td>
+            <td class="model-text">Freemium + VIP</td>
+            <td class="users-text" data-raw="30000000">30M+</td>
+            <td class="price-text" data-raw="1299">$12.99/mo</td>
+            <td><span class="free-badge free-badge--yes">Yes</span></td>
+            <td class="strength-text">Largest language exchange community</td>
+          </tr>
+          <tr style="--accent: var(--clr-gamified)">
+            <td><span class="rank-badge">11</span></td>
+            <td class="app-name-cell"><a href="#app-mondly">Mondly</a></td>
+            <td><span class="cat-chip">Gamified</span></td>
+            <td class="model-text">Freemium + Lifetime</td>
+            <td class="users-text" data-raw="100000000">100M+</td>
+            <td class="price-text" data-raw="999">$9.99/mo</td>
+            <td><span class="free-badge free-badge--yes">1 lesson/day</span></td>
+            <td class="strength-text">AR/VR immersion + 41 languages</td>
+          </tr>
+          <tr style="--accent: var(--clr-classroom)">
+            <td><span class="rank-badge">12</span></td>
+            <td class="app-name-cell"><a href="#app-lingoda">Lingoda</a></td>
+            <td><span class="cat-chip">Classroom</span></td>
+            <td class="model-text">Live-Class Subscription</td>
+            <td class="users-text" data-raw="1000000">1M+ active</td>
+            <td class="price-text" data-raw="8900">$89/mo</td>
+            <td><span class="free-badge free-badge--no">No</span></td>
+            <td class="strength-text">Sprint refund creates real accountability</td>
+          </tr>
+          <tr style="--accent: var(--clr-immersion)">
+            <td><span class="rank-badge">13</span></td>
+            <td class="app-name-cell"><a href="#app-lingq">LingQ</a></td>
+            <td><span class="cat-chip">Immersion</span></td>
+            <td class="model-text">Freemium + Subscription</td>
+            <td class="users-text" data-raw="10000000">10M+</td>
+            <td class="price-text" data-raw="1299">$12.99/mo</td>
+            <td><span class="free-badge free-badge--yes">500 LingQs</span></td>
+            <td class="strength-text">Import any content as an interactive lesson</td>
+          </tr>
+          <tr style="--accent: var(--clr-immersion)">
+            <td><span class="rank-badge">14</span></td>
+            <td class="app-name-cell"><a href="#app-fluentu">FluentU</a></td>
+            <td><span class="cat-chip">Immersion</span></td>
+            <td class="model-text">Subscription Only</td>
+            <td class="users-text" data-raw="1000000">~1M+</td>
+            <td class="price-text" data-raw="2000">$20/mo (annual)</td>
+            <td><span class="free-badge free-badge--no">14-day trial</span></td>
+            <td class="strength-text">Best authentic-video + vocab integration</td>
+          </tr>
+          <tr style="--accent: var(--clr-srs)">
+            <td><span class="rank-badge">15</span></td>
+            <td class="app-name-cell"><a href="#app-anki">Anki</a></td>
+            <td><span class="cat-chip">SRS</span></td>
+            <td class="model-text">Free / One-time iOS</td>
+            <td class="users-text" data-raw="10000000">10M+</td>
+            <td class="price-text" data-raw="0">Free (desktop)</td>
+            <td><span class="free-badge free-badge--yes">Yes</span></td>
+            <td class="strength-text">Gold-standard FSRS algorithm, open source</td>
+          </tr>
+          <tr style="--accent: var(--clr-gamified)">
+            <td><span class="rank-badge">16</span></td>
+            <td class="app-name-cell"><a href="#app-drops">Drops</a></td>
+            <td><span class="cat-chip">Gamified</span></td>
+            <td class="model-text">Freemium + Subscription</td>
+            <td class="users-text" data-raw="35000000">35M+ downloads</td>
+            <td class="price-text" data-raw="583">$5.83/mo (annual)</td>
+            <td><span class="free-badge free-badge--yes">5 min/day</span></td>
+            <td class="strength-text">Best visual vocab UX, 57 languages</td>
+          </tr>
+          <tr style="--accent: var(--clr-immersion)">
+            <td><span class="rank-badge">17</span></td>
+            <td class="app-name-cell"><a href="#app-lingopie">Lingopie</a></td>
+            <td><span class="cat-chip">Immersion</span></td>
+            <td class="model-text">Subscription</td>
+            <td class="users-text" data-raw="500000">~500K+</td>
+            <td class="price-text" data-raw="559">$5.59/mo (annual)</td>
+            <td><span class="free-badge free-badge--no">14-day trial</span></td>
+            <td class="strength-text">TV/film immersion with SRS integration</td>
+          </tr>
+          <tr style="--accent: var(--clr-classroom)">
+            <td><span class="rank-badge">18</span></td>
+            <td class="app-name-cell"><a href="#app-mango">Mango Languages</a></td>
+            <td><span class="cat-chip">Classroom</span></td>
+            <td class="model-text">Institutional + Individual</td>
+            <td class="users-text" data-raw="2000000">2M+ (via libraries)</td>
+            <td class="price-text" data-raw="799">$7.99/mo</td>
+            <td><span class="free-badge free-badge--yes">Free via library</span></td>
+            <td class="strength-text">70+ langs, free via 3,000 US libraries</td>
+          </tr>
+          <tr style="--accent: var(--clr-srs)">
+            <td><span class="rank-badge">19</span></td>
+            <td class="app-name-cell"><a href="#app-wanikani">WaniKani</a></td>
+            <td><span class="cat-chip">SRS</span></td>
+            <td class="model-text">Subscription / Lifetime</td>
+            <td class="users-text" data-raw="200000">~200K+</td>
+            <td class="price-text" data-raw="900">$9/mo</td>
+            <td><span class="free-badge free-badge--yes">Levels 1–3 free</span></td>
+            <td class="strength-text">Only structured kanji SRS for Japanese</td>
+          </tr>
+          <tr style="--accent: var(--clr-gamified)">
+            <td><span class="rank-badge">20</span></td>
+            <td class="app-name-cell"><a href="#app-clozemaster">Clozemaster</a></td>
+            <td><span class="cat-chip">Gamified</span></td>
+            <td class="model-text">Freemium + Pro</td>
+            <td class="users-text" data-raw="1000000">~1M+</td>
+            <td class="price-text" data-raw="500">$5/mo (annual)</td>
+            <td><span class="free-badge free-badge--yes">Yes</span></td>
+            <td class="strength-text">100K+ sentences per language pair</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CATEGORY BREAKDOWN
+═══════════════════════════════════════════════════════════════ -->
+<section id="categories">
+  <div class="container">
+    <h2 class="section-title">Category Breakdown<small>Deep-dive profiles for all 20 apps across 6 segments</small></h2>
+    <div class="categories-wrapper">
+
+      <!-- ── AI-Tutor Based ──────────────────────────────────────────── -->
+      <div class="category-block" id="cat-ai" style="--accent: var(--clr-ai)">
+        <div class="category-block__header">
+          <span class="category-block__swatch"></span>
+          <h3 class="category-block__name">AI-Tutor Based</h3>
+          <span class="category-block__count">3 apps</span>
+        </div>
+        <p class="category-block__desc">
+          AI-tutor platforms use large language models and speech AI to provide personalized feedback, conversation practice, and adaptive instruction — replacing or augmenting human tutors. This is the fastest-growing category in 2025–2026, driven by the accessibility of GPT-4o and multimodal speech models.
+        </p>
+        <div class="grid-2">
+
+          <article class="app-card" id="app-busuu">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">4</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Busuu</h4>
+                  <span class="app-card__category-chip">AI-Tutor Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>Free + $5.83/mo annual</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>120M+ registered</span>
+                <span class="free-badge free-badge--yes">Free tier</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>AI conversation practice with adaptive difficulty</li>
+                  <li>Native speaker community corrections (pay-it-forward)</li>
+                  <li>CEFR-aligned curriculum with progress tracking</li>
+                  <li>Business English learning path</li>
+                  <li>Busuu for Business B2B corporate tier</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Intermediate learners, corporate employees, CEFR certification seekers</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Human native-speaker corrections embedded in the learning loop — authenticity AI cannot replicate</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Free tier extremely limited; desktop experience less polished than mobile-native competitors</span>
+              </div>
+              <p class="app-card__reasoning">Busuu's 120M+ registered users masks a more modest active base, but the platform earns its top-five ranking through a genuinely differentiated feature: human native-speaker correction embedded into the learning loop. While ELSA and Speak offer AI feedback, Busuu delivers the harder-to-fake authenticity of a real person correcting your Portuguese essay. The AI conversation tools (added 2024–2025) layer synthetic practice on top of this human layer, making it the most hybrid platform in the AI-tutor category. The B2B arm serves enterprise L&amp;D budgets, providing revenue diversification that pure consumer apps lack.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-speak">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">5</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Speak</h4>
+                  <span class="app-card__category-chip">AI-Tutor Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>~$8.25/mo (annual $99)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>10M+</span>
+                <span class="free-badge free-badge--yes">Free trial</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>GPT-4o Speak Tutor — open-ended AI conversation</li>
+                  <li>Instant pronunciation scoring and feedback</li>
+                  <li>Short native-teacher video lessons</li>
+                  <li>Grammar explanations on demand mid-conversation</li>
+                  <li>6 languages: Spanish, French, Korean, Japanese, Italian, English</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Adult learners, professionals, college students learning Asian/European languages</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Best-in-class open-ended AI conversation — genuine multi-turn dialogues with contextual correction</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Only 6 languages; grammar depth thinner than structured-course competitors</span>
+              </div>
+              <p class="app-card__reasoning">Speak is the purest expression of the "AI as language tutor" thesis. Backed by SoftBank and tightly integrated with OpenAI's models, it addresses the single biggest bottleneck in language learning — finding someone to practice speaking with — by making an AI conversation partner available 24/7 at a fraction of italki session costs. The Wirecutter recommendation in 2026 and rapid growth in Korean and Japanese markets signal strong product-market fit with motivated adult learners. The six-language ceiling is a strategic liability, but deliberate focus on depth over breadth has produced an experience clearly superior to the speaking features bolted onto broader platforms.</p>
+            </div>
+          </article>
+
+          <article class="app-card app-card--full" id="app-elsa">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">9</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">ELSA Speak</h4>
+                  <span class="app-card__category-chip">AI-Tutor Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>Free + ~$12/mo</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>50M+</span>
+                <span class="free-badge free-badge--yes">Free tier</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Phoneme-level AI pronunciation scoring (not just word-level)</li>
+                  <li>50+ English accent models trained</li>
+                  <li>IELTS and TOEFL prep modules</li>
+                  <li>1,000+ targeted pronunciation exercises</li>
+                  <li>Corporate accent reduction programs (ELSA Business)</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Non-native English speakers, IELTS/TOEFL test takers, call center and corporate employees, ESL learners in Asia and MENA</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Most granular AI pronunciation analysis — scores every phoneme, catching consonant clusters and connected speech errors that generic speech recognition misses</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>English-only and pronunciation-only; limited value once pronunciation reaches B2 level</span>
+              </div>
+              <p class="app-card__reasoning">ELSA (English Language Speech Assistant) has carved out the most defensible moat in the AI-tutor category by going narrower and deeper than anyone else. Its phoneme-level scoring engine, trained on millions of speech samples, catches subtle errors — consonant clusters, vowel length, connected speech — that generic speech recognition in Duolingo or Babbel cannot detect. The IELTS and TOEFL prep modules tie it to high-stakes exam markets where a 0.5-band improvement has real financial value for learners whose careers depend on English certification. The single-language constraint is both limitation and advantage: the model is extraordinarily well-trained on English phonology precisely because it has not been diluted across 40 languages.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ── Gamified / Streak-Driven ────────────────────────────────── -->
+      <div class="category-block" id="cat-gamified" style="--accent: var(--clr-gamified)">
+        <div class="category-block__header">
+          <span class="category-block__swatch"></span>
+          <h3 class="category-block__name">Gamified / Streak-Driven</h3>
+          <span class="category-block__count">5 apps</span>
+        </div>
+        <p class="category-block__desc">
+          Gamified apps use behavioral design — streaks, XP, leagues, hearts, and visual rewards — to drive daily habit formation. This category holds the largest total user base and dominates app store downloads. The tension in this segment is between engagement metrics and genuine learning outcomes.
+        </p>
+        <div class="grid-2">
+
+          <article class="app-card" id="app-duolingo">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">1</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Duolingo</h4>
+                  <span class="app-card__category-chip">Gamified / Streak-Driven</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>Free / Super $6.99 / Max $13.99</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>900M+ registered</span>
+                <span class="free-badge free-badge--yes">Yes — full content</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>40+ languages with daily streak system and XP leagues</li>
+                  <li>AI Roleplay (Max) — GPT-4o conversation scenarios</li>
+                  <li>Video Call feature for speaking practice (Max)</li>
+                  <li>Stories, Listening Challenges, Podcasts add-ons</li>
+                  <li>Duolingo for Schools — classroom management tools</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Casual adult learners, students, hobbyists; all ages globally; beginners to intermediate</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Unmatched retention engine — streaks, hearts, and leagues drive daily returns better than any competitor</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Gamification over substance — creates "skill illusion" without building deep grammar or spoken competence</span>
+              </div>
+              <p class="app-card__reasoning">Duolingo dominates by sheer scale: 133M MAU (Q4 2025; peak 135.3M in Q3 2025) and $1.04B revenue in FY2025 make it the undisputed market leader. Its genius is the behavioral-design loop — streaks, hearts, leagues, and push notifications drive daily returns better than any competitor in history. The Max tier (GPT-4o Roleplay and Video Call) signals a meaningful pivot toward genuine AI-tutor territory, but the free and Super tiers still prioritize engagement metrics over learning outcomes. For casual learners who need motivation scaffolding, no app comes close; for serious learners targeting C1+ fluency, the surface-level gamification often substitutes the dopamine hit of earning XP for the harder work of actual language acquisition.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-memrise">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">7</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Memrise</h4>
+                  <span class="app-card__category-chip">Gamified / Streak-Driven</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$7.50/mo annual</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>65M+</span>
+                <span class="free-badge free-badge--yes">Yes</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>"Learn with Locals" — short native speaker video clips</li>
+                  <li>Spaced repetition vocab with streak tracking</li>
+                  <li>MemBot AI conversation practice (2025)</li>
+                  <li>Community-created courses (50M+ words/phrases)</li>
+                  <li>Grammar bots for rule-based practice</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Vocabulary-focused learners, students supplementing classroom study, authentic speech exposure seekers</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Native video clips are the best raw exposure to natural speech patterns, accents, and colloquial usage on any gamified app</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Fragmented curriculum — community courses vary wildly in quality; grammar teaching is weak</span>
+              </div>
+              <p class="app-card__reasoning">Memrise differentiates from Duolingo through its "Learn with Locals" video corpus — thousands of clips of real people saying real phrases in real environments. This authentic audio-visual exposure builds the kind of listening comprehension that reading-heavy apps cannot replicate, and research on input-based acquisition supports the approach. However, Memrise has historically struggled to convert its vocabulary strength into a coherent learning pathway, relying heavily on community-created courses whose quality is uneven. The MemBot AI conversation feature (2025) attempts to bridge recognition and production but remains less polished than Speak or Busuu's AI tools.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-mondly">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">11</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Mondly</h4>
+                  <span class="app-card__category-chip">Gamified / Streak-Driven</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$9.99/mo or $120 lifetime</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>100M+</span>
+                <span class="free-badge free-badge--yes">1 lesson/day</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>41 languages — broadest freemium language selection</li>
+                  <li>AR mode — virtual teacher placed in your environment</li>
+                  <li>VR mode for Meta Quest (restaurant, airport scenarios)</li>
+                  <li>Chatbot AI conversation with speech recognition</li>
+                  <li>MondlyWORK — corporate business language training</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Tech-forward learners, AR/VR enthusiasts, business professionals, European and Asian language learners</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Widest language selection (41) combined with AR/VR immersive practice — unique hardware-forward approach no major competitor has replicated</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Content depth per language is thinner than Babbel or Busuu; gamification feels derivative of Duolingo without the same social loops</span>
+              </div>
+              <p class="app-card__reasoning">Mondly's 100M+ users and 41-language library make it the most linguistically diverse freemium app after Duolingo. Where Mondly genuinely differentiates is hardware: the AR companion (places a virtual teacher in your physical room) and Meta Quest VR app (immersive restaurant and airport scenarios) explore a learning modality that research suggests improves spatial vocabulary retention. ATi Studios has invested heavily in this hardware-forward bet. The gamification layer is competent but derivative, and without Duolingo's viral social loops, Mondly relies more on direct acquisition marketing than organic network growth.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-drops">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">16</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Drops</h4>
+                  <span class="app-card__category-chip">Gamified / Streak-Driven</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$5.83/mo annual ($70/yr)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>35M+ downloads</span>
+                <span class="free-badge free-badge--yes">5 min/day free</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Visual vocabulary with illustrated gesture-based UX</li>
+                  <li>57 languages including rare options (Welsh, Swahili, Cherokee)</li>
+                  <li>5-minute timed sessions optimized for micro-learning</li>
+                  <li>Thematic word sets (food, travel, body, business)</li>
+                  <li>Grammar games added Q1 2026</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Visual learners, travelers, design-conscious users, casual learners supplementing other study</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Best visual vocabulary UX on the market — illustrated, gesture-driven interface makes passive acquisition genuinely enjoyable</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Vocabulary-only depth; cannot take a learner past A2 alone; 5-minute daily free cap is restrictive</span>
+              </div>
+              <p class="app-card__reasoning">Drops occupies a design-forward niche in language learning — its illustrated, gesture-driven vocabulary acquisition interface is genuinely beautiful and consistently earns UX praise. The 57-language catalog (including Welsh, Swahili, and Cherokee) serves niches that Duolingo and Babbel ignore entirely. In early 2026, Drops added grammar games, signaling awareness that vocabulary-only depth was a ceiling on its value proposition. However, Drops works best as a supplement to a structured course rather than a standalone product — it excels at building recognition vocabulary and forming the daily interaction habit, but cannot take a learner past A2 in isolation.</p>
+            </div>
+          </article>
+
+          <article class="app-card app-card--full" id="app-clozemaster">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">20</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Clozemaster</h4>
+                  <span class="app-card__category-chip">Gamified / Streak-Driven</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>Free + Pro $5/mo annual</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>~1M+</span>
+                <span class="free-badge free-badge--yes">Yes</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Fill-in-the-blank sentence cloze deletion at massive scale</li>
+                  <li>100,000+ sentences per major language pair (Tatoeba database)</li>
+                  <li>66+ language pairs including Esperanto, Latin, Toki Pona</li>
+                  <li>Difficulty bands by word frequency (top 100, 1000, 5000+)</li>
+                  <li>Listening mode and grammar challenge rounds</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Intermediate learners post-Duolingo/Babbel, vocabulary-breadth builders, grammar pattern exposure seekers</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Fastest path to mass sentence-context vocabulary — 100K+ varied sentences means exposure to words no narrow app ever reaches</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Not beginner-friendly (requires B1+ base); no speaking, no grammar explanations; UI is functional but not polished</span>
+              </div>
+              <p class="app-card__reasoning">Clozemaster is explicitly designed for the "post-Duolingo plateau" — learners who have core vocabulary but lack the sentence-level exposure to internalize grammar patterns and natural collocations. The cloze deletion format (fill in the missing word from context) forces active retrieval in a sentence context, producing better long-term retention than definition-based flashcards. At $60/year it is the most affordable paid option for mass vocabulary exposure. Its 66-language pair coverage includes many combinations (Esperanto, Latin, Toki Pona) that no commercial app offers. The app's honest positioning as an intermediate-advanced supplement rather than a complete solution is both a strength (it sets correct expectations) and a growth ceiling.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ── Immersion-Based ─────────────────────────────────────────── -->
+      <div class="category-block" id="cat-immersion" style="--accent: var(--clr-immersion)">
+        <div class="category-block__header">
+          <span class="category-block__swatch"></span>
+          <h3 class="category-block__name">Immersion-Based</h3>
+          <span class="category-block__count">4 apps</span>
+        </div>
+        <p class="category-block__desc">
+          Immersion apps expose learners to authentic native content — real videos, books, TV, and podcasts — with scaffolding tools that make comprehensible input accessible. These platforms target intermediate-to-advanced learners and draw on Stephen Krashen's input hypothesis and Steve Kaufmann's extensive input methodology.
+        </p>
+        <div class="grid-2">
+
+          <article class="app-card" id="app-rosetta">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">3</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Rosetta Stone</h4>
+                  <span class="app-card__category-chip">Immersion-Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$11.99/mo annual or $399 lifetime</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>25M+ lifetime users</span>
+                <span class="free-badge free-badge--no">Trial only</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Picture-word immersion method — zero L1 translation</li>
+                  <li>TruAccent speech recognition — most accurate in consumer apps</li>
+                  <li>Live Tutoring sessions with certified teachers</li>
+                  <li>25 languages with structured level progression</li>
+                  <li>Enterprise/government institutional licensing</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Serious adult learners, corporate L&amp;D teams, US government agencies, heritage language learners</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>TruAccent speech recognition is among the most accurate in consumer apps; 30-year brand trust in enterprise and institutional sales</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Zero-translation philosophy frustrates adult learners; among the most expensive options; feels dated against AI-native competitors</span>
+              </div>
+              <p class="app-card__reasoning">Rosetta Stone is simultaneously the most iconic and the most endangered brand in language learning. Its 30-year track record and $399 lifetime plan carry genuine value for dedicated learners — the immersion method mirrors how children acquire language and builds intuitive comprehension rather than translation dependence. But the refusal to modernize its zero-translation philosophy has become a UX liability in an era where AI can explain a grammar point in seconds. It retains enterprise and government clients through deep institutional relationships, but consumer market share has steadily eroded to gamified and AI-tutor competitors since 2018.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-lingq">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">13</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">LingQ</h4>
+                  <span class="app-card__category-chip">Immersion-Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$12.99/mo or $107.88/yr</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>10M+</span>
+                <span class="free-badge free-badge--yes">500 LingQs free</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Import any URL, PDF, ebook, or YouTube transcript as a lesson</li>
+                  <li>Lifetime known-word counter across 30+ languages</li>
+                  <li>Audio-text synchronization for reading + listening</li>
+                  <li>Mini Stories beginner library for new learners</li>
+                  <li>Community lessons and podcast feed integration</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Intermediate-to-advanced learners, polyglots, self-directed learners committed to extensive input</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Most powerful content import engine — turn Netflix subtitles, novels, or podcasts into tracked interactive lessons</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Steep learning curve; 500-LingQ free limit hit quickly; sparse onboarding fails beginners</span>
+              </div>
+              <p class="app-card__reasoning">LingQ is built on Steve Kaufmann's comprehensible input methodology — the idea that language is acquired through massive exposure to meaningful content slightly above current level. The platform's import engine (turn any URL, PDF, or ebook into an interactive lesson with every unknown word tracked against a lifetime vocabulary counter) is genuinely unmatched. This approach has produced measurable fluency for thousands of committed users, including Kaufmann himself who attributes 20+ languages to the method. The friction is real — new users need guidance that the app's sparse onboarding fails to provide — but for learners past beginner stage who commit to the platform, LingQ may offer the highest return per study hour of any app on this list.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-fluentu">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">14</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">FluentU</h4>
+                  <span class="app-card__category-chip">Immersion-Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$20/mo annual ($240/yr)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>~1M+</span>
+                <span class="free-badge free-badge--no">14-day trial</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Real YouTube/web videos with AI interactive subtitles</li>
+                  <li>Tap any word for definition, pronunciation, examples</li>
+                  <li>Sentence mining to personal SRS deck</li>
+                  <li>9 languages: Spanish, French, German, Italian, Japanese, Chinese, Korean, Russian, English</li>
+                  <li>Comprehension quizzes after each video</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Intermediate learners who want authentic media immersion; learners of East Asian and European languages</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Best authentic-video-plus-vocabulary integration — tap any subtitle word and it auto-adds to your SRS deck</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Most expensive per-year app on this list ($240); only 9 languages; no speaking practice</span>
+              </div>
+              <p class="app-card__reasoning">FluentU builds on the proven comprehensible input principle but adds a vocabulary scaffolding layer that makes authentic native content accessible to intermediate learners who would otherwise be overwhelmed. The ability to watch a Japanese variety show, tap an unknown word mid-subtitle, and have it automatically added to a spaced repetition deck creates a tight loop between entertainment and acquisition. At $240/year it commands the highest price point among app-based subscriptions — a positioning that limits its addressable market to committed learners but enables investment in content licensing and AI subtitle quality that cheaper competitors cannot match.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-lingopie">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">17</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Lingopie</h4>
+                  <span class="app-card__category-chip">Immersion-Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$5.59/mo annual ($67/yr)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>~500K+</span>
+                <span class="free-badge free-badge--no">14-day trial</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>TV series, movies, telenovelas with interactive dual subtitles</li>
+                  <li>Vocabulary flashcard export from watched content</li>
+                  <li>SRS review integrated with viewing history</li>
+                  <li>9 languages: Spanish, Portuguese, Italian, French, German, Japanese, Korean, Russian, English</li>
+                  <li>Family plan (~$75/yr for 4 members)</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Entertainment-first learners, binge-watchers, intermediate learners seeking comprehensible input</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Most natural immersion experience — narrative emotional engagement improves retention over decontextualized flashcards</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Vocabulary and listening only — no grammar, speaking, or writing; beginners need supplementary study first</span>
+              </div>
+              <p class="app-card__reasoning">Lingopie operationalizes the "watch TV to learn a language" advice that polyglots have given for decades by making every subtitle word immediately interactive. Where LingQ requires technical setup and FluentU targets YouTube content, Lingopie's curated streaming library of telenovelas, anime, and French cinema is pre-subtitled and pre-linked to SRS review. The emotional engagement of following a narrative arc produces better long-term vocabulary retention than decontextualized flashcards — a principle supported by research on language acquisition through storytelling. At $67/year it is the most affordable premium immersion platform, though the content library's size relative to Netflix is a genuine constraint.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ── Classroom-Supplement ────────────────────────────────────── -->
+      <div class="category-block" id="cat-classroom" style="--accent: var(--clr-classroom)">
+        <div class="category-block__header">
+          <span class="category-block__swatch"></span>
+          <h3 class="category-block__name">Classroom-Supplement</h3>
+          <span class="category-block__count">4 apps</span>
+        </div>
+        <p class="category-block__desc">
+          Classroom-supplement platforms are designed to complement formal instruction — structured curricula, live teacher sessions, institutional licensing, and CEFR-aligned progression. These platforms target learners who want human accountability, expert content design, or integration with educational institutions.
+        </p>
+        <div class="grid-2">
+
+          <article class="app-card" id="app-babbel">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">2</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Babbel</h4>
+                  <span class="app-card__category-chip">Classroom-Supplement</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$6.95/mo annual</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>15M+ subscribers</span>
+                <span class="free-badge free-badge--no">Trial only</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Expert-designed curriculum by 150+ in-house linguists</li>
+                  <li>Real-life dialogue focus (business, travel, social)</li>
+                  <li>Speech recognition with pronunciation feedback</li>
+                  <li>Review Manager for spaced repetition of weak points</li>
+                  <li>Babbel Live — add-on group classes with teachers</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Adult learners wanting structured curriculum-based progress, especially European languages</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Highest-quality lesson design — linguist-crafted courses built around practical conversation scenarios, not gamified trivia</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Paywall at lesson one; 14 languages only; speaking practice depth lags behind AI-tutor competitors</span>
+              </div>
+              <p class="app-card__reasoning">Babbel occupies a premium niche between Duolingo's gamified chaos and Rosetta Stone's immersive rigidity. Its 15M+ subscriber base signals real willingness-to-pay from adult learners who want a structured course rather than an open-ended app. The expert-crafted lessons covering business, travel, and social contexts are genuinely superior to AI-generated content for European languages — particularly German and Spanish. However, the paywall at lesson one limits top-of-funnel growth in markets where Duolingo's free tier sets user expectations, and the 14-language cap leaves billions of potential users outside its addressable market.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-italki">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">8</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">italki</h4>
+                  <span class="app-card__category-chip">Classroom-Supplement</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>From $5/hr (tutor-set)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>10M+ learners</span>
+                <span class="free-badge free-badge--yes">Free to browse</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>10,000+ teachers and community tutors in 150+ languages</li>
+                  <li>Flexible pay-per-lesson model (no subscription required)</li>
+                  <li>Community Notebook — written corrections from native speakers</li>
+                  <li>Group classes at discounted rates</li>
+                  <li>2025 subscription tier for broader tutor access added</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Learners wanting human tutors at flexible prices, conversation practice seekers, learners of rare languages</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Largest human-teacher marketplace — community tutors from $5/hr make real conversation accessible at any budget</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>No structured curriculum; lesson quality varies enormously; learner must self-direct; no teacher quality certification</span>
+              </div>
+              <p class="app-card__reasoning">italki occupies a unique position as a platform rather than a product — it does not teach languages itself but connects willing learners with willing teachers via marketplace commission. The 150-language breadth (including endangered and heritage languages) is unmatched by any app-based competitor. For intermediate and advanced learners who have grammar foundations and need speaking volume, even a $5/hr community tutor session delivers measurably better pronunciation feedback than any AI app currently available. The platform's central weakness is the absence of any learning scaffolding: a complete beginner booking their first italki lesson will almost certainly waste the session without supplementary study.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-lingoda">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">12</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Lingoda</h4>
+                  <span class="app-card__category-chip">Classroom-Supplement</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$89–$139/mo</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>1M+ active</span>
+                <span class="free-badge free-badge--no">No</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Live video group classes (3–5 students) with certified teachers</li>
+                  <li>24/7 scheduling across time zones</li>
+                  <li>CEFR-aligned curriculum: German, Spanish, French, English, Business English</li>
+                  <li>Sprint Challenge — complete 30 or 90 classes, get cash refund</li>
+                  <li>Official CEFR level certificate upon completion</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Serious adult learners seeking B2/C1; professionals needing certified language skills; accountability-driven learners</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Sprint program's financial commitment mechanism produces completion rates far above industry average</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Most expensive subscription on this list; limited to 5 languages; rigid scheduling frustrates busy schedules</span>
+              </div>
+              <p class="app-card__reasoning">Lingoda is the only major platform whose core product is live, certified-teacher-led group classes rather than self-paced content. At $89–$139/month it sits in a price bracket that only the most motivated learners will sustain, creating a self-selection effect: Lingoda's active users tend to be among the most serious on any platform. The Sprint program — where completing all assigned classes in a month earns a significant cash refund — is a behavioral economics masterstroke that converts subscriptions into completion, aligning the platform's incentive (engagement) with the learner's goal (progress). The 5-language limitation and premium price make it a niche choice, but within that niche it delivers outcomes that asynchronous apps cannot match.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-mango">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">18</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Mango Languages</h4>
+                  <span class="app-card__category-chip">Classroom-Supplement</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$7.99–$18/mo (free via library)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>2M+ via libraries</span>
+                <span class="free-badge free-badge--yes">Free via library card</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>70+ languages including Cherokee, Scottish Gaelic, Dzongkha, Pirahã</li>
+                  <li>Practical dialogue-first curriculum with cultural notes</li>
+                  <li>Voice comparison pronunciation tool</li>
+                  <li>Mango Movies — film-based language learning</li>
+                  <li>Library card authentication (3,000+ US library partnerships)</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Heritage language learners, library patrons, rare-language learners, K-12 institutional users</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Free via US library card for millions of users; unmatched rare and heritage language catalog (70+)</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Mobile UX is dated; no AI features; thin advanced content; institutional sales muscle has not been matched by product investment</span>
+              </div>
+              <p class="app-card__reasoning">Mango Languages wins on accessibility and breadth in ways consumer-first apps cannot match. Its partnership with 3,000+ US public library systems means millions of Americans can access 70+ language courses for free — a distribution advantage no venture-backed competitor has replicated. The rare and heritage language catalog (Cherokee, Scottish Gaelic, Yiddish, Pirahã) serves communities with no alternative digital resources. On the weakness side, Mango has been slow to integrate AI features and its consumer mobile app receives consistently mixed UI reviews, suggesting its institutional sales prowess has not been matched by commensurate product investment. The platform's future depends on whether it can modernize before AI-native competitors build comparable language breadth.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ── SRS-Based ───────────────────────────────────────────────── -->
+      <div class="category-block" id="cat-srs" style="--accent: var(--clr-srs)">
+        <div class="category-block__header">
+          <span class="category-block__swatch"></span>
+          <h3 class="category-block__name">SRS-Based</h3>
+          <span class="category-block__count">2 apps</span>
+        </div>
+        <p class="category-block__desc">
+          Spaced Repetition System (SRS) apps use algorithmically timed review intervals to schedule flashcard review at the optimal moment before forgetting — the most scientifically validated method for long-term vocabulary retention. SRS tools serve the most self-directed and analytically rigorous learners.
+        </p>
+        <div class="grid-2">
+
+          <article class="app-card" id="app-anki">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">15</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Anki</h4>
+                  <span class="app-card__category-chip">SRS-Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>Free (desktop) / €25 iOS one-time</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>10M+</span>
+                <span class="free-badge free-badge--yes">Yes (desktop/Android)</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>FSRS algorithm (2023) — most accurate SRS scheduling available</li>
+                  <li>Fully customizable card templates: text, image, audio, cloze</li>
+                  <li>10,000+ community decks on AnkiWeb (Core 2000, Tae Kim, etc.)</li>
+                  <li>Rich add-on ecosystem (100+ community extensions)</li>
+                  <li>Cross-device sync via AnkiWeb (free)</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Medical/law students, polyglots, serious self-directed learners, Japanese and Chinese kanji learners</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Gold-standard SRS — most flexible, most researched, and most battle-tested spaced repetition system available; free on all non-iOS platforms</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Requires significant self-setup; no built-in content; steep learning curve for non-technical users; iOS price creates friction</span>
+              </div>
+              <p class="app-card__reasoning">Anki is the only app on this list used equally by medical students memorizing 20,000 anatomy terms and polyglots building 50,000-word vocabularies in six languages. Its open-source FSRS algorithm, updated in 2023, is arguably the most scientifically accurate spaced repetition scheduling system commercially available. The fundamental trade-off is that Anki provides zero content: it is a scheduling engine that requires the learner to source or create cards. Pre-made decks on AnkiWeb (including legendary decks like Core 2000 Japanese vocabulary and Anki's shared medical collections) lower this barrier substantially, but the raw power of Anki is fully realized only by learners willing to invest in card creation as a learning activity in itself.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-wanikani">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">19</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">WaniKani</h4>
+                  <span class="app-card__category-chip">SRS-Based</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$9/mo or $299 lifetime</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>~200K+</span>
+                <span class="free-badge free-badge--yes">Levels 1–3 free</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>2,000+ kanji and 6,000+ vocabulary via structured SRS</li>
+                  <li>Mnemonic story system: radicals → kanji → vocabulary</li>
+                  <li>60 progressive levels with JLPT alignment</li>
+                  <li>Tofugu community forums and study groups</li>
+                  <li>Open API for third-party app integrations (scripts, dashboards)</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> English-speaking Japanese learners (JLPT N5–N1); learners who found Anki too unstructured for kanji</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>The only app that makes kanji learnable through a progressive, mnemonic-anchored system — reduces the single largest barrier to Japanese literacy</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Japanese-only and English-UI-only; 1–2 year commitment to level 60; mnemonic system requires accepting WaniKani's invented stories</span>
+              </div>
+              <p class="app-card__reasoning">WaniKani exists to solve one problem — teaching 2,000+ kanji to adult learners — and it does so with exceptional structural rigor. The radical → kanji → vocabulary progression, combined with invented-but-memorable mnemonic stories, maps kanji acquisition onto a clear 60-level pathway that Anki's blank canvas cannot replicate for most learners. At roughly 200,000 active users it has a small audience relative to most apps on this list, but within the Japanese-learning community it commands cult-like loyalty and is consistently cited as the platform most responsible for learners crossing the kanji literacy threshold. The $299 lifetime plan represents strong long-term value for the 12–18 months most learners invest in reaching level 60.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ── Audio-First ─────────────────────────────────────────────── -->
+      <div class="category-block" id="cat-audio" style="--accent: var(--clr-audio)">
+        <div class="category-block__header">
+          <span class="category-block__swatch"></span>
+          <h3 class="category-block__name">Audio-First</h3>
+          <span class="category-block__count">2 apps</span>
+        </div>
+        <p class="category-block__desc">
+          Audio-first platforms prioritize listening and speaking over reading and writing, targeting learners whose primary context is screen-free (commuting, exercising) or who want authentic human conversation practice. These platforms have the highest per-hour cost but serve use cases no screen-based app can replicate.
+        </p>
+        <div class="grid-2">
+
+          <article class="app-card" id="app-pimsleur">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">6</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">Pimsleur</h4>
+                  <span class="app-card__category-chip">Audio-First</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>$21/mo (full catalog)</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>10M+</span>
+                <span class="free-badge free-badge--yes">1 free lesson</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>30-minute audio lessons with native speaker recordings</li>
+                  <li>Spaced repetition of spoken phrases — no screen required</li>
+                  <li>50+ languages with 5-level curriculum per language</li>
+                  <li>Reading lessons and Quick Match app activities supplementary</li>
+                  <li>Per-language course purchase option available</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Commuters, audio learners, travelers, heritage language learners, older demographics less comfortable with touch UX</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Screen-free spoken fluency building — the only major app that recruits motor memory through vocalization, not tapping</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Most expensive per-content-hour on the list; zero visual or writing component; can feel repetitive to analytically-minded learners</span>
+              </div>
+              <p class="app-card__reasoning">Pimsleur is the only app on this list that deliberately avoids the screen. Its 30-minute audio lessons, built on the same spaced recall principles as Anki but delivered as a conversational audio drama with native speakers, uniquely serve learners whose primary study context is driving, exercising, or commuting. At $21/month it is one of the most expensive per-hour-of-content options available, yet the method genuinely works for building speaking reflexes — the act of vocalizing aloud under time pressure recruits motor memory in a way no tap-based app does. The platform's main modernization risk is that Pimsleur's parent (Simon &amp; Schuster/KKR) has been slow to integrate AI-generated conversation practice into the audio format.</p>
+            </div>
+          </article>
+
+          <article class="app-card" id="app-hellotalk">
+            <div class="app-card__top-bar"></div>
+            <div class="app-card__body">
+              <div class="app-card__header">
+                <span class="app-card__rank">10</span>
+                <div class="app-card__title-group">
+                  <h4 class="app-card__name">HelloTalk</h4>
+                  <span class="app-card__category-chip">Audio-First</span>
+                </div>
+              </div>
+              <div class="app-card__meta-row">
+                <span class="meta-pill"><i class="meta-pill__icon">💰</i>Free + VIP $79.99/yr</span>
+                <span class="meta-pill"><i class="meta-pill__icon">👥</i>30M+</span>
+                <span class="free-badge free-badge--yes">Yes — full core</span>
+              </div>
+              <div class="app-card__features">
+                <ul>
+                  <li>Language exchange with 30M+ native speakers globally</li>
+                  <li>Voice and video chat with in-app real-time translation</li>
+                  <li>Strikethrough correction tools — native speakers edit your messages</li>
+                  <li>Moments social feed for informal writing and cultural exchange</li>
+                  <li>Tutor booking add-on for paid professional sessions</li>
+                </ul>
+              </div>
+              <p class="app-card__audience"><strong>Target:</strong> Intermediate learners ready for authentic conversation, social learners, Asian language learners (large Chinese/Japanese community)</p>
+              <div class="app-card__badges">
+                <span class="badge badge--strength"><i class="badge__icon">✓</i>Largest language exchange community globally — 30M+ users means near-instant matching for major language pairs</span>
+                <span class="badge badge--weakness"><i class="badge__icon">✗</i>Partner quality varies enormously; many users seek social connection over language correction; can devolve into social media use</span>
+              </div>
+              <p class="app-card__reasoning">HelloTalk's 30M+ user community represents a network effect that purpose-built AI cannot replicate — real humans who correct your mistakes, share cultural context, and maintain conversation relationships across months of exchange. The free tier's breadth (voice, text, and correction tools for one language pair) makes it the best cost-free path to authentic conversation practice for motivated intermediate learners. The platform's core challenge is curation: the gap between a HelloTalk exchange with a dedicated language-learning partner and one who treats the app as a cultural pen-pal service is enormous, and the platform currently provides limited tools to filter for the former. For learners who invest in finding a genuine partner, the payoff is unmatched by any AI substitute.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════════ -->
+<footer class="report-footer">
+  <div class="container">
+    <p class="footer__methodology">
+      <strong>Methodology:</strong> Rankings reflect aggregated estimates of monthly active users (MAU), App Store and Google Play ratings as of Q1–Q2 2026, company investor relations filings, and third-party analytics from Sensor Tower and data.ai. Revenue and subscriber figures for private companies are analyst estimates. Pricing reflects publicly listed rates as of May 2026 and may vary by region, promotion, or plan tier. Apps are ranked primarily by estimated global reach and market influence, with secondary weighting on revenue and critical mindshare.
+    </p>
+    <p class="footer__sources">
+      <em>User and MAU figures are point-in-time estimates; reverify against current company filings before external citation.</em><br>
+      <strong>Sources:</strong>
+      Duolingo FY2025 Shareholder Letters (Q3 2025: 135.3M MAU peak; Q4 2025: ~133M MAU) ·
+      Busuu company disclosures ·
+      Sensor Tower Q1 2026 Mobile Market Report ·
+      data.ai Mobile App Index 2026 ·
+      Similarweb traffic estimates ·
+      Business of Apps Language Learning Report 2026 ·
+      Statista Language Learning Apps Data 2026 ·
+      Market.us Language Learning App Market Report ·
+      Company pricing pages (Duolingo, Babbel, Rosetta Stone, Pimsleur, Lingoda, LingQ, FluentU, Anki, WaniKani, HelloTalk) ·
+      Wirecutter Language Learning App Reviews 2026 ·
+      App Store / Google Play editorial rankings May 2026
+    </p>
+    <p class="footer__copy">© 2026 Competitive Intelligence Report · Generated May 2026 · Data accurate at time of publication</p>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TABLE SORT SCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  const table = document.getElementById('rankingTable');
+  const tbody = table.querySelector('tbody');
+  const headers = table.querySelectorAll('th[data-sort]');
+  const sortBtns = document.querySelectorAll('.sort-btn[data-col]');
+  let currentCol = -1;
+  let ascending = true;
+
+  function getRows() {
+    return Array.from(tbody.querySelectorAll('tr'));
+  }
+
+  function sortByCol(colIndex) {
+    const rows = getRows();
+    if (colIndex === currentCol) {
+      ascending = !ascending;
+    } else {
+      ascending = colIndex === 0;
+      currentCol = colIndex;
+    }
+
+    rows.sort((a, b) => {
+      const cellA = a.querySelectorAll('td')[colIndex];
+      const cellB = b.querySelectorAll('td')[colIndex];
+      const rawA = cellA ? cellA.dataset.raw : null;
+      const rawB = cellB ? cellB.dataset.raw : null;
+
+      let valA, valB;
+      if (rawA !== undefined && rawA !== null && rawA !== '') {
+        valA = parseFloat(rawA);
+        valB = parseFloat(rawB);
+      } else {
+        valA = (cellA ? cellA.textContent.trim() : '').toLowerCase();
+        valB = (cellB ? cellB.textContent.trim() : '').toLowerCase();
+      }
+
+      if (typeof valA === 'number') {
+        return ascending ? valA - valB : valB - valA;
+      }
+      return ascending
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+    updateSortUI(colIndex);
+  }
+
+  function updateSortUI(activeCol) {
+    headers.forEach((th, i) => {
+      const icon = th.querySelector('.sort-icon');
+      if (!icon) return;
+      const colMap = { 'rank': 0, 'users': 4, 'price': 5 };
+      const thCol = colMap[th.dataset.sort];
+      if (thCol === activeCol) {
+        icon.textContent = ascending ? ' ↑' : ' ↓';
+        icon.style.opacity = '1';
+      } else {
+        icon.textContent = ' ↕';
+        icon.style.opacity = '0.4';
+      }
+    });
+    sortBtns.forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.col) === activeCol);
+    });
+  }
+
+  headers.forEach(th => {
+    const colMap = { 'rank': 0, 'users': 4, 'price': 5 };
+    th.addEventListener('click', () => sortByCol(colMap[th.dataset.sort]));
+    th.style.cursor = 'pointer';
+  });
+
+  sortBtns.forEach(btn => {
+    btn.addEventListener('click', () => sortByCol(parseInt(btn.dataset.col)));
+  });
+
+  // Pre-cache data-raw values for users and price columns
+  getRows().forEach(row => {
+    const cells = row.querySelectorAll('td');
+    // users col (index 4) and price col (index 5) already have data-raw in HTML
+  });
+})();
+</script>
+
+</body>
+</html>
