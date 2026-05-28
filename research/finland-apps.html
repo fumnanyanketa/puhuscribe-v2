@@ -211,18 +211,23 @@ body {
   border-radius: var(--r-lg);
   border: 1px solid var(--border);
 }
+/*
+  border-collapse:separate + border-spacing:0 is required for reliable
+  position:sticky on <th> cells. With border-collapse:collapse, Chrome
+  and Safari clip the first tbody row behind the sticky header on scroll.
+*/
 .ranking-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 13px;
 }
-.ranking-table thead tr {
-  background: var(--bg-raised);
+/* Sticky applied per-cell, not per-row, so browsers honour it correctly */
+.ranking-table th {
   position: sticky;
   top: 48px;
   z-index: 10;
-}
-.ranking-table th {
+  background: var(--bg-raised);
   padding: 12px 14px;
   text-align: left;
   font-size: 11px;
@@ -233,6 +238,7 @@ body {
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
+  /* border-bottom drawn here keeps the separator visible while scrolling */
   border-bottom: 1px solid var(--border);
   transition: color 0.15s;
 }
@@ -644,7 +650,7 @@ body {
     <span class="hero__pill">B1 Required for Residency (2026)</span>
     <span class="hero__pill">22 Resources Analyzed</span>
     <span class="hero__pill">6 Categories</span>
-    <span class="hero__pill">~1,100 hrs to B2</span>
+    <span class="hero__pill">~1,100 hrs to Proficiency (FSI)</span>
     <span class="hero__pill">9,010 YKI Test-Takers/yr</span>
   </div>
 </header>
@@ -680,7 +686,7 @@ body {
 <section id="overview" class="section" style="padding-bottom:var(--sp-lg)">
   <div class="container">
     <h2 class="section-title">Market Overview</h2>
-    <p class="section-sub">Finnish is an FSI Tier IV language — the same difficulty tier as Korean, Turkish, and Mandarin — yet faces a hard regulatory deadline: B1 YKI proficiency is now required for permanent residence permits as of January 2026.</p>
+    <p class="section-sub">Finnish requires roughly 1,100 hours of study to reach professional proficiency (FSI estimate), placing it alongside Russian, Turkish, and Hungarian — demanding, but a full tier below Korean, Mandarin, Japanese, and Arabic which require ~2,200 hours. It faces a hard regulatory deadline: B1 YKI proficiency is now the main route to permanent residence permits as of January 2026 (fast-track exceptions exist for high earners and Finnish degree holders).</p>
     <div class="stats-grid">
       <div class="stat-card" style="--accent:var(--clr-yki)">
         <div class="stat-card__label">YKI Test-Takers</div>
@@ -690,7 +696,7 @@ body {
       <div class="stat-card" style="--accent:var(--clr-finnish)">
         <div class="stat-card__label">Hours to B2</div>
         <div class="stat-card__value">~1,100 hrs</div>
-        <div class="stat-card__sub">FSI Tier IV · Same as Korean, Turkish, Mandarin</div>
+        <div class="stat-card__sub">FSI professional proficiency · Peer group: Russian, Turkish, Hungarian · Korean/Mandarin require ~2,200 hrs</div>
       </div>
       <div class="stat-card" style="--accent:var(--clr-ai)">
         <div class="stat-card__label">YKI Speaking Pass Rate</div>
@@ -705,7 +711,7 @@ body {
       <div class="stat-card" style="--accent:var(--clr-public)">
         <div class="stat-card__label">Residency Requirement</div>
         <div class="stat-card__value">B1 YKI</div>
-        <div class="stat-card__sub">Required for permanent residence permit · Jan 2026</div>
+        <div class="stat-card__sub">Main route to permanent residence permit · Jan 2026 · Fast-track exceptions: high earners, Finnish degree holders</div>
       </div>
       <div class="stat-card" style="--accent:var(--clr-university)">
         <div class="stat-card__label">Free Government Resources</div>
@@ -2185,7 +2191,7 @@ body {
         <li><em>User figures and pricing are point-in-time estimates; reverify against current sources before external citation.</em></li>
         <li>OPH / Finnish National Agency for Education — YKI test specifications and statistics</li>
         <li>Duolingo 2025 Language Report — Finnish learner counts</li>
-        <li>FSI Language Learning Difficulty Rankings — hours-to-B2 estimates</li>
+        <li>FSI Language Learning Difficulty Rankings — ~1,100 hrs to professional proficiency; Finnish peer group: Russian, Turkish, Hungarian; Korean/Mandarin/Japanese/Arabic ~2,200 hrs</li>
         <li>Yle Uutiset — Finnish language policy coverage</li>
         <li>Individual app/platform pricing pages — May 2026</li>
         <li>App store ratings and user reviews — App Store, Google Play, Trustpilot</li>
