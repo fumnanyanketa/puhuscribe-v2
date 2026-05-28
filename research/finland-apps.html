@@ -211,22 +211,12 @@ body {
   border-radius: var(--r-lg);
   border: 1px solid var(--border);
 }
-/*
-  border-collapse:separate + border-spacing:0 is required for reliable
-  position:sticky on <th> cells. With border-collapse:collapse, Chrome
-  and Safari clip the first tbody row behind the sticky header on scroll.
-*/
 .ranking-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   font-size: 13px;
 }
-/* Sticky applied per-cell, not per-row, so browsers honour it correctly */
 .ranking-table th {
-  position: sticky;
-  top: 48px;
-  z-index: 10;
   background: var(--bg-raised);
   padding: 12px 14px;
   text-align: left;
@@ -238,7 +228,6 @@ body {
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
-  /* border-bottom drawn here keeps the separator visible while scrolling */
   border-bottom: 1px solid var(--border);
   transition: color 0.15s;
 }
