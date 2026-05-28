@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finnish Language Learning Resources — Competitive Intelligence 2026</title>
+<style>
+/* ── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-page);
+  color: var(--txt-primary);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* ── Design tokens ────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg-page:      #0f172a;
+  --bg-surface:   #1e293b;
+  --bg-raised:    #334155;
+  --bg-hover:     #3b4f6b;
+  /* Text */
+  --txt-primary:  #f1f5f9;
+  --txt-secondary:#94a3b8;
+  --txt-muted:    #64748b;
+  /* Borders */
+  --border:       #334155;
+  --border-light: #475569;
+  /* Category colors — Finland report */
+  --clr-finnish:    #d97706;   /* amber  — Finnish-specific apps  */
+  --clr-general:    #2563eb;   /* blue   — general apps w/ Finnish */
+  --clr-yki:        #7c3aed;   /* purple — YKI exam prep          */
+  --clr-ai:         #0d9488;   /* teal   — AI conversation        */
+  --clr-public:     #0284c7;   /* sky    — government/public      */
+  --clr-university: #4f46e5;   /* indigo — university/institutional*/
+  /* Spacing scale */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  40px;
+  --sp-2xl: 64px;
+  /* Radius */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 var(--sp-lg); }
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #003580 0%, #0053a6 35%, #1e40af 65%, #1e3a8a 100%);
+  padding: var(--sp-2xl) var(--sp-lg);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 120%, rgba(255,255,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero__eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: var(--sp-sm);
+}
+.hero__title {
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: var(--sp-md);
+}
+.hero__subtitle {
+  font-size: 17px;
+  color: rgba(255,255,255,0.75);
+  max-width: 640px;
+  margin: 0 auto var(--sp-xl);
+}
+.hero__pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-sm);
+}
+.hero__pill {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+}
+
+/* ── Jump nav ─────────────────────────────────────────────────── */
+.jump-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.jump-nav__inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px var(--sp-lg);
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.jump-nav__inner::-webkit-scrollbar { display: none; }
+.jump-nav__link {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--txt-secondary);
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.jump-nav__link:hover { color: var(--txt-primary); background: var(--bg-surface); }
+.jump-nav__link--color { border-color: currentColor; }
+.jump-nav__sep {
+  color: var(--txt-muted);
+  font-size: 12px;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+/* ── Section titles ───────────────────────────────────────────── */
+.section { padding: var(--sp-2xl) var(--sp-lg); }
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--txt-primary);
+  margin-bottom: 6px;
+}
+.section-sub {
+  color: var(--txt-secondary);
+  font-size: 15px;
+  margin-bottom: var(--sp-xl);
+  max-width: 680px;
+}
+
+/* ── Stat cards ───────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-xl);
+}
+.stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-lg);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent, #64748b);
+}
+.stat-card__value {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--txt-primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.stat-card__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.stat-card__sub {
+  font-size: 11px;
+  color: var(--txt-muted);
+}
+
+/* ── Ranking table ────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+}
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ranking-table thead tr {
+  background: var(--bg-raised);
+  position: sticky;
+  top: 48px;
+  z-index: 10;
+}
+.ranking-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.15s;
+}
+.ranking-table th:hover { color: var(--txt-primary); }
+.ranking-table th.sorted { color: var(--txt-primary); }
+.ranking-table th .sort-arrow { margin-left: 4px; opacity: 0.5; font-size: 10px; }
+.ranking-table th.sorted .sort-arrow { opacity: 1; }
+.ranking-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.ranking-table tbody tr:last-child td { border-bottom: none; }
+.ranking-table tbody tr {
+  background: var(--bg-surface);
+  transition: background 0.12s;
+}
+.ranking-table tbody tr:hover { background: var(--bg-hover); }
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.tbl-name { font-weight: 600; color: var(--txt-primary); }
+.tbl-cat {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  white-space: nowrap;
+}
+.yki-badges { display: flex; gap: 4px; }
+.yki-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  border-radius: var(--r-sm);
+  font-size: 10px;
+  font-weight: 700;
+}
+.yki-badge--yes      { background: #14532d; color: #4ade80; border: 1px solid #16a34a; }
+.yki-badge--partial  { background: #431407; color: #fbbf24; border: 1px solid #d97706; }
+.yki-badge--no       { background: var(--bg-raised); color: var(--txt-muted); border: 1px solid var(--border); }
+.free-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.free-pill--yes { background: #14532d; color: #4ade80; border: 1px solid #16a34a; }
+.free-pill--limited { background: #451a03; color: #fbbf24; border: 1px solid #d97706; }
+.free-pill--no  { background: var(--bg-raised); color: var(--txt-muted); border: 1px solid var(--border); }
+
+/* ── Category blocks ──────────────────────────────────────────── */
+.category-block { margin-bottom: var(--sp-2xl); scroll-margin-top: 60px; }
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-lg);
+  padding-bottom: var(--sp-md);
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.category-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.category-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--txt-primary);
+}
+.category-count {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  margin-left: auto;
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--sp-lg);
+}
+
+/* ── App cards ────────────────────────────────────────────────── */
+.app-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.app-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  transform: translateY(-2px);
+}
+.app-card--full { grid-column: 1 / -1; }
+.app-card__top {
+  height: 5px;
+  background: var(--accent);
+}
+.app-card__head {
+  padding: var(--sp-lg) var(--sp-lg) var(--sp-md);
+  border-bottom: 1px solid var(--border);
+}
+.app-card__name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--txt-primary);
+  margin-bottom: 4px;
+}
+.app-card__tagline {
+  font-size: 12px;
+  color: var(--txt-secondary);
+  font-style: italic;
+}
+.app-card__body { padding: var(--sp-md) var(--sp-lg); flex: 1; }
+.app-card__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-md);
+}
+.meta-item__label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--txt-muted);
+  margin-bottom: 2px;
+}
+.meta-item__value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt-primary);
+}
+.app-card__features {
+  margin-bottom: var(--sp-md);
+}
+.features-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--txt-muted);
+  margin-bottom: 6px;
+}
+.feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.feature-list li {
+  font-size: 13px;
+  color: var(--txt-secondary);
+  padding-left: 14px;
+  position: relative;
+}
+.feature-list li::before {
+  content: '·';
+  position: absolute;
+  left: 3px;
+  color: var(--accent);
+}
+
+/* ── YKI row ──────────────────────────────────────────────────── */
+.yki-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--sp-md);
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--bg-raised) 60%, transparent);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+.yki-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--txt-muted);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.yki-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: default;
+}
+.yki-cell--yes     { background: #14532d; color: #4ade80; border: 1px solid #16a34a; }
+.yki-cell--partial { background: #431407; color: #fbbf24; border: 1px solid #d97706; }
+.yki-cell--no      { background: var(--bg-raised); color: var(--txt-muted); border: 1px solid var(--border); opacity: 0.5; }
+.yki-legend {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--txt-muted);
+}
+.yki-legend span { display: flex; align-items: center; gap: 3px; }
+
+/* ── Strength / Weakness ──────────────────────────────────────── */
+.app-card__sw {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-md);
+}
+.sw-block {
+  padding: 10px;
+  border-radius: var(--r-sm);
+}
+.sw-block--strength { background: #0f2a1a; border: 1px solid #16a34a44; }
+.sw-block--weakness { background: #2a0f0f; border: 1px solid #dc262644; }
+.sw-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.sw-block--strength .sw-label { color: #4ade80; }
+.sw-block--weakness .sw-label { color: #f87171; }
+.sw-text { font-size: 12px; color: var(--txt-secondary); }
+
+/* ── Reasoning ────────────────────────────────────────────────── */
+.app-card__audience {
+  padding: var(--sp-md) var(--sp-lg);
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-raised) 40%, transparent);
+}
+.audience-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--txt-muted);
+  margin-bottom: 6px;
+}
+.reasoning-text {
+  font-size: 13px;
+  color: var(--txt-secondary);
+  line-height: 1.65;
+}
+
+/* ── Gaps section ─────────────────────────────────────────────── */
+.gaps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--sp-lg);
+}
+.gap-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-lg);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.gap-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: var(--gap-color, #64748b);
+}
+.gap-card:hover { border-color: color-mix(in srgb, var(--gap-color, #64748b) 50%, transparent); }
+.gap-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-sm);
+  padding-left: 12px;
+}
+.gap-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--txt-primary);
+  line-height: 1.3;
+}
+.severity-badge {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.severity--critical { background: #450a0a; color: #f87171; border: 1px solid #dc2626; }
+.severity--high     { background: #431407; color: #fbbf24; border: 1px solid #d97706; }
+.severity--medium   { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; }
+.gap-card__body { padding-left: 12px; }
+.gap-card__desc {
+  font-size: 13px;
+  color: var(--txt-secondary);
+  margin-bottom: var(--sp-sm);
+  line-height: 1.6;
+}
+.gap-card__affected {
+  font-size: 11px;
+  color: var(--txt-muted);
+}
+.gap-card__affected strong { color: var(--txt-secondary); }
+
+/* ── Footer ───────────────────────────────────────────────────── */
+.report-footer {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: var(--sp-2xl) var(--sp-lg);
+}
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--sp-xl);
+}
+.footer-section h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--txt-secondary);
+  margin-bottom: var(--sp-sm);
+}
+.footer-section p, .footer-section li {
+  font-size: 12px;
+  color: var(--txt-muted);
+  line-height: 1.7;
+}
+.footer-section ul { list-style: none; }
+.footer-section li { padding: 2px 0; }
+.footer-bottom {
+  max-width: 1280px;
+  margin: var(--sp-xl) auto 0;
+  padding-top: var(--sp-lg);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 11px;
+  color: var(--txt-muted);
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cards-grid { grid-template-columns: 1fr; }
+  .app-card__sw { grid-template-columns: 1fr; }
+  .app-card__meta { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .gaps-grid { grid-template-columns: 1fr; }
+  .hero { padding: var(--sp-xl) var(--sp-md); }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .section { padding: var(--sp-xl) var(--sp-md); }
+}
+
+/* ── Print ────────────────────────────────────────────────────── */
+@media print {
+  body { background: #fff; color: #111; }
+  .hero { background: #003580 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .jump-nav { display: none; }
+  .app-card, .stat-card, .gap-card { border: 1px solid #ccc; break-inside: avoid; }
+  .app-card { page-break-inside: avoid; }
+  .ranking-table thead tr { background: #f1f5f9; }
+  .ranking-table td, .ranking-table th { color: #111; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero__eyebrow">Competitive Intelligence Report · May 2026</div>
+  <h1 class="hero__title">Finnish Language Learning<br>Resources &amp; Apps</h1>
+  <p class="hero__subtitle">22 resources analyzed across 6 categories — with YKI B1/B2 readiness scoring and ecosystem gap analysis</p>
+  <div class="hero__pills">
+    <span class="hero__pill">B1 Required for Residency (2026)</span>
+    <span class="hero__pill">22 Resources Analyzed</span>
+    <span class="hero__pill">6 Categories</span>
+    <span class="hero__pill">~1,100 hrs to B2</span>
+    <span class="hero__pill">9,010 YKI Test-Takers/yr</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JUMP NAV
+════════════════════════════════════════════════════════════ -->
+<nav class="jump-nav">
+  <div class="jump-nav__inner">
+    <a href="#overview" class="jump-nav__link">Overview</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#rankings" class="jump-nav__link">Rankings</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#cat-finnish" class="jump-nav__link jump-nav__link--color" style="color:#d97706">Finnish Apps</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#cat-general" class="jump-nav__link jump-nav__link--color" style="color:#2563eb">General Apps</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#cat-yki" class="jump-nav__link jump-nav__link--color" style="color:#7c3aed">YKI Prep</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#cat-ai" class="jump-nav__link jump-nav__link--color" style="color:#0d9488">AI Conversation</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#cat-public" class="jump-nav__link jump-nav__link--color" style="color:#0284c7">Public Resources</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#cat-university" class="jump-nav__link jump-nav__link--color" style="color:#4f46e5">University</a>
+    <span class="jump-nav__sep">·</span>
+    <a href="#gaps" class="jump-nav__link jump-nav__link--color" style="color:#e11d48">Ecosystem Gaps</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OVERVIEW
+════════════════════════════════════════════════════════════ -->
+<section id="overview" class="section" style="padding-bottom:var(--sp-lg)">
+  <div class="container">
+    <h2 class="section-title">Market Overview</h2>
+    <p class="section-sub">Finnish is an FSI Tier IV language — the same difficulty tier as Korean, Turkish, and Mandarin — yet faces a hard regulatory deadline: B1 YKI proficiency is now required for permanent residence permits as of January 2026.</p>
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--clr-yki)">
+        <div class="stat-card__label">YKI Test-Takers</div>
+        <div class="stat-card__value">9,010/yr</div>
+        <div class="stat-card__sub">2023 annual figure · 7.9× growth since 1994</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--clr-finnish)">
+        <div class="stat-card__label">Hours to B2</div>
+        <div class="stat-card__value">~1,100 hrs</div>
+        <div class="stat-card__sub">FSI Tier IV · Same as Korean, Turkish, Mandarin</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--clr-ai)">
+        <div class="stat-card__label">YKI Speaking Pass Rate</div>
+        <div class="stat-card__value">~40%</div>
+        <div class="stat-card__sub">Hardest subtest · Writing also ~53.5%</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--clr-general)">
+        <div class="stat-card__label">Duolingo Finnish Learners</div>
+        <div class="stat-card__value">1M+</div>
+        <div class="stat-card__sub">Global · 50K sign-ups in first 4 days at launch</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--clr-public)">
+        <div class="stat-card__label">Residency Requirement</div>
+        <div class="stat-card__value">B1 YKI</div>
+        <div class="stat-card__sub">Required for permanent residence permit · Jan 2026</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--clr-university)">
+        <div class="stat-card__label">Free Government Resources</div>
+        <div class="stat-card__value">Free</div>
+        <div class="stat-card__sub">Yle, kotisuomessa.fi, OPH materials available</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     RANKINGS TABLE — placeholder, filled next
+════════════════════════════════════════════════════════════ -->
+<section id="rankings" class="section">
+  <div class="container">
+    <h2 class="section-title">All Resources Ranked</h2>
+    <p class="section-sub">Sorted by overall usefulness for Finnish B1/B2 learners. Click any column header to re-sort.</p>
+    <div class="table-wrap" id="rankings-table-container">
+      <table class="ranking-table" id="ranking-table">
+        <thead>
+          <tr>
+            <th data-sort="num">#</th>
+            <th>Resource</th>
+            <th>Category</th>
+            <th>Pricing</th>
+            <th>Level</th>
+            <th>YKI B1/B2</th>
+            <th>Free Tier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="--accent:var(--clr-yki)">
+            <td><span class="rank-badge">1</span></td>
+            <td class="tbl-name">YKI Trainer</td>
+            <td><span class="tbl-cat">YKI Prep</span></td>
+            <td>Freemium + ~$10–15/mo</td>
+            <td>B1–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--yes" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Limited</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-public)">
+            <td><span class="rank-badge">2</span></td>
+            <td class="tbl-name">Yle Kielikoulu + YKI-treenit</td>
+            <td><span class="tbl-cat">Public Resource</span></td>
+            <td>Free</td>
+            <td>A1–C2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-university)">
+            <td><span class="rank-badge">3</span></td>
+            <td class="tbl-name">Preply Finnish Tutors</td>
+            <td><span class="tbl-cat">University / Inst.</span></td>
+            <td>$11–$68/hr (avg $32)</td>
+            <td>A1–C2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--yes" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--no">No</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-university)">
+            <td><span class="rank-badge">4</span></td>
+            <td class="tbl-name">italki Finnish Tutors</td>
+            <td><span class="tbl-cat">University / Inst.</span></td>
+            <td>$5–$50/hr (community $5+)</td>
+            <td>A2–C2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--yes" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Browse free</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-yki)">
+            <td><span class="rank-badge">5</span></td>
+            <td class="tbl-name">JYU YKI Practice Portal</td>
+            <td><span class="tbl-cat">YKI Prep</span></td>
+            <td>Free</td>
+            <td>B1–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--yes" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-university)">
+            <td><span class="rank-badge">6</span></td>
+            <td class="tbl-name">Univ. of Helsinki Open University</td>
+            <td><span class="tbl-cat">University / Inst.</span></td>
+            <td>Free–€400/course</td>
+            <td>A1–B2.1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Some free</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-finnish)">
+            <td><span class="rank-badge">7</span></td>
+            <td class="tbl-name">WordDive</td>
+            <td><span class="tbl-cat">Finnish App</span></td>
+            <td>€9.99/mo</td>
+            <td>A1–B1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--partial" title="Reading">R</span><span class="yki-badge yki-badge--partial" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Trial</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-general)">
+            <td><span class="rank-badge">8</span></td>
+            <td class="tbl-name">Glossika Finnish</td>
+            <td><span class="tbl-cat">General App</span></td>
+            <td>$16.99–$40/mo</td>
+            <td>B1–C1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--partial" title="Listening">L</span><span class="yki-badge yki-badge--partial" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Trial</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-yki)">
+            <td><span class="rank-badge">9</span></td>
+            <td class="tbl-name">YKI Finnish</td>
+            <td><span class="tbl-cat">YKI Prep</span></td>
+            <td>Free sample + sub</td>
+            <td>B1–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--yes" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Samples</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-university)">
+            <td><span class="rank-badge">10</span></td>
+            <td class="tbl-name">JYU Summer University</td>
+            <td><span class="tbl-cat">University / Inst.</span></td>
+            <td>Varies; YKI prep available</td>
+            <td>A1–C1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--yes" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--yes" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--no">No</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-finnish)">
+            <td><span class="rank-badge">11</span></td>
+            <td class="tbl-name">Ling Finnish</td>
+            <td><span class="tbl-cat">Finnish App</span></td>
+            <td>$8.99/mo · $54.99/yr</td>
+            <td>A1–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--partial" title="Reading">R</span><span class="yki-badge yki-badge--partial" title="Writing">W</span><span class="yki-badge yki-badge--partial" title="Listening">L</span><span class="yki-badge yki-badge--partial" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">7-day trial</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-general)">
+            <td><span class="rank-badge">12</span></td>
+            <td class="tbl-name">LingQ Finnish</td>
+            <td><span class="tbl-cat">General App</span></td>
+            <td>$12.99/mo · $107.88/yr</td>
+            <td>A2–C2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--partial" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--partial" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">500 LingQs</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-ai)">
+            <td><span class="rank-badge">13</span></td>
+            <td class="tbl-name">Talkio AI Finnish</td>
+            <td><span class="tbl-cat">AI Conversation</span></td>
+            <td>~$13/mo</td>
+            <td>A2–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--partial" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Trial</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-finnish)">
+            <td><span class="rank-badge">14</span></td>
+            <td class="tbl-name">FinnishPod101</td>
+            <td><span class="tbl-cat">Finnish App</span></td>
+            <td>Free limited; $8–$47/mo</td>
+            <td>A1–C1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--partial" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--partial" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Limited</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-ai)">
+            <td><span class="rank-badge">15</span></td>
+            <td class="tbl-name">Talkpal Finnish</td>
+            <td><span class="tbl-cat">AI Conversation</span></td>
+            <td>~$14/mo</td>
+            <td>A2–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--partial" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">Trial</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-yki)">
+            <td><span class="rank-badge">16</span></td>
+            <td class="tbl-name">yki-testi.fi</td>
+            <td><span class="tbl-cat">YKI Prep</span></td>
+            <td>Free</td>
+            <td>B1–B2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--yes" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--yes" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-general)">
+            <td><span class="rank-badge">17</span></td>
+            <td class="tbl-name">Duolingo Finnish</td>
+            <td><span class="tbl-cat">General App</span></td>
+            <td>Free / Super $6.99/mo</td>
+            <td>A1–A2+</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-public)">
+            <td><span class="rank-badge">18</span></td>
+            <td class="tbl-name">kotisuomessa.fi</td>
+            <td><span class="tbl-cat">Public Resource</span></td>
+            <td>Free</td>
+            <td>A1–B1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--partial" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-finnish)">
+            <td><span class="rank-badge">19</span></td>
+            <td class="tbl-name">Pimsleur Finnish</td>
+            <td><span class="tbl-cat">Finnish App</span></td>
+            <td>$14.95–$20.95/mo</td>
+            <td>A2–B1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--partial" title="Listening">L</span><span class="yki-badge yki-badge--partial" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">1 lesson</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-general)">
+            <td><span class="rank-badge">20</span></td>
+            <td class="tbl-name">Clozemaster Finnish</td>
+            <td><span class="tbl-cat">General App</span></td>
+            <td>Free / Pro $5/mo</td>
+            <td>B1–C1</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--partial" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-finnish)">
+            <td><span class="rank-badge">21</span></td>
+            <td class="tbl-name">Drops Finnish</td>
+            <td><span class="tbl-cat">Finnish App</span></td>
+            <td>Free 5min/day; $69.99/yr</td>
+            <td>A1–A2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--limited">5 min/day</span></td>
+          </tr>
+          <tr style="--accent:var(--clr-public)">
+            <td><span class="rank-badge">22</span></td>
+            <td class="tbl-name">Infopankki.fi</td>
+            <td><span class="tbl-cat">Public Resource</span></td>
+            <td>Free</td>
+            <td>A1–A2</td>
+            <td><div class="yki-badges"><span class="yki-badge yki-badge--no" title="Reading">R</span><span class="yki-badge yki-badge--no" title="Writing">W</span><span class="yki-badge yki-badge--no" title="Listening">L</span><span class="yki-badge yki-badge--no" title="Speaking">S</span></div></td>
+            <td><span class="free-pill free-pill--yes">Yes</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CATEGORY BLOCKS — placeholders, filled next
+════════════════════════════════════════════════════════════ -->
+<section id="categories" class="section" style="padding-top:0">
+  <div class="container">
+
+    <!-- Cat 1: Finnish-Specific Apps -->
+    <div id="cat-finnish" class="category-block" style="--accent:var(--clr-finnish)">
+      <div class="category-header">
+        <div class="category-dot"></div>
+        <h2 class="category-title">Finnish-Specific Commercial Apps</h2>
+        <span class="category-count">5 resources</span>
+      </div>
+      <div class="cards-grid" id="cards-finnish">
+        <!-- WordDive -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">WordDive</div>
+            <div class="app-card__tagline">Finnish company · SRS vocabulary · 5,000+ words</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">€9.99/mo</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–B1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Trial only</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Personalized SRS algorithm adapts to individual pace</li>
+                <li>5,000+ Finnish words with native-speaker audio</li>
+                <li>Basic grammar exercises alongside vocabulary</li>
+                <li>Progress tracking with estimated time to next level</li>
+                <li>Helsinki-based team with deep Finnish linguistic expertise</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--partial" title="Reading">R</span>
+              <span class="yki-cell yki-cell--partial" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best commercial Finnish-specific app for systematic vocabulary and adaptive pacing — built by a Finnish team with genuine linguistic depth</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">No YKI-aligned output assessment; stops short of B2 grammar depth required for exam writing tasks; no listening or speaking components</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">WordDive is the only major Finnish-specific app built by a Finnish company, giving it a native linguistic authority that international platforms cannot replicate. Its adaptive SRS algorithm models each learner's forgetting curve individually, producing measurably better long-term retention than the fixed-interval systems in Duolingo or Drops. The 5,000+ word corpus with native audio covers the active vocabulary range needed for A2–B1 exam tasks. The ceiling is the writing/speaking gap: a learner can reach strong passive vocabulary with WordDive but will arrive at their YKI exam unable to produce the structured written texts or spoken responses the test demands.</p>
+          </div>
+        </div>
+
+        <!-- Ling Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Ling Finnish</div>
+            <div class="app-card__tagline">Chatbot dialogue · 60+ languages · structured grammar</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">$8.99/mo · $54.99/yr · $149.99 lifetime</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">iOS · Android · Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">7-day trial</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Chatbot dialogue mode for practicing Finnish conversation</li>
+                <li>Structured grammar explanations per lesson</li>
+                <li>Native audio with phonetic transliteration</li>
+                <li>Writing and listening exercises in most units</li>
+                <li>60+ language catalog — one of few apps with broad Finnish coverage</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--partial" title="Reading">R</span>
+              <span class="yki-cell yki-cell--partial" title="Writing">W</span>
+              <span class="yki-cell yki-cell--partial" title="Listening">L</span>
+              <span class="yki-cell yki-cell--partial" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Most comprehensive among commercial apps for Finnish — covers all four skills at a partial level, more than Duolingo or Drops offer</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Finnish module is shallower than Romance language offerings; speaking accuracy evaluation unpolished; chatbot makes grammatical errors in complex Finnish</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Ling occupies a useful middle ground for Finnish learners who want more than vocabulary flashcards but less than a full structured course. Its chatbot mode is one of the few places in the commercial app market where a learner can practice producing Finnish sentences and receive a response — a meaningful advantage over apps that offer only recognition exercises. However, the Finnish module's depth reflects the commercial reality of a 60-language platform: it has not received the investment that Ling's more popular language offerings have. Grammar explanations are clear but thin at B1+, and the speaking evaluation engine misses many characteristically Finnish pronunciation errors like vowel harmony violations.</p>
+          </div>
+        </div>
+
+        <!-- FinnishPod101 -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">FinnishPod101</div>
+            <div class="app-card__tagline">Largest Finnish lesson library · 5 CEFR levels · audio-visual</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free limited; $8 Basic · $25 Premium · $47 Premium PLUS /mo</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–C1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Limited free lessons</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Hundreds of Finnish audio/video lessons at 5 CEFR levels</li>
+                <li>PDF lesson notes with grammar breakdowns</li>
+                <li>Spaced repetition flashcard system (vocab)</li>
+                <li>Premium PLUS adds a dedicated personal teacher</li>
+                <li>Covers absolute beginner through advanced conversation</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--partial" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--partial" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Largest structured Finnish lesson library available — 5 CEFR levels from absolute beginner to advanced; best for audio-visual learners who want a curriculum</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Expensive for content depth offered; no YKI writing or speaking task practice; community largely inactive; $47/mo PLUS tier required for meaningful teacher feedback</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">FinnishPod101 is the Rosetta Stone of Finnish-specific content: broad, deep in raw lesson volume, and more expensive than newer competitors. Its lesson format — a dialogue between two hosts followed by detailed grammar and vocabulary breakdown — works well for intermediate learners who need to understand not just what to say but why. The PDF lesson notes are genuinely useful study artifacts. The gap at the YKI interface is meaningful: a learner can consume hundreds of hours of FinnishPod101 content and still arrive at their exam without ever having written a structured Finnish text or delivered a timed spoken response under pressure, precisely because neither skill is tested in the platform.</p>
+          </div>
+        </div>
+
+        <!-- Drops Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Drops Finnish</div>
+            <div class="app-card__tagline">Visual vocabulary · 2,600+ words · 5 min/day free</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free 5min/day; $69.99/yr ($5.83/mo); $159.99 lifetime</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–A2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">5 min/day cap</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>2,600+ Finnish words with illustrated visual associations</li>
+                <li>Gesture-based UX — swipe to accept, reject, or replay</li>
+                <li>Thematic word sets (food, transport, home, travel)</li>
+                <li>57 languages including rare options</li>
+                <li>Grammar games added 2026 (basic case forms)</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best visual vocabulary UX in the Finnish market — illustrated, gesture-driven interface makes passive vocabulary acquisition genuinely enjoyable</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Cannot take a learner past A2 alone; no grammar instruction; 5-minute free cap is severely restrictive; zero YKI readiness across all four subtests</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Drops works best as a habit-formation entry point for complete beginners, not as a path to B1 exam readiness. Its illustrated, gesture-driven interface reduces friction to near zero — a meaningful advantage for learners who struggle to build a daily study habit. The visual associations genuinely accelerate A1-level vocabulary acquisition. But the hard ceiling is stark: Finnish grammar (15 cases, vowel harmony, consonant gradation) requires explicit instruction that a picture-word matching app cannot provide. A learner targeting YKI readiness should use Drops as a supplement to a structured course, not as a primary resource.</p>
+          </div>
+        </div>
+
+        <!-- Pimsleur Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Pimsleur Finnish</div>
+            <div class="app-card__tagline">Audio-only · 30 lessons · spoken Finnish focus</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">$14.95–$20.95/mo; 1 level (30 lessons)</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A2–B1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">iOS · Android · Web · Audio download</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">1 free lesson</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>30 audio lessons (~15 hours total) using spaced recall</li>
+                <li>Screen-free — designed for commute and exercise use</li>
+                <li>Native Finnish speaker recordings throughout</li>
+                <li>Phonetically reliable for basic spoken Finnish</li>
+                <li>Research-backed spaced interval method</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--partial" title="Listening">L</span>
+              <span class="yki-cell yki-cell--partial" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Only major Finnish resource usable without a screen; builds spoken recall reflexes through audio-only spaced repetition that no app-based method replicates</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Hard one-level ceiling — finishes at rough A2 with nowhere to continue on the same platform; among the most expensive per content-hour; no reading or writing component</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Pimsleur Finnish's 30-lesson audio course is a useful complement for learners whose primary study time is commute or exercise — the act of vocalizing aloud under time pressure recruits motor memory in a way no tap-based app does. The problem is the cliff: a learner finishes Pimsleur Finnish with rough conversational basics and has nowhere to go within the same platform. The single-level constraint is not a pedagogical choice but a market reality — Finnish learner numbers never justified the investment to build Levels 2–5 the way Pimsleur has for Spanish or French. For YKI candidates, Pimsleur is supplementary at best; reading and writing tasks cannot be practiced in an audio-only format.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cat 2: General Apps with Finnish -->
+    <div id="cat-general" class="category-block" style="--accent:var(--clr-general)">
+      <div class="category-header">
+        <div class="category-dot"></div>
+        <h2 class="category-title">General Apps with Finnish Support</h2>
+        <span class="category-count">4 resources</span>
+      </div>
+      <div class="cards-grid" id="cards-general">
+        <!-- Duolingo Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Duolingo Finnish</div>
+            <div class="app-card__tagline">1M+ learners · A1–A2+ · best gateway for beginners</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free / Super $6.99/mo</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–A2+</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">iOS · Android · Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Yes — full course free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>1M+ global Finnish learners; 50K sign-ups in first 4 days</li>
+                <li>Gamified streak system and XP leagues</li>
+                <li>Stories and listening exercises at higher levels</li>
+                <li>Teaches kirjakieli (standard written Finnish) exclusively</li>
+                <li>Largest free Finnish course available</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best gateway for absolute beginners — free, gamified, largest Finnish learner community, lowest barrier to entry of any Finnish resource</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Hard ceiling at A2+; teaches kirjakieli only; no YKI alignment; streak mechanic creates illusion of progress without reaching the B1 threshold that residency requires</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Duolingo Finnish is the most accessible entry point into Finnish and the most dangerous trap for deadline-driven learners. The 1M+ global learner base suggests enormous demand, yet the course tops out at roughly A2+ — well short of the B1 level required for permanent residence. Babbel, Busuu, and Rosetta Stone do not offer Finnish at all, making Duolingo the sole representative of the mainstream consumer app category for this language. For a learner who is six months from a YKI test date, using Duolingo as a primary resource is a strategic error; as a habit-formation supplement at A1 stage, it remains useful.</p>
+          </div>
+        </div>
+
+        <!-- Glossika Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Glossika Finnish</div>
+            <div class="app-card__tagline">3,000+ sentences · spaced repetition · B1–C1 focus</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">$16.99–$20/mo Basic; $40/mo Pro; $199/yr Basic</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">B1–C1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Trial</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>3,000+ Finnish sentences with native-speaker audio</li>
+                <li>Spaced repetition of full sentences (not isolated words)</li>
+                <li>Production-focused — type or speak sentences from memory</li>
+                <li>B1–C1 level sentences cover complex grammar constructions</li>
+                <li>Colloquial Finnish sentences included in higher levels</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--partial" title="Listening">L</span>
+              <span class="yki-cell yki-cell--partial" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best tool for developing spoken sentence rhythm and Finnish collocation awareness — 3,000+ sentences expose learners to natural grammatical patterns at B1+ level</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Not YKI-formatted; no grammar explanation; can feel mechanical; expensive at $40/mo Pro; not useful for complete beginners who need foundational grammar first</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Glossika is the most powerful production-focused tool for intermediate Finnish learners in 2026. Where most apps test recognition (multiple choice, matching), Glossika requires learners to produce Finnish sentences from memory — a cognitively harder task that builds the procedural fluency needed for spoken YKI subtests. The 3,000-sentence Finnish corpus includes B1+ structures like complex partitive usage and subordinate clauses that simpler apps never reach. The weakness is the entry requirement: a learner without solid A2 foundations will find Glossika frustrating and opaque. It is best deployed at B1 stage as a speaking and listening supplement alongside a platform that covers reading and writing exam tasks.</p>
+          </div>
+        </div>
+
+        <!-- LingQ Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">LingQ Finnish</div>
+            <div class="app-card__tagline">Input immersion · 1,000+ hrs content · A2–C2</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">$12.99/mo · $107.88/yr</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A2–C2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">500 LingQs free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>1,000+ hours of authentic Finnish reading and listening content</li>
+                <li>Import any Finnish URL, ebook, or podcast as a lesson</li>
+                <li>Known-word counter tracks lifetime vocabulary growth</li>
+                <li>Audio-sync reading: text highlights as audio plays</li>
+                <li>Beginner mini-stories and intermediate-advanced authentic content</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--partial" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--partial" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best immersion environment for intermediate–advanced Finnish — import Yle news articles, Finnish podcasts, or literary texts and have every unknown word tracked</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Steep setup curve for new users; 500-LingQ free limit hit quickly; no speaking or writing output practice; requires learner self-direction most beginners lack</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">LingQ's import engine is uniquely powerful for Finnish: a learner can paste a Yle news article or an OPH sample YKI reading text directly into the platform and have every unknown word added to their SRS queue automatically. This tight loop between authentic reading input and vocabulary review mirrors the comprehensible input methodology that underpins the most efficient routes to B2. The Finnish content library covers both kirjakieli and puhekieli sources, addressing the colloquial-standard split that most apps ignore. The ceiling is production: LingQ builds strong receptive competence but offers no feedback on writing or speaking, meaning YKI candidates must supplement with a production-focused resource before the exam.</p>
+          </div>
+        </div>
+
+        <!-- Clozemaster Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Clozemaster Finnish</div>
+            <div class="app-card__tagline">100K+ cloze sentences · post-Duolingo plateau · B1+</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free / Pro $5/mo ($60/yr)</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">B1–C1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Yes — generous free tier</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>100K+ Finnish cloze sentences (fill-in-the-blank in context)</li>
+                <li>Frequency-band levels (most common → rarest vocabulary)</li>
+                <li>Listening mode — hear sentence, type missing word</li>
+                <li>Grammar challenges targeting specific Finnish constructions</li>
+                <li>Gamified XP, streaks, and leaderboards</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--partial" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Fastest way to encounter Finnish vocabulary in context at scale — 100K+ sentences expose learners to words and case forms that narrow vocab apps never reach</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Not beginner-friendly; no speaking or writing output feedback; no YKI exam format alignment; can feel mechanical without grammar explanations</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Clozemaster is the recommended next step after a learner exhausts Duolingo's Finnish course — it is explicitly designed for the post-A2 plateau where learner progress stalls for lack of contextual sentence exposure. The cloze format forces active retrieval in a sentence context, producing better retention than definition-based flashcards and building the reading comprehension needed for YKI reading subtest passages. At $60/year (or free with limitations), it is the most affordable supplementary reading tool. The honest positioning — supplement, not complete solution — is both its strength and its ceiling: no amount of cloze practice substitutes for the writing and speaking production that the YKI exam demands.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cat 3: YKI Exam Prep -->
+    <div id="cat-yki" class="category-block" style="--accent:var(--clr-yki)">
+      <div class="category-header">
+        <div class="category-dot"></div>
+        <h2 class="category-title">YKI Exam Preparation</h2>
+        <span class="category-count">4 resources</span>
+      </div>
+      <div class="cards-grid" id="cards-yki">
+        <!-- YKI Trainer -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">YKI Trainer</div>
+            <div class="app-card__tagline">ykitrainer.fi · AI-powered · all 4 subtests · OPH-aligned</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Freemium + subscription (~$10–15/mo)</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">B1–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web (mobile-optimized)</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Limited free exercises</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>AI-powered practice for all 4 YKI subtests on one platform</li>
+                <li>Scoring rubric aligned to OPH YKI B1/B2 criteria</li>
+                <li>Timed practice tasks mirroring real exam format</li>
+                <li>Written text feedback with AI-generated rubric scores</li>
+                <li>Speaking tasks with recording and AI pronunciation feedback</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--yes" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Most comprehensive YKI prep tool in 2026 — only platform covering all 4 subtests with AI scoring rubric aligned to OPH criteria on a single mobile-accessible interface</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">UI primarily Finnish-only, limiting accessibility for immigrant learners who need it most; small user base; limited English-language support documentation</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">YKI Trainer is the closest thing to a complete digital YKI preparation platform currently available, and its ranking reflects this unique position. The AI scoring engine for writing tasks attempts to replicate OPH rubric criteria — evaluating task completion, vocabulary range, grammatical accuracy, and text coherence — providing feedback that no flashcard app can match. The speaking module's pronunciation feedback is less granular than dedicated tools like ELSA but covers the exam-specific task types (short announcements, responses to recorded questions) that no other platform addresses. The critical limitation is the Finnish-only UI: many YKI candidates are recent immigrants with limited Finnish literacy, who may struggle to navigate a platform that does not offer English-language guidance.</p>
+          </div>
+        </div>
+
+        <!-- YKI Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">YKI Finnish</div>
+            <div class="app-card__tagline">ykifinnish.fi · writing + speaking AI practice · free samples</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free sample tests + subscription</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">B1–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Free sample tasks</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>AI speaking practice formatted to real YKI task types</li>
+                <li>AI writing feedback on YKI-format text production tasks</li>
+                <li>Sample tasks free to try without registration</li>
+                <li>Task types: letters, messages, short essays (writing); announcements, responses (speaking)</li>
+                <li>Feedback on grammatical accuracy and task completion</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--yes" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best tool for isolated writing and speaking skill practice in YKI task format — directly targets the two hardest subtests (pass rates ~40–53%) with AI feedback</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Does not cover reading or listening subtests; UI primarily in Finnish; not a complete YKI preparation solution on its own</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">YKI Finnish's strategic focus on writing and speaking — the two hardest YKI subtests with pass rates of 40–53% — is well-calibrated. A learner who has solid reading and listening foundations from Yle Kielikoulu or yki-testi.fi can use YKI Finnish specifically to drill the production skills that determine exam outcomes. The AI writing feedback covers the core YKI B1 writing tasks: formal letters, informal messages, and short descriptive texts. The speaking module handles announcement and response task types. The platform's honest scope — production only, no reading or listening — makes it a natural complement to the reading-and-listening-focused free tools rather than a competitor to them.</p>
+          </div>
+        </div>
+
+        <!-- yki-testi.fi -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">yki-testi.fi</div>
+            <div class="app-card__tagline">Free mock tests · 95% exam similarity · reading + listening</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">B1–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Fully free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Mock reading and listening tests at B1–B2 level</li>
+                <li>95% structural similarity to real YKI exam format</li>
+                <li>Timed test environment matching real exam conditions</li>
+                <li>Answer keys with explanations</li>
+                <li>Zero cost, zero registration required</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best zero-cost exam familiarization tool — high exam format fidelity allows learners to experience real test conditions for reading and listening before exam day</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Static content — no adaptive feedback, no progress tracking, no writing or speaking practice; a familiarization tool, not an active learning platform</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">yki-testi.fi occupies a specific and valuable role in the YKI preparation ecosystem: it is the best tool for exam format familiarization at zero cost. Research on test performance consistently shows that familiarity with exam format and time pressure significantly improves scores independent of underlying language ability. A learner who takes multiple timed mock tests on yki-testi.fi before their real exam will be less surprised by question types, answer formats, and pacing demands. The limitation is pedagogical: yki-testi.fi does not teach Finnish or provide feedback on wrong answers beyond the answer key, making it a finishing supplement rather than a study platform.</p>
+          </div>
+        </div>
+
+        <!-- JYU YKI Portal -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">JYU YKI Practice Portal</div>
+            <div class="app-card__tagline">ykitesti.solki.jyu.fi · University of Jyväskylä · all 4 subtests · authoritative</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">B1–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Fully free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Official example exercises for all 4 YKI subtests (R/W/L/S)</li>
+                <li>Produced by JYU Centre for Applied Language Studies (SOLKI)</li>
+                <li>Authoritative source — same institution that advises OPH</li>
+                <li>Exercises formatted identically to real YKI tasks</li>
+                <li>B1 and B2 level materials available</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--yes" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">The most authoritative free YKI reference — produced by the academic institution that advises OPH; covers all 4 subtests; zero cost</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">No feedback, no progress tracking, web-only, dense UI; a reference resource rather than an adaptive learning platform</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">The JYU YKI Portal is the most academically authoritative free resource in the Finnish learning ecosystem. The University of Jyväskylä's Centre for Applied Language Studies (SOLKI) is the institution most deeply involved in YKI test development and research, lending the portal's exercise materials a degree of fidelity to the real exam that community-created resources cannot match. All four subtests are represented with genuine task examples and answer guidelines. The practical limitation is user experience: the portal's dense, bureaucratic UI was designed for institutional use, not consumer learner engagement, and navigating it without Finnish-language reading competence is challenging. The ideal use case is a B1-level learner using the portal materials as the gold standard against which they calibrate all other practice.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cat 4: AI Conversation -->
+    <div id="cat-ai" class="category-block" style="--accent:var(--clr-ai)">
+      <div class="category-header">
+        <div class="category-dot"></div>
+        <h2 class="category-title">AI Conversation Practice</h2>
+        <span class="category-count">2 resources</span>
+      </div>
+      <div class="cards-grid" id="cards-ai">
+        <!-- Talkio AI -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Talkio AI Finnish</div>
+            <div class="app-card__tagline">400+ AI tutors · real-time conversation · pronunciation feedback</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">~$13/mo</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A2–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Trial available</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Real-time AI voice conversation in Finnish</li>
+                <li>Pronunciation feedback mid-conversation</li>
+                <li>40+ languages; Finnish AI tutors available</li>
+                <li>Scenario-based conversations (café, office, travel)</li>
+                <li>Conversation history and vocabulary review</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--partial" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best AI conversation partner for Finnish available in 2026 — provides real-time spoken practice at any hour, which human tutors and classroom study cannot replicate for on-demand drilling</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Finnish phonology model less refined than English; not YKI-formatted; speaking fluency in open conversation ≠ structured YKI spoken task performance</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Talkio AI addresses the biggest practical bottleneck for Finnish learners who live outside Finland: finding a Finnish-speaking conversation partner available at their study schedule. For learners who have core grammar and vocabulary foundations, regular AI conversation practice measurably improves spoken fluency and reduces the hesitation that causes YKI speaking subtest failures. The limitation is specificity: the YKI speaking subtest requires production of structured task types (read an announcement aloud, respond to a recorded message, describe a situation) that open-ended conversation practice does not directly rehearse. Talkio should be paired with YKI Trainer or YKI Finnish for exam-specific speaking preparation.</p>
+          </div>
+        </div>
+
+        <!-- Talkpal Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Talkpal Finnish</div>
+            <div class="app-card__tagline">AI tutor · gamified scenarios · B1 conversation maintenance</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">~$14/mo</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A2–B2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Trial available</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>AI tutor with gamified scenario-based Finnish conversations</li>
+                <li>Grammar correction feedback during dialogue</li>
+                <li>Role-play scenarios: job interview, shopping, navigation</li>
+                <li>Text and voice interaction options</li>
+                <li>Finnish support improving in 2025–2026 updates</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--partial" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Good for conversation maintenance at B1 level — daily low-stakes AI dialogue keeps active Finnish production skills from atrophying between tutoring sessions</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Less polished Finnish module than English; generic scenarios; no exam alignment; grammar correction feedback less accurate for complex Finnish morphology</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Talkpal offers a similar value proposition to Talkio AI but with a slightly more gamified, scenario-structured approach that some learners find more motivating than open-ended conversation. The role-play scenarios (job interview, navigating a Finnish city, buying groceries) are realistic contexts that intermediate learners benefit from practicing before encountering them in real life. The Finnish language model's weaker calibration compared to Talkpal's English offering means that grammatical corrections for complex Finnish cases (partitive, genitive, locative endings) are less reliable. It is a competent second choice if Talkio AI is unavailable or if learners prefer a more structured conversation format.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cat 5: Government / Public -->
+    <div id="cat-public" class="category-block" style="--accent:var(--clr-public)">
+      <div class="category-header">
+        <div class="category-dot"></div>
+        <h2 class="category-title">Government &amp; Public Resources</h2>
+        <span class="category-count">3 resources</span>
+      </div>
+      <div class="cards-grid" id="cards-public">
+        <!-- Yle Kielikoulu -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Yle Kielikoulu + YKI-treenit</div>
+            <div class="app-card__tagline">National broadcaster · free · bilingual UI · YKI-format reading + listening</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–C2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Fully free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>YKI-treenit sub-platform: reading and listening exercises in YKI format</li>
+                <li>Bilingual Finnish/English UI — most accessible government resource</li>
+                <li>Authentic Yle news content at simplified reading levels</li>
+                <li>A1–C2 range of materials across language skills</li>
+                <li>Backed by Finnish national broadcaster — content quality assured</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best free combined resource in the entire Finnish ecosystem — YKI-treenit provides reading and listening practice formatted to real YKI tasks at zero cost with bilingual navigation</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">No writing or speaking practice; static content without adaptive AI feedback; passive consumption model rather than production-focused exam preparation</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Yle Kielikoulu and its YKI-treenit sub-platform represent the best return on investment in the Finnish learning ecosystem: a fully free, high-quality resource produced by the Finnish national broadcaster with bilingual English/Finnish navigation that makes it uniquely accessible to immigrant learners. The YKI-treenit exercises are designed to match actual YKI B1/B2 reading and listening task formats, giving learners genuine exam practice at no cost. The bilingual UI is a critical differentiator — most Finnish government learning tools assume sufficient Finnish literacy for navigation, creating a paradox for the learners who need them most. Any Finnish learner targeting YKI should treat Yle Kielikoulu as a foundational free resource regardless of what paid tools they use.</p>
+          </div>
+        </div>
+
+        <!-- kotisuomessa.fi -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">kotisuomessa.fi</div>
+            <div class="app-card__tagline">Government · immigrant integration · practical A1–B1 Finnish</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–B1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Fully free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Practical Finnish for daily life in Finland — housing, work, services</li>
+                <li>Government-produced; specifically designed for immigrants</li>
+                <li>Vocabulary and reading exercises for everyday contexts</li>
+                <li>A1–B1 coverage matching integration training needs</li>
+                <li>Complements kotoutumiskoulutus (integration training) programs</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--partial" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best integration-focused free resource — practical Finnish for navigating Finnish society, directly relevant to immigrant learners whose daily language needs differ from textbook scenarios</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Thin advanced content; no exam-specific practice beyond B1 everyday language; not mobile-optimized; vocabulary scope limited to integration contexts rather than academic/formal register needed for YKI</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">kotisuomessa.fi serves a specific user: the recently arrived immigrant who needs functional Finnish for navigating Finnish bureaucracy, healthcare, and employment before they are ready to target B1 exam proficiency. The vocabulary and reading scenarios — healthcare appointments, Kela forms, job applications — are more immediately useful for daily life than the travel and restaurant scenarios that dominate commercial app content. The gap at the YKI interface reflects the platform's design intent: it is an integration tool, not an exam preparation tool. Learners who outgrow it at B1 level need to transition to exam-specific resources like YKI Trainer or the JYU portal to continue their progression.</p>
+          </div>
+        </div>
+
+        <!-- Infopankki.fi -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Infopankki.fi</div>
+            <div class="app-card__tagline">State-funded · 30+ UI languages · civic Finnish reading exposure</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–A2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Fully free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Finnish civic information in 30+ languages including Finnish</li>
+                <li>Parallel text option — read content in Finnish alongside your native language</li>
+                <li>Topics: residence permits, taxes, healthcare, education</li>
+                <li>Produced by the City of Helsinki and Ministry of Economic Affairs</li>
+                <li>Free, no registration, no paywall</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--no" title="Reading">R</span>
+              <span class="yki-cell yki-cell--no" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best multilingual gateway to Finnish civic literacy — 30+ UI languages make it the only government resource accessible to learners with no Finnish or English reading ability</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Not a language-learning platform — no assessment, no exercises, no progression; reading exposure only; beginner-level vocabulary; cannot build YKI skills</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Infopankki's value is entirely in the first weeks of a newcomer's Finnish journey. The parallel-text feature — reading Finnish civic content alongside your native language translation — provides genuine comprehensible input exposure at A1 level and helps learners absorb the vocabulary of Finnish bureaucracy (oleskelulupa, Kela, verokortti) that no language app teaches. As a language-learning tool it is too passive and too narrow to produce measurable proficiency gains, but as a day-one orientation resource it is unmatched in multilingual accessibility. Learners should move on to kotisuomessa.fi and Yle Kielikoulu as soon as they have basic A1 literacy.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cat 6: University / Institutional -->
+    <div id="cat-university" class="category-block" style="--accent:var(--clr-university)">
+      <div class="category-header">
+        <div class="category-dot"></div>
+        <h2 class="category-title">University &amp; Institutional</h2>
+        <span class="category-count">4 resources</span>
+      </div>
+      <div class="cards-grid" id="cards-university">
+        <!-- University of Helsinki -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Univ. of Helsinki Open University</div>
+            <div class="app-card__tagline">Accredited · A1.1–B2.1 · teacher-assessed writing · free for Ukrainian refugees 2026</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Free–€400/course (free for Ukrainian refugees 2026)</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1.1–B2.1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web (asynchronous online)</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Some free; Ukrainian refugees free</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Accredited university courses (ECTS credits); A1.1 through B2.1</li>
+                <li>Teacher-assessed writing exercises — genuine feedback on written production</li>
+                <li>Structured grammar instruction at each CEFR level</li>
+                <li>Free access for Ukrainian refugees in Finland (2026 program)</li>
+                <li>Globally accessible asynchronous format</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--no" title="Listening">L</span>
+              <span class="yki-cell yki-cell--no" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best platform for grammar depth and assessed writing practice leading to YKI readiness — teacher feedback on written work is unavailable in any app-based tool</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Not free for most learners; asynchronous only; course registration windows are limited; does not replace listening/speaking practice; €400/course is a high per-course cost</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">The University of Helsinki's Open University Finnish courses are the only resource on this list that provide human teacher feedback on written Finnish production at scale — a fundamentally different signal than AI rubric scoring. For the writing subtest specifically, a learner who has had their B1-level texts corrected by a trained Finnish instructor arrives at their exam with calibrated self-assessment that no app can provide. The accredited ECTS credits also hold value for learners seeking formal academic recognition. The structural limitations are real: courses open on fixed registration windows, are not mobile-optimized, and at €400/course represent a meaningful investment that asynchronous pacing may not justify for some learners compared to per-hour human tutoring.</p>
+          </div>
+        </div>
+
+        <!-- JYU Summer University -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">JYU Summer University</div>
+            <div class="app-card__tagline">Explicit YKI prep courses · online + intensive · A1–C1</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Varies; YKI prep courses available</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–C1</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Online + in-person intensive</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">No</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Explicit YKI preparation courses available (all 4 subtests)</li>
+                <li>Intensive summer format (1–2 weeks) for fast progression</li>
+                <li>Online asynchronous courses for non-local learners</li>
+                <li>Movi Language Centre for enrolled JYU students</li>
+                <li>Institutional connection to YKI research expertise at SOLKI</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--yes" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best institutional option explicitly offering YKI preparation for all 4 subtests with the academic authority of the institution that developed the test</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Intensive scheduling not compatible with working immigrants; online options smaller in scope than intensive; Finnish-UI dominates navigation; variable pricing and availability</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">JYU's Summer University is the institutional option with the most direct YKI preparation DNA — the University of Jyväskylä runs SOLKI, the Centre for Applied Language Studies that advises on YKI test development, meaning the instructors who teach YKI preparation there have a unique insider understanding of what the exam actually tests. The intensive summer format compresses preparation into weeks rather than months, which can be valuable for learners with a fixed YKI test date approaching. The constraint is scheduling: an immigrant working full-time in Finland cannot take two weeks off for a Jyväskylä intensive. The smaller online offerings address this but do not deliver the same learning density as the in-person format.</p>
+          </div>
+        </div>
+
+        <!-- Preply -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">Preply Finnish Tutors</div>
+            <div class="app-card__tagline">55+ tutors · avg $32/hr · 4.97/5 rating · YKI specialists available</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">$11–$68/hr (avg $32); free tutor replacement</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A1–C2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">No (pay per lesson)</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>55+ Finnish tutors with flexible hourly pricing</li>
+                <li>Many tutors explicitly offer YKI exam preparation</li>
+                <li>Free tutor replacement guarantee if first session unsatisfactory</li>
+                <li>Video lessons via built-in platform (no external app needed)</li>
+                <li>All four YKI skills covered in 1-on-1 sessions</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--yes" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Best flexible 1-on-1 human instruction for all 4 YKI skills — a specialist YKI tutor can provide exactly the feedback that no app or AI can: nuanced, context-aware, human correction</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Expensive — $32/hr average for regular sessions; quality varies between tutors despite platform ratings; requires self-directed study between sessions to use tutor time effectively</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">Preply's Finnish tutor marketplace provides the one thing no digital tool can fully replicate: a human expert who can listen to a learner's spoken Finnish, read their written texts, and provide contextually nuanced feedback calibrated to that specific learner's fossilized errors and exam proximity. For a learner who is 2–3 months from a YKI test date with solid B1 foundations, a weekly 1-hour session with a Preply tutor specializing in YKI preparation is likely the highest-leverage investment available. The free tutor replacement guarantee reduces the risk of booking without prior relationship. The per-hour cost is the primary barrier: at $32/hr for regular sessions, monthly tutoring costs approach structured course fees.</p>
+          </div>
+        </div>
+
+        <!-- italki Finnish -->
+        <div class="app-card">
+          <div class="app-card__top"></div>
+          <div class="app-card__head">
+            <div class="app-card__name">italki Finnish Tutors</div>
+            <div class="app-card__tagline">150+ languages · community tutors from $5/hr · YKI specialists</div>
+          </div>
+          <div class="app-card__body">
+            <div class="app-card__meta">
+              <div class="meta-item"><div class="meta-item__label">Pricing</div><div class="meta-item__value">Community tutors $5+/hr; professional teachers $17–50/hr</div></div>
+              <div class="meta-item"><div class="meta-item__label">Level</div><div class="meta-item__value">A2–C2</div></div>
+              <div class="meta-item"><div class="meta-item__label">Platform</div><div class="meta-item__value">Web · iOS · Android</div></div>
+              <div class="meta-item"><div class="meta-item__label">Free Tier</div><div class="meta-item__value">Free to browse tutors</div></div>
+            </div>
+            <div class="app-card__features">
+              <div class="features-label">Headline Features</div>
+              <ul class="feature-list">
+                <li>Largest tutor marketplace — 150+ language pairs including Finnish</li>
+                <li>Community tutors from $5/hr for budget-conscious learners</li>
+                <li>Professional certified teachers $17–50/hr</li>
+                <li>YKI exam specialists available (search by specialty)</li>
+                <li>Video, audio, and text session formats</li>
+              </ul>
+            </div>
+            <div class="yki-row">
+              <span class="yki-label">YKI B1/B2</span>
+              <span class="yki-cell yki-cell--yes" title="Reading">R</span>
+              <span class="yki-cell yki-cell--yes" title="Writing">W</span>
+              <span class="yki-cell yki-cell--yes" title="Listening">L</span>
+              <span class="yki-cell yki-cell--yes" title="Speaking">S</span>
+              <span class="yki-legend"><span>🟢 Yes</span><span>🟡 Partial</span><span>⬜ No</span></span>
+            </div>
+            <div class="app-card__sw">
+              <div class="sw-block sw-block--strength">
+                <div class="sw-label">Strength</div>
+                <div class="sw-text">Most affordable human speaking practice — community tutors from $5/hr make 1-on-1 Finnish conversation accessible at any budget; YKI specialists available via search</div>
+              </div>
+              <div class="sw-block sw-block--weakness">
+                <div class="sw-label">Weakness</div>
+                <div class="sw-text">Finnish tutor supply limited compared to major languages; no structured curriculum provided by the platform; YKI-specialist tutors rarer than on Preply; learner must self-direct</div>
+              </div>
+            </div>
+          </div>
+          <div class="app-card__audience">
+            <div class="audience-label">Analysis</div>
+            <p class="reasoning-text">italki's community tutor pricing ($5+/hr) makes human Finnish conversation practice economically accessible to learners for whom Preply's $32/hr average is prohibitive. For a learner who needs weekly speaking practice to prepare for the YKI speaking subtest, three $10/hr community tutor sessions per week costs less than one month of most paid apps. The trade-off is quality assurance: community tutors are not certified teachers and may lack YKI exam expertise. The recommended approach is to use community tutors for conversation volume and book occasional sessions with a professional YKI specialist for structured exam practice, combining the two italki tiers for cost-effective comprehensive preparation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ECOSYSTEM GAPS — placeholder, filled last
+════════════════════════════════════════════════════════════ -->
+<section id="gaps" class="section" style="padding-top:0">
+  <div class="container">
+    <h2 class="section-title">Ecosystem Gaps</h2>
+    <p class="section-sub">Critical needs in the Finnish learning market that no current resource adequately fills. These represent opportunities for new product development.</p>
+    <div class="gaps-grid" id="gaps-grid">
+      <!-- Gap 1 -->
+      <div class="gap-card" style="--gap-color:#dc2626">
+        <div class="gap-card__head">
+          <h3 class="gap-card__title">No Finnish Pronunciation AI</h3>
+          <span class="severity-badge severity--critical">Critical</span>
+        </div>
+        <div class="gap-card__body">
+          <p class="gap-card__desc">No ELSA Speak equivalent exists for Finnish phonology. Vowel harmony violations, consonant gradation errors, and quantity distinctions (short vs. long vowels and consonants that change word meaning) go uncorrected in every current AI tutor. Talkio and Talkpal provide generic speaking feedback, but none analyze Finnish-specific phonemic error patterns at the granularity needed to move a learner from accented to comprehensible speech.</p>
+          <p class="gap-card__affected"><strong>Affected users:</strong> All Finnish learners — especially speakers of typologically distant languages (Arabic, Russian, Somali, Thai) who dominate the Finnish immigrant learner population</p>
+        </div>
+      </div>
+
+      <!-- Gap 2 -->
+      <div class="gap-card" style="--gap-color:#dc2626">
+        <div class="gap-card__head">
+          <h3 class="gap-card__title">No Full 4-Subtest YKI Platform with Adaptive AI Scoring</h3>
+          <span class="severity-badge severity--critical">Critical</span>
+        </div>
+        <div class="gap-card__body">
+          <p class="gap-card__desc">YKI Trainer comes closest, but no single mobile-optimized platform covers all 4 YKI subtests with adaptive AI scoring aligned to OPH's official rubric. Writing and speaking feedback remains static or generically AI-scored rather than calibrated to Finnish-language exam criteria. With 9,010+ annual test takers and a hard 2026 residency deadline creating urgency, this gap represents the clearest unmet need in the entire Finnish learning market.</p>
+          <p class="gap-card__affected"><strong>Affected users:</strong> All 9,010+ annual YKI exam takers, with disproportionate impact on immigrants facing residency deadlines</p>
+        </div>
+      </div>
+
+      <!-- Gap 3 -->
+      <div class="gap-card" style="--gap-color:#d97706">
+        <div class="gap-card__head">
+          <h3 class="gap-card__title">No Heritage Finnish Platform</h3>
+          <span class="severity-badge severity--high">High</span>
+        </div>
+        <div class="gap-card__body">
+          <p class="gap-card__desc">An estimated 600,000+ Finnish diaspora members in the USA, Sweden, Canada, and Australia have no digital heritage maintenance option. Salolampi (the Finnish language village in Minnesota) is the only significant heritage Finnish program, and it is offline-only and seasonal. Heritage Finnish differs from immigrant Finnish in pedagogical needs: heritage learners typically have listening comprehension but weak literacy and formal grammar, a profile that no current digital tool addresses.</p>
+          <p class="gap-card__affected"><strong>Affected users:</strong> 600K+ Finnish diaspora learners seeking heritage language maintenance or reconnection</p>
+        </div>
+      </div>
+
+      <!-- Gap 4 -->
+      <div class="gap-card" style="--gap-color:#d97706">
+        <div class="gap-card__head">
+          <h3 class="gap-card__title">No Systematic Colloquial Finnish Curriculum</h3>
+          <span class="severity-badge severity--high">High</span>
+        </div>
+        <div class="gap-card__body">
+          <p class="gap-card__desc">The kirjakieli (standard written Finnish) / puhekieli (colloquial spoken Finnish) split is ignored by all major apps — every resource teaches standard written Finnish. Immigrants who complete B1 courses arrive in Finland and cannot understand native Finns speaking naturally: "minä" becomes "mä", "sinä" becomes "sä", case endings contract and elide in ways no app prepares learners for. This is the most commonly cited frustration among Finnish language learners who have achieved test proficiency but lack functional comprehension.</p>
+          <p class="gap-card__affected"><strong>Affected users:</strong> Immigrants and expats who need to understand natural spoken Finnish in workplace and social contexts</p>
+        </div>
+      </div>
+
+      <!-- Gap 5 -->
+      <div class="gap-card" style="--gap-color:#2563eb">
+        <div class="gap-card__head">
+          <h3 class="gap-card__title">No Gamified Finnish Morphology Drills</h3>
+          <span class="severity-badge severity--medium">Medium-High</span>
+        </div>
+        <div class="gap-card__body">
+          <p class="gap-card__desc">Finnish's 15 grammatical cases, possessive suffixes, and vowel harmony create a morphological complexity that no app addresses with targeted, progressive, game-based drilling. Learners default to passive exposure hoping to internalize case selection through input, but research on adult L2 acquisition of complex morphology suggests that explicit, spaced practice of case selection in context significantly outperforms pure input methods at the B1–B2 stage where case mastery is the primary barrier.</p>
+          <p class="gap-card__affected"><strong>Affected users:</strong> All learners at A2–B2 level where case accuracy is the primary barrier to fluency and exam performance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="report-footer">
+  <div class="footer-inner">
+    <div class="footer-section">
+      <h3>Methodology</h3>
+      <p>Resources were evaluated based on publicly available information including official product pages, user reviews, and app store listings as of May 2026. YKI readiness scores reflect alignment with OPH (Finnish National Agency for Education) YKI test specifications at B1/B2 level. Rankings reflect overall utility for Finnish language learners targeting B1–B2 proficiency, with YKI exam alignment as a primary weighting factor.</p>
+    </div>
+    <div class="footer-section">
+      <h3>YKI Exam Fast Facts</h3>
+      <ul>
+        <li>4 mandatory subtests: Reading, Writing, Listening, Speaking</li>
+        <li>All subtests completed on the same day</li>
+        <li>B1.1 required for Finnish citizenship</li>
+        <li>B1 required for permanent residence (Jan 2026 law)</li>
+        <li>Pass rates 2023: Listening 56% · Writing 53.5% · Reading ~40% · Speaking ~40%</li>
+        <li>2026 test dates: Jan 31, Apr 11, Aug 29, Oct 2, Nov 14</li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Key Sources</h3>
+      <ul>
+        <li><em>User figures and pricing are point-in-time estimates; reverify against current sources before external citation.</em></li>
+        <li>OPH / Finnish National Agency for Education — YKI test specifications and statistics</li>
+        <li>Duolingo 2025 Language Report — Finnish learner counts</li>
+        <li>FSI Language Learning Difficulty Rankings — hours-to-B2 estimates</li>
+        <li>Yle Uutiset — Finnish language policy coverage</li>
+        <li>Individual app/platform pricing pages — May 2026</li>
+        <li>App store ratings and user reviews — App Store, Google Play, Trustpilot</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    Finnish Language Learning Competitive Intelligence · May 2026 · Point-in-time research; verify before citation
+  </div>
+</footer>
+
+<script>
+// ── Table sort ─────────────────────────────────────────────────
+(function() {
+  function initSort(table) {
+    if (!table) return;
+    const ths = table.querySelectorAll('th[data-sort]');
+    let currentCol = null, asc = true;
+    ths.forEach(th => {
+      th.innerHTML += ' <span class="sort-arrow">↕</span>';
+      th.addEventListener('click', () => {
+        if (currentCol === th) { asc = !asc; } else { asc = true; }
+        if (currentCol) {
+          currentCol.classList.remove('sorted');
+          currentCol.querySelector('.sort-arrow').textContent = '↕';
+        }
+        currentCol = th;
+        th.classList.add('sorted');
+        th.querySelector('.sort-arrow').textContent = asc ? '↑' : '↓';
+        const idx = th.cellIndex;
+        const type = th.dataset.sort;
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const aCell = a.cells[idx], bCell = b.cells[idx];
+          let av = (aCell.dataset.raw !== undefined) ? parseFloat(aCell.dataset.raw) : aCell.textContent.trim().toLowerCase();
+          let bv = (bCell.dataset.raw !== undefined) ? parseFloat(bCell.dataset.raw) : bCell.textContent.trim().toLowerCase();
+          if (type === 'num') { av = parseFloat(aCell.dataset.raw) || 0; bv = parseFloat(bCell.dataset.raw) || 0; }
+          return (av < bv ? -1 : av > bv ? 1 : 0) * (asc ? 1 : -1);
+        });
+        rows.forEach(r => tbody.appendChild(r));
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    initSort(document.querySelector('.ranking-table'));
+  });
+})();
+</script>
+</body>
+</html>
