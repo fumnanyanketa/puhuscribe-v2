@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<title>PuhuScribe v2: The Build Manual — v4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  :root {
+    --bg: #FFFFFF;
+    --bg-tint: #FAFAF7;
+    --bg-deep: #F2F1EC;
+    --ink: #0A0A0A;
+    --ink-soft: #2A2D32;
+    --ink-muted: #6B7079;
+    --rule: #E5E5E0;
+    --lake: #1B4965;
+    --lake-deep: #0E2F47;
+    --forest: #2D4A2B;
+    --sauna: #B5784A;
+    --sauna-deep: #8C5530;
+    --terracotta: #C25B3F;
+    --moss: #8FA68E;
+  }
+
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 16.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  @media (max-width: 540px) { body { font-size: 15.5px; line-height: 1.62; } }
+
+  h1, h2, h3, h4, h5, h6, .display {
+    font-family: 'Bricolage Grotesque', 'Manrope', sans-serif;
+    font-variation-settings: "opsz" 48;
+    color: var(--ink);
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 720px) { .container { padding: 0 26px; } }
+  @media (max-width: 420px) { .container { padding: 0 22px; } }
+
+  /* ---------- MASTHEAD ---------- */
+  .masthead { border-bottom: 1.5px solid var(--ink); padding: 20px 0 16px; margin-bottom: 40px; }
+  .masthead-row {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px 22px;
+    font-family: 'Manrope', sans-serif; font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink);
+  }
+  @media (max-width: 540px) { .masthead-row { font-size: 9.5px; letter-spacing: 0.16em; gap: 6px 14px; } }
+  @media (max-width: 380px) { .masthead-row > span:nth-child(2) { display: none; } }
+  .masthead-row .dot {
+    display: inline-block; width: 7px; height: 7px;
+    background: var(--terracotta); border-radius: 50%; margin-right: 10px; vertical-align: middle;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero { padding-top: 40px; padding-bottom: 64px; }
+  @media (max-width: 720px) { .hero { padding-top: 24px; padding-bottom: 48px; } }
+
+  .hero-eyebrow {
+    font-family: 'Manrope', sans-serif; font-size: 11.5px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--sauna-deep);
+    margin-bottom: 28px; display: flex; align-items: center; gap: 14px;
+  }
+  @media (max-width: 540px) { .hero-eyebrow { font-size: 10.5px; letter-spacing: 0.18em; margin-bottom: 20px; } }
+  .hero-eyebrow::after { content: ''; flex: 1; height: 1.5px; background: var(--ink); max-width: 180px; }
+  @media (max-width: 540px) { .hero-eyebrow::after { max-width: 80px; } }
+
+  h1.hero-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-variation-settings: "opsz" 96, "wdth" 100;
+    font-weight: 500; font-size: clamp(30px, 7.5vw, 92px);
+    line-height: 1.02; letter-spacing: -0.03em; margin-bottom: 24px;
+  }
+  @media (max-width: 540px) { h1.hero-title { line-height: 1.08; margin-bottom: 20px; } }
+  h1.hero-title .accent { color: var(--lake); font-weight: 400; }
+
+  .hero-deck {
+    font-family: 'Manrope', sans-serif; font-weight: 400;
+    font-size: clamp(15.5px, 1.9vw, 21px); line-height: 1.55;
+    color: var(--ink-soft); max-width: 680px; margin-bottom: 36px;
+  }
+
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; padding-top: 28px; border-top: 1px solid var(--rule);
+  }
+  @media (max-width: 900px) { .hero-meta { grid-template-columns: repeat(2, 1fr); gap: 22px; } }
+  @media (max-width: 540px) { .hero-meta { grid-template-columns: 1fr; gap: 18px; } }
+
+  .meta-block .meta-label {
+    font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px;
+  }
+  .meta-block .meta-value {
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 24;
+    font-size: 16px; font-weight: 500; color: var(--ink); line-height: 1.3; word-wrap: break-word;
+  }
+  @media (max-width: 540px) { .meta-block .meta-value { font-size: 15px; } }
+
+  /* ---------- TOC ---------- */
+  .toc {
+    background: var(--bg-tint); border: 1.5px solid var(--ink);
+    padding: 32px 36px; margin-bottom: 64px; position: relative;
+  }
+  @media (max-width: 720px) { .toc { padding: 26px 22px; margin-bottom: 48px; } }
+  .toc::before {
+    content: ''; position: absolute; top: -1.5px; left: -1.5px;
+    width: 60px; height: 8px; background: var(--terracotta);
+  }
+  .toc-title {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink); margin-bottom: 20px;
+  }
+  .toc-list {
+    list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 40px;
+  }
+  @media (max-width: 780px) { .toc-list { grid-template-columns: 1fr; gap: 2px; } }
+  .toc-list a {
+    color: var(--ink); text-decoration: none;
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 18;
+    font-size: 16.5px; font-weight: 500;
+    display: flex; align-items: baseline; gap: 14px; padding: 12px 0;
+    min-height: 44px; border-bottom: 1px dotted var(--rule); transition: color 0.2s ease;
+  }
+  .toc-list a:hover, .toc-list a:focus { color: var(--lake); }
+  .toc-list a .num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    color: var(--sauna); letter-spacing: 0.05em; min-width: 24px; flex-shrink: 0;
+  }
+  .toc-list a.stop .num, .toc-list a.milestone .num { color: var(--terracotta); }
+  .toc-list a.stop, .toc-list a.milestone { color: var(--ink); }
+  .toc-list a.stop:hover, .toc-list a.milestone:hover { color: var(--terracotta); }
+  .toc-list a.milestone { font-weight: 600; }
+  .toc-list a.done .num { color: var(--forest); }
+  .toc-list a.done { color: var(--ink-muted); }
+
+  /* ---------- SECTIONS ---------- */
+  section.phase { padding-top: 48px; padding-bottom: 20px; }
+  @media (max-width: 720px) { section.phase { padding-top: 36px; padding-bottom: 16px; } }
+
+  .phase-header {
+    display: grid; grid-template-columns: 130px 1fr; gap: 28px;
+    margin-bottom: 36px; padding-bottom: 24px; border-bottom: 1.5px solid var(--ink);
+  }
+  @media (max-width: 780px) {
+    .phase-header { grid-template-columns: 1fr; gap: 10px; margin-bottom: 28px; padding-bottom: 20px; }
+  }
+  .phase-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.14em; color: var(--sauna-deep); padding-top: 14px;
+  }
+  @media (max-width: 780px) { .phase-num { padding-top: 0; font-size: 11px; } }
+
+  .phase-title {
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 60;
+    font-weight: 500; font-size: clamp(26px, 4.4vw, 46px);
+    line-height: 1.08; letter-spacing: -0.025em; margin-bottom: 12px;
+  }
+  .phase-title .accent { color: var(--lake); font-weight: 400; }
+  .phase-subtitle { font-family: 'Manrope', sans-serif; font-weight: 400; font-size: 16px; color: var(--ink-muted); line-height: 1.45; }
+
+  /* ---------- STEPS ---------- */
+  .step {
+    display: grid; grid-template-columns: 64px 1fr; gap: 24px;
+    padding: 24px 0; border-bottom: 1px solid var(--rule);
+  }
+  @media (max-width: 780px) { .step { grid-template-columns: 1fr; gap: 4px; padding: 22px 0; } }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 48, "wdth" 90;
+    font-size: 38px; font-weight: 300; color: var(--sauna); line-height: 1; padding-top: 4px; letter-spacing: -0.02em;
+  }
+  @media (max-width: 780px) { .step-num { font-size: 28px; padding-top: 0; margin-bottom: 4px; } }
+  .step-body h3 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 24;
+    font-weight: 600; font-size: 21px; line-height: 1.25; color: var(--ink);
+    margin-bottom: 12px; letter-spacing: -0.01em;
+  }
+  @media (max-width: 540px) { .step-body h3 { font-size: 18px; line-height: 1.3; } }
+  .step-body p { margin-bottom: 14px; color: var(--ink-soft); overflow-wrap: break-word; }
+  .step-body p:last-child { margin-bottom: 0; }
+  .step-body strong { color: var(--ink); font-weight: 600; }
+  .step-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.86em;
+    background: var(--bg-deep); padding: 2px 6px; border-radius: 3px; color: var(--ink); word-break: break-word;
+  }
+  .step-body ul { margin: 14px 0; padding: 0; list-style: none; }
+  .step-body ul li {
+    padding: 5px 0 5px 22px; position: relative; color: var(--ink-soft); overflow-wrap: break-word;
+  }
+  .step-body ul li::before {
+    content: ''; position: absolute; left: 0; top: 16px; width: 10px; height: 1.5px; background: var(--sauna);
+  }
+
+  /* ---------- PROMPT BLOCK ---------- */
+  .prompt {
+    background: var(--ink); color: #F0EFEA;
+    padding: 28px 24px 22px; margin: 32px 0 22px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.65;
+    border-left: 4px solid var(--sauna); position: relative;
+    overflow: visible; overflow-wrap: anywhere; word-break: break-word; white-space: pre-wrap;
+  }
+  @media (max-width: 540px) { .prompt { padding: 26px 18px 20px; font-size: 12.5px; line-height: 1.7; margin: 28px 0 20px; } }
+
+  .prompt::before {
+    content: 'PROMPT'; position: absolute; top: -10px; left: 16px;
+    background: var(--sauna); color: var(--ink);
+    font-family: 'Manrope', sans-serif; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.2em; padding: 4px 10px; border-radius: 2px; z-index: 1;
+  }
+  .prompt.dispatch::before { content: 'DISPATCH'; background: var(--lake); color: #F0EFEA; }
+  .prompt.dispatch { border-left-color: var(--lake); }
+  .prompt.design::before { content: 'CLAUDE DESIGN'; background: var(--terracotta); color: #F0EFEA; }
+  .prompt.design { border-left-color: var(--terracotta); }
+  .prompt.cowork::before { content: 'COWORK'; background: var(--forest); color: #F0EFEA; }
+  .prompt.cowork { border-left-color: var(--forest); }
+  .prompt.template::before { content: 'TEMPLATE'; background: #F0EFEA; color: var(--ink); border: 1.5px solid var(--ink); }
+  .prompt.template { border-left-color: var(--ink); }
+
+  .prompt[class*="mode-"]::after {
+    position: absolute; top: -10px; right: 16px;
+    font-family: 'Manrope', sans-serif; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.2em; padding: 3px 9px; border-radius: 2px; z-index: 1; white-space: nowrap;
+  }
+  .prompt.mode-plan::after { content: 'PLAN MODE'; background: #F0EFEA; color: var(--lake); border: 1.5px solid var(--lake); }
+  .prompt.mode-code::after { content: 'CODE MODE'; background: #F0EFEA; color: var(--forest); border: 1.5px solid var(--forest); }
+
+  /* ---------- LEGEND ---------- */
+  .legend {
+    background: var(--bg-tint); border: 1.5px solid var(--ink);
+    padding: 28px 32px; margin-bottom: 56px; position: relative;
+  }
+  @media (max-width: 720px) { .legend { padding: 22px 22px; margin-bottom: 40px; } }
+  .legend::before { content: ''; position: absolute; top: -1.5px; left: -1.5px; width: 60px; height: 8px; background: var(--lake); }
+  .legend-title {
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink); margin-bottom: 16px;
+  }
+  .legend-text { font-family: 'Manrope', sans-serif; font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 12px; }
+  .legend-text:last-child { margin-bottom: 0; }
+  .legend-text strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- CALLOUT ---------- */
+  .callout { background: var(--bg-tint); border-left: 4px solid var(--lake); padding: 20px 24px; margin: 22px 0; }
+  @media (max-width: 540px) { .callout { padding: 18px 20px; } }
+  .callout-label {
+    font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--lake); margin-bottom: 10px;
+  }
+  .callout p { font-family: 'Manrope', sans-serif; font-size: 15.5px; font-weight: 500; color: var(--ink); line-height: 1.55; margin: 0; }
+  .callout.warn { border-left-color: var(--terracotta); }
+  .callout.warn .callout-label { color: var(--terracotta); }
+  .callout.note { border-left-color: var(--moss); }
+  .callout.note .callout-label { color: var(--forest); }
+  .callout.complete { border-left-color: var(--forest); }
+  .callout.complete .callout-label { color: var(--forest); }
+
+  /* ---------- AGENT GRID ---------- */
+  .agents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 22px 0; }
+  @media (max-width: 720px) { .agents { grid-template-columns: 1fr; } }
+  .agent { border: 1.5px solid var(--ink); padding: 20px; background: var(--bg); }
+  .agent-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.14em; color: var(--sauna-deep); margin-bottom: 8px; }
+  .agent-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; margin-bottom: 10px; color: var(--ink); letter-spacing: -0.01em; }
+  .agent-task { font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+  .agent.done { border-color: var(--forest); }
+  .agent.done .agent-label { color: var(--forest); }
+  .agent.done .agent-name::after { content: ' ✓'; color: var(--forest); font-size: 14px; }
+
+  /* ---------- DATA TABLE ---------- */
+  .matrix-wrap { overflow-x: auto; margin: 22px 0; -webkit-overflow-scrolling: touch; border: 1px solid var(--rule); }
+  .matrix { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 540px; }
+  .matrix th, .matrix td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .matrix th {
+    font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink);
+    border-bottom: 1.5px solid var(--ink); background: var(--bg-tint);
+  }
+  .matrix td { color: var(--ink-soft); }
+  .matrix td strong { color: var(--ink); }
+
+  /* ---------- PULL QUOTE ---------- */
+  .pull { margin: 56px 0; padding: 48px 0; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); text-align: center; }
+  @media (max-width: 720px) { .pull { margin: 40px 0; padding: 36px 0; } }
+  .pull blockquote {
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 48;
+    font-weight: 400; font-size: clamp(22px, 3.4vw, 34px); line-height: 1.25;
+    color: var(--lake); max-width: 820px; margin: 0 auto; letter-spacing: -0.02em; padding: 0 12px;
+  }
+  .pull blockquote::before { content: ''; display: block; width: 40px; height: 1.5px; background: var(--sauna); margin: 0 auto 24px; }
+
+  /* ---------- CHECKLIST ---------- */
+  .checklist { background: var(--ink); color: #F0EFEA; padding: 44px 40px; margin: 56px 0 28px; }
+  @media (max-width: 720px) { .checklist { padding: 30px 22px; margin: 40px 0 24px; } }
+  .checklist h2 {
+    font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 48;
+    font-weight: 500; font-size: clamp(26px, 4vw, 36px); margin-bottom: 8px; letter-spacing: -0.02em; color: #F0EFEA;
+  }
+  .checklist .sub { font-family: 'Manrope', sans-serif; font-weight: 400; font-size: 15px; color: rgba(240,239,234,0.6); margin-bottom: 28px; }
+  .checklist ul { list-style: none; padding: 0; columns: 2; column-gap: 36px; }
+  @media (max-width: 720px) { .checklist ul { columns: 1; } }
+  .checklist li { padding: 10px 0 10px 28px; border-bottom: 1px solid rgba(240,239,234,0.12); position: relative; break-inside: avoid; font-size: 14.5px; line-height: 1.5; }
+  .checklist li::before { content: ''; position: absolute; left: 0; top: 16px; width: 14px; height: 14px; border: 1.5px solid var(--sauna); }
+  .checklist li.done { color: rgba(240,239,234,0.5); }
+  .checklist li.done::before { background: var(--forest); border-color: var(--forest); }
+
+  /* ---------- FOOTER ---------- */
+  footer { padding-top: 56px; padding-bottom: 40px; border-top: 1.5px solid var(--ink); margin-top: 40px; }
+  @media (max-width: 720px) { footer { padding-top: 40px; padding-bottom: 32px; } }
+  .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; align-items: end; }
+  @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr; gap: 22px; } }
+  .footer-mark { font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 36; font-weight: 400; font-size: clamp(20px, 3vw, 28px); line-height: 1.2; color: var(--ink); letter-spacing: -0.02em; }
+  .footer-mark .accent { color: var(--lake); font-weight: 500; }
+  .footer-meta { font-family: 'Manrope', sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-muted); text-align: right; line-height: 2; }
+  @media (max-width: 720px) { .footer-meta { text-align: left; } }
+
+  /* ---------- BACK TO TOP ---------- */
+  .to-top {
+    position: fixed; bottom: 20px; right: 20px; width: 48px; height: 48px;
+    background: var(--ink); color: var(--bg); border: none; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Manrope', sans-serif; font-size: 22px; line-height: 1;
+    opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+    pointer-events: none; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.18); text-decoration: none;
+  }
+  .to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .to-top:hover { background: var(--lake); }
+
+  /* ---------- OPERATING LENS ---------- */
+  .operating-lens { margin-bottom: 56px; padding-bottom: 48px; border-bottom: 1.5px solid var(--ink); }
+  @media (max-width: 720px) { .operating-lens { margin-bottom: 40px; padding-bottom: 36px; } }
+  .lens-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.14em; color: var(--lake); margin-bottom: 14px; }
+  @media (max-width: 540px) { .lens-num { font-size: 11px; } }
+  .lens-title { font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 60; font-weight: 500; font-size: clamp(26px, 4.4vw, 46px); line-height: 1.08; letter-spacing: -0.025em; margin-bottom: 24px; color: var(--ink); }
+  .lens-title .accent { color: var(--lake); font-weight: 400; }
+  .lens-body p { font-family: 'Manrope', sans-serif; font-size: 16px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 16px; max-width: 760px; }
+  .lens-body p:last-child { margin-bottom: 0; }
+  .lens-pillars { margin: 22px 0 4px; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 28px; max-width: 720px; }
+  @media (max-width: 540px) { .lens-pillars { grid-template-columns: 1fr; gap: 8px; } }
+  .lens-pillars li { font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 18; font-weight: 500; font-size: 15px; color: var(--ink); padding: 6px 0 6px 22px; position: relative; letter-spacing: -0.005em; }
+  .lens-pillars li::before { content: ''; position: absolute; left: 0; top: 14px; width: 12px; height: 1.5px; background: var(--lake); }
+
+  /* ---------- STOP POINT ---------- */
+  .stop-point { background: var(--bg-tint); border: 2.5px solid var(--terracotta); padding: 40px 44px 36px; margin: 56px 0; position: relative; }
+  @media (max-width: 720px) { .stop-point { padding: 32px 22px 26px; margin: 44px 0; } }
+  .stop-point::before {
+    content: 'STOP / GET OUT OF THE BUILDING'; position: absolute; top: -14px; left: 28px;
+    background: var(--terracotta); color: #FFFFFF;
+    font-family: 'Manrope', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.22em; padding: 6px 14px; border-radius: 2px;
+  }
+  @media (max-width: 540px) { .stop-point::before { font-size: 9.5px; letter-spacing: 0.18em; left: 18px; padding: 5px 11px; } }
+  .stop-point.milestone { border-width: 3px; background: var(--bg); }
+  .stop-point.milestone::before { content: 'V1 MILESTONE / GET OUT OF THE BUILDING'; }
+  .stop-point-num { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 500; letter-spacing: 0.14em; color: var(--terracotta); margin-bottom: 14px; text-transform: uppercase; }
+  .stop-point h3 { font-family: 'Bricolage Grotesque', sans-serif; font-variation-settings: "opsz" 36; font-weight: 500; font-size: clamp(22px, 3.4vw, 32px); line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 14px; color: var(--ink); }
+  .stop-point h3 .accent { color: var(--terracotta); font-weight: 400; }
+  .stop-point-deck { font-family: 'Manrope', sans-serif; font-size: 15.5px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 24px; max-width: 720px; }
+  .stop-point h4 { font-family: 'Manrope', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); margin: 22px 0 10px; }
+  .stop-point h4:first-of-type { margin-top: 8px; }
+  .stop-point p { margin-bottom: 12px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; max-width: 760px; }
+  .stop-point p em { font-style: italic; color: var(--ink); background: var(--bg); padding: 2px 6px; border-left: 2px solid var(--sauna); display: inline-block; margin: 4px 0; }
+  .stop-point ul { margin: 10px 0 14px; padding: 0; list-style: none; max-width: 760px; }
+  .stop-point ul li { padding: 5px 0 5px 22px; position: relative; color: var(--ink-soft); font-size: 14.5px; line-height: 1.55; }
+  .stop-point ul li::before { content: ''; position: absolute; left: 0; top: 14px; width: 10px; height: 1.5px; background: var(--terracotta); }
+  .stop-point code { font-family: 'JetBrains Mono', monospace; font-size: 0.86em; background: var(--bg-deep); padding: 2px 6px; border-radius: 3px; color: var(--ink); word-break: break-word; }
+  .stop-point-milestone { display: inline-block; margin-top: 18px; padding: 8px 14px; background: var(--ink); color: #F0EFEA; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ---------- ANIMATION ---------- */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .hero h1, .hero-deck, .hero-meta { animation: fadeUp 0.7s ease-out both; }
+  .hero-deck { animation-delay: 0.08s; }
+  .hero-meta { animation-delay: 0.16s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  @media print {
+    body { background: white; }
+    .prompt { color: black; background: #f4f4f0; border: 1px solid #333; }
+    .checklist { background: white; color: black; }
+    .checklist li { color: black; }
+    .to-top { display: none; }
+  }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--lake); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="masthead">
+    <div class="masthead-row">
+      <span><span class="dot"></span>The Build Manual</span>
+      <span>Vol. 01 / Issue 04</span>
+      <span>For Internal Use</span>
+    </div>
+  </div>
+</div>
+
+<header class="container hero">
+  <div class="hero-eyebrow">A senior-dev workflow for one founder</div>
+  <h1 class="hero-title">PuhuScribe v2.<br><span class="accent">The Build Manual.</span></h1>
+  <p class="hero-deck">
+    A granular, step-by-step playbook for building a production-grade Finnish language learning app using Claude Code, Claude Design, and Claude Dispatch. No team. No agency. One operator, one ecosystem. Built for the immigrant who arrived in Finland six months ago and needs Finnish to stay.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-block">
+      <div class="meta-label">Product</div>
+      <div class="meta-value">PuhuScribe v2</div>
+    </div>
+    <div class="meta-block">
+      <div class="meta-label">North Star</div>
+      <div class="meta-value">YKI B1 pass for immigrants</div>
+    </div>
+    <div class="meta-block">
+      <div class="meta-label">Stack</div>
+      <div class="meta-value">React 19, Supabase, Workers, MCP</div>
+    </div>
+    <div class="meta-block">
+      <div class="meta-label">Operator</div>
+      <div class="meta-value">Fumnanya Nketa</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="toc" aria-label="Contents">
+    <div class="toc-title">Contents</div>
+    <ol class="toc-list">
+      <li><a href="#operating-lens"><span class="num">→</span>The operating lens</a></li>
+      <li><a href="#product" class="milestone"><span class="num">★</span>The product: what we are building</a></li>
+      <li><a href="#setup"><span class="num">→</span>Setup your workspace</a></li>
+      <li><a href="#phase-00" class="done"><span class="num">✓</span>Phase 00: Research the market — COMPLETE</a></li>
+      <li><a href="#stop-01" class="stop"><span class="num">↘</span>Stop point 01: validate with learners</a></li>
+      <li><a href="#phase-01"><span class="num">01</span>Phase 01: Pre-flight — the product brief</a></li>
+      <li><a href="#phase-015"><span class="num">01.5</span>Phase 01.5: Content foundation</a></li>
+      <li><a href="#phase-02"><span class="num">02</span>Phase 02: Design before code</a></li>
+      <li><a href="#stop-02" class="stop"><span class="num">↘</span>Stop point 02: test with learners</a></li>
+      <li><a href="#phase-03"><span class="num">03</span>Phase 03: The handoff — design to code</a></li>
+      <li><a href="#phase-04"><span class="num">04</span>Phase 04: Parallel build with sub-agents</a></li>
+      <li><a href="#stop-03" class="milestone"><span class="num">★</span>V1 milestone: first learner sessions</a></li>
+      <li><a href="#phase-05"><span class="num">05</span>Phase 05: Dispatch — build from your phone</a></li>
+      <li><a href="#phase-06"><span class="num">06</span>Phase 06: Marketing while you build</a></li>
+      <li><a href="#phase-07"><span class="num">07</span>Phase 07: Growing the learner base</a></li>
+      <li><a href="#phase-08"><span class="num">08</span>Phase 08: GDPR and compliance</a></li>
+      <li><a href="#checklist"><span class="num">09</span>The week-one checklist</a></li>
+    </ol>
+  </nav>
+</div>
+
+<div class="container">
+  <div class="legend">
+    <div class="legend-title">How to read this manual</div>
+    <p class="legend-text">Each command block carries a left-side label showing which tool to paste it into. <strong>PROMPT</strong> goes into Claude Code. <strong>DISPATCH</strong> is sent from your phone. <strong>CLAUDE DESIGN</strong> goes into Claude Design. <strong>TEMPLATE</strong> blocks are reference content you paste as a file, not as a command.</p>
+    <p class="legend-text">Claude Code prompts also carry a right-side mode label. <strong>PLAN MODE</strong> means Claude explores the codebase and proposes an approach before touching anything. Use it for research, orchestration, and architecture work where a wrong execution would cost a day to undo. <strong>CODE MODE</strong> means Claude starts implementing immediately. Use it for mechanical work with clear scope where re-running is cheap.</p>
+    <p class="legend-text">Three <strong style="color: var(--terracotta);">STOP POINTS</strong> are marked in terracotta throughout the manual. At each one, the build pauses and you leave the desk to talk directly to Finnish learners — the adult immigrants this product is built for. Do not skip them. The prompts are not the work. The prompts are how you do the work fast enough to spend most of your time on the part that actually matters: learning whether you are building the right thing.</p>
+  </div>
+</div>
+
+<div class="container">
+  <section class="operating-lens" id="operating-lens">
+    <div class="lens-num">OPERATING LENS</div>
+    <h2 class="lens-title">The build is fast. <span class="accent">The learning has to be faster.</span></h2>
+    <div class="lens-body">
+      <p>The build is fast because every prompt in this manual is pre-loaded. Run them in order and you ship in days, not months. The risk is not under-building. It is the build running ahead of the learning. Every phase below this line answers the question <em>how do I build the next thing</em>. Almost none of them answer the question <em>should I be building the next thing yet</em>.</p>
+      <p>This manual is run through two paired disciplines. <strong>Service design</strong> is the lens. Every decision is examined through the journey of one specific person: an adult immigrant who arrived in Finland six months ago, is working in English, and is starting to feel the pressure of language requirements. <strong>Compressed Lean Startup</strong> is the cadence. Continuous learner discovery. Prototype as spec. Iteration measured in hours and days, not weeks.</p>
+      <p>Four concepts have to stay live throughout the build:</p>
+      <ul class="lens-pillars">
+        <li>The learner's real situation, not a generic user</li>
+        <li>Continuous discovery — talk to learners, not about them</li>
+        <li>Prototype as spec — show, don't explain</li>
+        <li>Skipping a stop point is the most expensive mistake</li>
+      </ul>
+      <p>Three stop points are written into this manual, marked in terracotta. At each one, the build pauses. You leave the desk. You talk to adult Finnish learners — people living this problem right now. You bring what you have heard back into the next phase. <strong>The prompts are not the work. The prompts are how you do the work fast enough to spend most of your time on the part that actually matters: learning whether you are building the right thing.</strong></p>
+    </div>
+  </section>
+</div>
+
+<div class="container">
+  <section class="operating-lens" id="product" style="border-top: 1.5px solid var(--ink); padding-top: 48px;">
+    <div class="lens-num" style="color: var(--terracotta);">THE PRODUCT — SINGLE SOURCE OF TRUTH</div>
+    <h2 class="lens-title">What we are <span class="accent">building.</span></h2>
+    <div class="lens-body">
+      <p>This section is the product definition for PuhuScribe. Everything below the Setup phase is how you build what this section describes. When anything drifts, this is what you return to.</p>
+
+      <p><strong>The North Star.</strong> PuhuScribe is a Finnish learning app for adults who need to actually reach a level that matters: B1 for residency, B2 for professional work. The person we are building for arrived in Finland in the last twelve months. They are intelligent, working, and pressed for time. They have likely tried Duolingo, hit its ceiling within two weeks, and stopped. They need Finnish to stay in Finland. That urgency is the product's fuel.</p>
+
+      <p>PuhuScribe leads on three things general apps get wrong. First, the gap between kirjakieli (standard written Finnish) and puhekieli (colloquial spoken Finnish) — the single biggest source of learner frustration, taught together from day one. Second, retention that sticks, using memory science rather than streak-bait. Third, practice built from the learner's real situations, not generic phrases.</p>
+
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;margin:28px 0 12px;color:var(--ink);">The five core mechanics</h3>
+      <ul class="lens-pillars" style="grid-template-columns:1fr;">
+        <li><strong>Mnemonic encoding</strong> — every new word paired with a sound-bridge and a visualization, one tap. Critical for Finnish, where cognate coverage is only 5–10 percent.</li>
+        <li><strong>Spaced retrieval with FSRS-5</strong> — the retention spine. A custom FSRS-5 algorithm (already built and tested) decides what to review, never the user.</li>
+        <li><strong>Active recall on every encounter</strong> — English to Finnish production, not recognition. The learner produces Finnish 80 percent of the time, never just consumes it.</li>
+        <li><strong>Frequency-ordered content</strong> — the Leipzig CC-BY Finnish frequency corpus decides what surfaces next. Always the most useful next word.</li>
+        <li><strong>Daily audio on every sentence</strong> — high-quality Finnish TTS (Azure Cognitive Services, fi-FI-NooraNeural) for all kirjakieli sentences. Puhekieli versions are displayed as text alongside the kirjakieli audio — the learner hears the standard form and reads the colloquial form simultaneously. This is the pedagogically correct approach: comprehension before production.</li>
+      </ul>
+
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;margin:28px 0 12px;color:var(--ink);">The three Finnish-specific differentiators</h3>
+      <ul class="lens-pillars" style="grid-template-columns:1fr;">
+        <li><strong>Dual-register throughout</strong> — every Language Island sentence has both a kirjakieli and a puhekieli version. No general-purpose app does this. For Finnish it is a requirement, not a feature.</li>
+        <li><strong>Single AI layer, built right</strong> — one MCP server with six specialised tools (grammar explanation, conjugation, vocabulary context, puhekieli transformation, cultural notes, error correction). Single Claude model for v1; multi-model routing deferred to v2.</li>
+        <li><strong>YKI-aligned tracking</strong> — every exercise maps to a YKI skill (reading, listening, writing, speaking) and a CEFR level. The learner always knows where they stand relative to the B1 threshold.</li>
+      </ul>
+
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;margin:28px 0 12px;color:var(--ink);">The Day One Sprint</h3>
+      <p>The activation event. The learner ends day one having retained 150–200 words and <em>feels</em> the method work. This is the felt proof that changes the learner's belief about what is possible.</p>
+      <p>The Sprint vocabulary is a mix: high-frequency concrete nouns (<em>talo, auto, ihminen, ruoka, vesi, työ, koira, kauppa</em>) and everyday adjectives (<em>iso, pieni, hyvä, huono, kaunis, kallis, nopea, vanha</em>). Every word is paired with a sound-bridge mnemonic in English. The session is paced in waves across the day — not one sitting — with FSRS re-surfacing earlier words at spaced intervals. Morning: learn ~50. Midday: review first batch, learn ~50 more. Evening: consolidation review. The sprint is a day's architecture, not a marathon.</p>
+      <p><strong>Reconciliation with the daily rate:</strong> the Sprint is a one-time onboarding event at recognition level. After day one, the ongoing rate is 10–15 new words per day at production level (English to Finnish). The two numbers are not in conflict. One is a spectacle. The other is the habit.</p>
+
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;margin:28px 0 12px;color:var(--ink);">First build scope</h3>
+      <ul class="lens-pillars" style="grid-template-columns:1fr;">
+        <li><strong>Core data model</strong> — User, Word, Sentence, Card, ReviewLog, Audio, Mnemonic, LanguageIsland, Topic. Already built.</li>
+        <li><strong>FSRS-5 scheduling engine</strong> — built and tested (16 passing unit tests). Already committed.</li>
+        <li><strong>Day One Sprint</strong> — 150–200 words, mnemonic-paired, wave-paced across the day.</li>
+        <li><strong>Mode 1 Vocabulary</strong> — FSRS review, mnemonics, active recall, sentence-based, frequency-ordered, dual-register.</li>
+        <li><strong>Mode 2 Listening</strong> — TTS audio for every kirjakieli sentence; puhekieli text alongside.</li>
+        <li><strong>Mode 3 Speaking with Language Islands as the spine</strong> — 25 YKI-aligned topics, 20–30 sentences each, every one in both registers. Shadowing as the daily spoken exercise.</li>
+        <li><strong>Daily routine orchestrator</strong> — ties the modes into one daily session.</li>
+        <li><strong>Scope</strong> — A1 to A2 content (~2,000 words). Single Claude model.</li>
+      </ul>
+
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;margin:28px 0 12px;color:var(--ink);">Deliberately excluded from the first build</h3>
+      <p>Writing modes, AI conversation, reading mode, the full sprint suite beyond Day One, plateau diagnostics, grammar deep dives, multi-model routing (Mistral, Poro/Viking), gamification beyond basic streaks. First build ships the validated core: the day-one win and the dual-register Language Islands spine.</p>
+
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:22px;margin:28px 0 12px;color:var(--ink);">Honest calibration</h3>
+      <ul class="lens-pillars" style="grid-template-columns:1fr;">
+        <li>No "fluency in 12 months." Finnish is FSI Category III (~1,100 hours to B2). At 30 minutes a day, 12 months reaches B1.1. Set honest expectations.</li>
+        <li>No "no grammar needed." Explicit instruction outperforms pure implicit acquisition for Finnish's hardest patterns. Grammar is integrated at the right moments.</li>
+        <li>No examiner-grade YKI scoring at launch. YKI is the direction, not a day-one feature.</li>
+        <li>Start at 10–15 new words a day. Sustainability beats peak volume.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<section class="phase container" id="setup">
+  <div class="phase-header">
+    <div class="phase-num">SETUP</div>
+    <div>
+      <h2 class="phase-title">Setup <span class="accent">your workspace.</span></h2>
+      <p class="phase-subtitle">Primary surface: Claude desktop on your PC. Secondary surface: Claude mobile when you are out. Everything syncs through GitHub.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Install Claude desktop on your PC.</h3>
+      <p>Download the Claude desktop app from Anthropic. Sign in with your Claude account. Confirm three tabs in the sidebar: Chat, and Code. The Code tab is where you live for the next several weeks. It is not the same product as Chat. Chat is what you have been using to talk to me. Code is the agentic coding interface.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Install the Claude mobile app.</h3>
+      <p>Get the Claude app on your phone. Sign in with the same account. The Code tab is also available on mobile. Walking home from Oodi, on the tram, between gym sets — you queue tasks here. They run in the cloud and you review on your PC later.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Connect Claude to GitHub and pick Remote environment.</h3>
+      <p>In the Claude desktop app, click the <strong>Code</strong> tab. Tap <strong>Select environment</strong> and choose <strong>Remote</strong> (Anthropic-hosted cloud). Click <strong>Connect to GitHub</strong> and authorize Claude to access your repos. Select <code>puhuscribe-v2</code> as your project. The repo's files should appear in the file tree.</p>
+      <div class="callout">
+        <div class="callout-label">Why Remote, not Local</div>
+        <p>Remote is device-independent. Your repo lives in GitHub. Your sandbox lives at Anthropic. Your PC and phone are just windows into the same work. When we deploy Cloudflare Workers, the cloud sandbox deploys via GitHub Actions instead of local Wrangler — which is the correct production approach anyway.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>What is already in the repository.</h3>
+      <p>The <code>puhuscribe-v2</code> repo already has a working foundation from earlier sessions. Before you run any new prompts, understand what is there:</p>
+      <ul>
+        <li><strong>/research/</strong> — all five Phase 00 research artifacts (global-apps.html, finland-apps.html, reddit-voice.md, competitor-reviews.md, pricing-matrix.md, positioning-brief.md)</li>
+        <li><strong>src/lib/fsrs/</strong> — complete FSRS-5 scheduling engine with 16 passing unit tests</li>
+        <li><strong>src/lib/supabase/</strong> — typed Supabase client and database type definitions</li>
+        <li><strong>supabase/migrations/</strong> — two migration files: initial schema (all 9 tables with RLS) and 25 YKI topic seed rows</li>
+        <li><strong>package.json, tsconfig.json, vite.config.ts, vitest.config.ts</strong> — React 19 + Vite 6 + TypeScript 5.7 scaffold</li>
+      </ul>
+      <p>What does not yet exist: no UI screens, no Cloudflare Worker, no MCP server, no CLAUDE.md, no design system, no content (words, sentences, audio). That is what the phases below build.</p>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-00">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 00</div>
+    <div>
+      <h2 class="phase-title">Research <span class="accent">the market.</span></h2>
+      <p class="phase-subtitle">Two layers. Global language apps first, then Finnish-specific. Pull the language learners actually use to describe their frustration.</p>
+    </div>
+  </div>
+
+  <div class="callout complete">
+    <div class="callout-label">Phase Complete</div>
+    <p>All seven Phase 00 steps are done. Research artifacts are committed to <code>/research/</code> on the main branch. The positioning brief is under 600 words and names three verbatim marketing headlines from real learner complaints. Resume at Stop Point 01.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Global language app market report. <strong style="color:var(--forest);">✓ Done</strong></h3>
+      <p>Top 20 apps ranked by category, pricing, user base, strengths, weaknesses. Saved to <code>/research/global-apps.html</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Finland-specific apps and resources report. <strong style="color:var(--forest);">✓ Done</strong></h3>
+      <p>22 Finnish learning resources with YKI skills matrix (R/W/L/S per resource) and an Ecosystem Gaps section. Saved to <code>/research/finland-apps.html</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Learner voice research. <strong style="color:var(--forest);">✓ Done</strong></h3>
+      <p>47 verbatim quotes across 7 frustration themes. Sourced from public blogs, forum discussions, and app review snippets. Saved to <code>/research/reddit-voice.md</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>Competitor review mining. <strong style="color:var(--forest);">✓ Done</strong></h3>
+      <p>Verified verbatim quotes from 1-star and 5-star reviews of Duolingo Finnish, WordDive, Drops, Memrise, and Mondly. Includes 10 marketing copy candidates. Saved to <code>/research/competitor-reviews.md</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">05</div>
+    <div class="step-body">
+      <h3>Pricing matrix. <strong style="color:var(--forest);">✓ Done</strong></h3>
+      <p>2026 EUR pricing for 22 apps, per tier, with AI tutor column. Three candidate price points for PuhuScribe. Saved to <code>/research/pricing-matrix.md</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">06–07</div>
+    <div class="step-body">
+      <h3>Positioning brief. <strong style="color:var(--forest);">✓ Done</strong></h3>
+      <p>One page, under 600 words. Wedge, three verbatim headlines, pricing recommendation, three competitor weaknesses, three user priorities. Saved to <code>/research/positioning-brief.md</code>. Read this before any marketing or copy work.</p>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <section class="stop-point" id="stop-01">
+    <div class="stop-point-num">STOP POINT / 01</div>
+    <h3>Validate the problem <span class="accent">with real learners.</span></h3>
+    <p class="stop-point-deck">You have desk research. You do not yet have a confirmation that the problem you are about to spend three weeks solving is real to the people who would actually use the solution. Find out before you write the brief.</p>
+
+    <h4>The artifact you have</h4>
+    <p>The market research output from Phase 00. A point of view about why Finnish learners are underserved by current apps. Not a product. A hypothesis.</p>
+
+    <h4>Who you talk to</h4>
+    <p>Three adult Finnish learners. Ideally immigrants who have been in Finland 6–18 months and are actively trying to learn Finnish. Find them in the places they already gather: Reddit r/LearnFinnish (post a "looking for 15-minute chat" request), Facebook groups like <em>"Suomea kaikille"</em> and <em>"Learning Finnish in Finland"</em>, the Internations Helsinki community, Helsinki language exchange Meetups. Prioritise people who have already tried at least one app and stopped.</p>
+
+    <h4>How you ask</h4>
+    <p><em>"Hi, I'm building a Finnish learning app specifically for immigrants and I'm trying to understand what actually works and what doesn't — before I build it. Would you have 15 minutes for a quick call this week? No demo, no pitch. I just want to understand your experience."</em></p>
+
+    <h4>What you ask on the call</h4>
+    <ul>
+      <li>How long have you been in Finland? What brought you here?</li>
+      <li>How urgent is learning Finnish for you right now — is there a deadline?</li>
+      <li>What have you tried so far? What did you stick with longest?</li>
+      <li>Where did it break down? What made you stop?</li>
+      <li>Have you noticed a difference between written Finnish and the Finnish people actually speak?</li>
+      <li>What would make you actually practice every day?</li>
+    </ul>
+
+    <h4>What you listen for</h4>
+    <p>Urgency signals — residency deadlines, employer pressure, integration requirements. Specific failure stories with Duolingo or other apps. The kirjakieli/puhekieli frustration (do they name it unprompted?). What a daily practice would realistically look like for their schedule. If two of three learners describe the same failure unprompted, that failure is the problem you are solving.</p>
+
+    <h4>What you do with what you hear</h4>
+    <p>Write one paragraph summarising the pattern. Put it in <code>/research/problem-validation.md</code>. Reference it in the Phase 01 brief. If what you hear contradicts the research, revise before continuing. If it confirms it, continue with stronger ground.</p>
+
+    <div class="stop-point-milestone">Resume only after 3 learner conversations complete</div>
+  </section>
+</div>
+
+<section class="phase container" id="phase-01">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 01</div>
+    <div>
+      <h2 class="phase-title">Pre-flight: <span class="accent">the product brief.</span></h2>
+      <p class="phase-subtitle">Before you ever say "build" to Claude Code, you load the room. Four documents. One hour. Every session starts better for it.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Scaffold the project docs and folder structure.</h3>
+      <p>The repo already has <code>research/</code>, <code>src/</code>, and <code>supabase/</code>. The next move is to add the four orientation documents and the marketing folders.</p>
+      <div class="prompt mode-code">Scaffold the remaining project structure for PuhuScribe v2.
+
+At the repo root, create these empty files if they do not already exist: CLAUDE.md, BRIEF.md, ARCHITECTURE.md, PROGRESS.md.
+
+Create these folders with .gitkeep files: marketing/voice/, marketing/log/, marketing/staged/, marketing/learners/, docs/.
+
+Do not touch anything in src/, supabase/, or research/.
+
+Commit with message "Scaffold project docs and marketing folders" and push to main.</div>
+      <p>Four documents matter from day one. <strong>CLAUDE.md</strong> is read automatically at the start of every Claude Code session. <strong>BRIEF.md</strong> is the product context. <strong>ARCHITECTURE.md</strong> locks the stack so Claude does not re-litigate decisions every session. <strong>PROGRESS.md</strong> is what you append at the end of every session so the next one does not start cold.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Write CLAUDE.md — the agent's working manual.</h3>
+      <p>Claude Code reads this automatically at the start of every session. Keep it under 800 words. Paste this template directly into CLAUDE.md.</p>
+      <div class="prompt template"># CLAUDE.md
+
+## Project
+PuhuScribe v2: a Finnish language learning app for adult immigrants in Finland targeting YKI exam readiness at B1 to B2 level. Freemium. Built solo with Claude Code.
+
+## The person we are building for
+An adult immigrant who arrived in Finland 0–18 months ago. Working in English. Under pressure — residency, employer, or personal urgency — to learn Finnish. Has tried Duolingo, hit its ceiling, stopped. Needs Finnish to stay. Every design and content decision is tested against this person's reality.
+
+## Files to read at session start
+- @BRIEF.md — product brief, competitive wedge
+- @ARCHITECTURE.md — tech stack and component decisions
+- @PROGRESS.md — what shipped last session, what is next
+
+## Behavioral rules
+- Start every session by reading PROGRESS.md.
+- End every session by appending a 3-line entry to PROGRESS.md: what shipped, what is blocked, what is next.
+- Commit at the end of every meaningful task with a clear message.
+- For research, orchestration, or architecture work, use Plan mode.
+- For mechanical changes with clear scope, Code mode is fine.
+- When in doubt about scope or approach, ask before acting.
+
+## Commands
+- `npm run dev` — start the Vite dev server
+- `npm run test` — run Vitest (16 FSRS tests currently passing)
+- `npm run build` — production build
+
+## Conventions
+- All brand values live in CSS custom properties under :root. Never use stock Tailwind utilities for brand colors or typography.
+- API keys never appear in the browser. Cloudflare Worker proxy is mandatory.
+- Sub-agent prompts must have a written definition of done before launch.
+- Puhekieli text is always paired with kirjakieli audio, never standalone TTS.
+
+## Hard rules
+- NEVER commit secrets, API keys, or .env files.
+- NEVER refactor auth, RLS policies, or billing without explicit confirmation.
+- NEVER use the deprecated ts-fsrs library. The custom FSRS-5 engine at src/lib/fsrs/ is the only scheduler.
+- The Kotus frequency lexicon (CC BY-ND-NC) is NOT licensed for commercial use. Use Leipzig CC-BY corpus only.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Write BRIEF.md — two paragraphs, read every session.</h3>
+      <div class="prompt template"># PuhuScribe v2 Brief
+
+Product: PuhuScribe is a Finnish language learning app for adult immigrants in Finland targeting YKI B1 to B2. Freemium. Competitive wedge: dual-register content (kirjakieli and puhekieli taught together from day one), custom FSRS-5 spaced repetition, mnemonic encoding for every word, and an AI layer that explains Finnish grammar honestly rather than hiding it. The learner feels the method work on day one through the Day One Sprint (150–200 words, wave-paced, mnemonic-paired). YKI readiness is the direction, not a day-one feature.
+
+Stack: React 19 with Vite 6. Custom CSS design system with Finnish brand tokens. Supabase for auth and PostgreSQL. Cloudflare Worker proxy in front of Anthropic API. One MCP server with six tools (grammar_explain, conjugate, vocabulary_context, puhekieli_transform, culture_note, error_correct). Azure Cognitive Services for Finnish TTS (fi-FI-NooraNeural). Leipzig CC-BY frequency corpus for word ordering. Tatoeba CC-BY sentence pairs as seed content. Deployed on Vercel (frontend) and Cloudflare Workers (AI/MCP).
+
+Positioning brief lives at /research/positioning-brief.md. Read it before any marketing or copy work.
+
+This week: [insert this week's milestone].</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>Write ARCHITECTURE.md — the technical constitution.</h3>
+      <div class="prompt template"># PuhuScribe v2 Architecture
+
+## Frontend
+React 19 + Vite 6 + TypeScript 5.7. CSS custom properties for all brand tokens. Tailwind utilities allowed only for layout (flex, grid, padding, margin) — never for brand colors or typography. Brand tokens: --lake (#1B4965), --forest (#2D4A2B), --sauna (#B5784A), --terracotta (#C25B3F).
+
+## Backend
+Supabase. Tables: users, words, sentences, cards, review_logs, audio, mnemonics, language_islands, island_sentences, topics. Row-level security on every table. Supabase project hosted on EU region (eu-central-1) for GDPR compliance.
+
+## FSRS-5 Engine
+Custom implementation at src/lib/fsrs/. Do NOT use ts-fsrs or any external FSRS library. 16 passing unit tests. The engine is complete — integrate it, do not replace it.
+
+## AI Layer
+Cloudflare Worker proxy. API key in Worker secrets only — never in browser, never in git. One MCP server with six tools:
+- grammar_explain: why does this form exist? plain explanation for adult learners.
+- conjugate: return all forms of a Finnish verb/noun in a structured table.
+- vocabulary_context: use this word in 3 example sentences at the learner's current CEFR level.
+- puhekieli_transform: convert a kirjakieli sentence to its puhekieli equivalent with notes on the transformations.
+- culture_note: cultural context for a word or phrase.
+- error_correct: the learner produced X — what is wrong and why, in plain English?
+
+## Audio
+Azure Cognitive Services Finnish TTS (fi-FI-NooraNeural for female, fi-FI-HarriNeural for male). Kirjakieli sentences only. Puhekieli displayed as text. Audio files stored in Supabase Storage.
+
+## Content
+Vocabulary ordered by Leipzig CC-BY Finnish frequency corpus. Seed sentences from Tatoeba CC-BY Finnish-English pairs, augmented with Claude-generated content verified against uusikielemme.fi grammar rules. All attribution in /docs/content-attribution.md.
+
+## Deployment
+Vercel (frontend), Cloudflare Workers (AI + MCP), Supabase (data). GitHub Actions for all deploys — no local Wrangler required.</div>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-015">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 01.5</div>
+    <div>
+      <h2 class="phase-title">Content <span class="accent">foundation.</span></h2>
+      <p class="phase-subtitle">You cannot demo a language app with empty decks. This phase builds the seed content before the UI exists — so the first test session is real, not staged.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Understand the content sources and their licenses.</h3>
+      <p>Three sources, all verified commercial-use friendly:</p>
+      <ul>
+        <li><strong>Leipzig Corpora Collection Finnish (CC BY 4.0)</strong> — word frequency ranking. Tells us which Finnish words appear most often in real text. Determines the order in which words surface in the app. Download from the CLARIN ERIC resource portal.</li>
+        <li><strong>Tatoeba Finnish-English sentence pairs (CC BY 2.0 FR)</strong> — real bilingual sentence pairs, community-contributed. Used as seed sentences, adapted and augmented. Attribution: "Some sentences sourced from the Tatoeba Project (tatoeba.org), CC BY 2.0 FR."</li>
+        <li><strong>Claude-generated content</strong> — vocabulary entries, dual-register sentence pairs, mnemonics, cultural notes. Generated by Claude and verified against uusikielemme.fi grammar documentation and Wiktionary Finnish entries.</li>
+      </ul>
+      <div class="callout warn">
+        <div class="callout-label">License trap to avoid</div>
+        <p>The Kotus "Frequency Lexicon of Finnish Newspaper Language" (the well-known 9,996-lemma list) is CC BY-ND-NC — NonCommercial and NoDerivatives. It cannot be used in a paid app. Use the Leipzig corpus instead.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Generate the A1–A2 vocabulary seed.</h3>
+      <div class="prompt mode-plan">Read the migration files at supabase/migrations/ to understand the exact schema for the words, sentences, topics, and audio tables.
+
+Content seeding plan — four tasks:
+
+Task 1 — Vocabulary seed (500 A1–A2 words):
+Use frequency ordering from the Leipzig Corpora Collection Finnish corpus (CC BY 4.0 — cite in a comment at the top of the SQL file). Generate 500 vocabulary entries. Each entry: base_form (lemma), translation_en (accurate English), frequency_rank (integer, lower = more common), level (A1 or A2), part_of_speech. Prioritise the most frequent concrete nouns, common verbs, and high-utility adjectives. Verify each translation for accuracy. Output as supabase/seeds/01_vocabulary.sql.
+
+Task 2 — Sentence pairs (25 topics × 20 pairs):
+For each of the 25 topics in the topics table, generate 20 sentence pairs. Each pair: kirjakieli (standard Finnish), puhekieli (colloquial spoken equivalent), translation_en (English), level (A1 or A2), topic_id. Apply documented puhekieli transformation rules consistently: minä→mä, sinä→sä, hän→se (informal), final-vowel reduction (-ssa/-ssä→-s in rapid speech), conditional shortening, verb contraction (menee→menee/menee→mee). Output as supabase/seeds/02_sentences.sql.
+
+Task 3 — Puhekieli review file:
+For every puhekieli sentence generated in Task 2, note which transformation rules were applied. Flag any sentence where the colloquial form is regionally variable or uncertain. Output as supabase/seeds/PUHEKIELI_REVIEW.md for human review before deployment.
+
+Task 4 — Day One Sprint vocabulary (150–200 words):
+Generate the Sprint set: high-frequency concrete nouns (talo, auto, ihminen, ruoka, vesi, työ, koira, kauppa, puhelin, ovi, ikkuna, kaupunki, perhe, ystävä, aika) plus everyday adjectives (iso, pieni, hyvä, huono, kaunis, kallis, halvat, nopea, hidas, vanha, nuori, uusi, kylmä, lämmin, väsynyt). Each word needs a sound-bridge mnemonic in English — phonetic similarity or vivid visual association. Prioritise words with strong mnemonic potential. Each entry must have: base_form, translation_en, mnemonic_text (English, max 20 words), frequency_rank. Output as supabase/seeds/03_sprint_vocabulary.sql.
+
+Show me the full plan before writing any SQL.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Review the puhekieli output before committing.</h3>
+      <p>Before running the seed migrations, open <code>supabase/seeds/PUHEKIELI_REVIEW.md</code>. Check the flagged sentences against uusikielemme.fi. The puhekieli transformation is the product's core differentiator — any sentence where the colloquial form is wrong or awkward will erode trust immediately when a real Finnish speaker reviews the app.</p>
+      <div class="callout note">
+        <div class="callout-label">Finnish TTS note on puhekieli</div>
+        <p>The Azure Finnish TTS voice is trained on standard written Finnish. Feeding it puhekieli text ("mä meen kauppaan") will produce slightly unnatural prosody. The architecture handles this correctly: kirjakieli audio plays, puhekieli text is displayed. Do not attempt to TTS the puhekieli form.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>Write the content attribution file.</h3>
+      <div class="prompt mode-code">Create /docs/content-attribution.md. It must contain:
+
+(1) A one-paragraph statement that vocabulary frequency ordering is derived from the Leipzig Corpora Collection Finnish corpus, licensed CC BY 4.0, with a link to the source.
+
+(2) A one-paragraph statement that some seed sentences are adapted from the Tatoeba Project (tatoeba.org), licensed CC BY 2.0 FR, with proper attribution.
+
+(3) A one-paragraph statement that remaining content is Claude-generated and verified against uusikielemme.fi grammar documentation and Wiktionary Finnish entries.
+
+(4) A note that the Kotus CC BY-ND-NC frequency lexicon was reviewed but is excluded from this codebase due to its NonCommercial license term.
+
+This file is referenced in the app's privacy policy and in the About screen. Commit alongside the seed files.</div>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-02">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 02</div>
+    <div>
+      <h2 class="phase-title">Design <span class="accent">before</span> code.</h2>
+      <p class="phase-subtitle">The single highest-leverage move in the entire workflow. The design system you lock here determines what every screen inherits.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Open Claude Design. Lock the brand first.</h3>
+      <p>The cure for a generic-looking app is not better prompts asking for prettier components. The cure is a brand anchor that Claude Code inherits when the design hands off. For PuhuScribe the anchor is <strong>Finnish design heritage</strong>: Marimekko, Aalto, Iittala, Artek. Birch white, lake blue, sauna wood, deep forest. Typography with personality.</p>
+      <div class="prompt design">Design the PuhuScribe v2 brand system. Aesthetic anchor: Finnish design heritage (Marimekko, Aalto, Iittala). Palette: birch white #F4F0E6 base, lake blue #1B4965 primary, forest green #2D4A2B secondary, sauna wood #B5784A accent, terracotta #C25B3F flag. Typography: Bricolage Grotesque (display headings) paired with Manrope (body). The app should feel Finnish before a single word is read — specificity is the brand. Generate a full brand sheet: logo treatment, color tokens, type scale, button states, card patterns, iconography style. The cards will display both kirjakieli (standard Finnish) and puhekieli (colloquial Finnish) — design a dual-register card component that makes the register difference visually clear without being cluttered.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Design the five core screens.</h3>
+      <p>Do not design every screen. Design the five that carry the product. Everything else inherits from these.</p>
+      <ul>
+        <li><strong>Onboarding.</strong> First moment of contact. Establishes urgency context (residency, YKI) and collects the learner's situation. Should feel like the app already understands them.</li>
+        <li><strong>Day One Sprint.</strong> The activation event. A wave of mnemonic word cards, recognition quizzes, audio. The screen that proves the method in the first 10 minutes.</li>
+        <li><strong>Daily session.</strong> The core loop after Day One. FSRS review queue, kirjakieli/puhekieli dual card, four grade buttons.</li>
+        <li><strong>Language Island (speaking mode).</strong> A topic, a sentence in both registers, a shadowing exercise. This screen embodies the product's core differentiator.</li>
+        <li><strong>Progress dashboard.</strong> Streak, CEFR position, days until estimated B1 readiness at current pace. Honest and motivating, not gamified.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Pressure-test the design against the persona.</h3>
+      <p>Open each screen and ask: does this speak to someone who moved to Finland six months ago and needs Finnish to stay? Does the Day One Sprint screen communicate "you will feel this work today"? Does the Language Island screen make the kirjakieli/puhekieli difference immediately obvious?</p>
+      <div class="callout note">
+        <div class="callout-label">Heuristic</div>
+        <p>If your design could belong to Duolingo or Drops without changes, redesign it. Specificity is the brand. A learner who opens the app should feel, before reading a word, that this was made for their exact situation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <section class="stop-point" id="stop-02">
+    <div class="stop-point-num">STOP POINT / 02</div>
+    <h3>Test the value proposition <span class="accent">before you write a line of code.</span></h3>
+    <p class="stop-point-deck">You have screens. You do not yet have evidence that the value proposition lands when a learner sees it for the first time. Find out now, because design changes are free and code changes are not.</p>
+
+    <h4>The artifact you have</h4>
+    <p>The five core screens from Phase 02. Static or clickable. The Day One Sprint visualised. The kirjakieli/puhekieli dual card visible as a concept.</p>
+
+    <h4>Who you talk to</h4>
+    <p>Two or three adult Finnish learners — ideally different from the three in Stop Point 01. Find them the same way: Reddit, Facebook groups, language exchange Meetups. The important thing is that they have not seen the designs before.</p>
+
+    <h4>How you ask</h4>
+    <p><em>"I have something to show you. It is not built yet — just the screens. Could I take 20 minutes to walk you through it and get your honest reaction before I spend three weeks building it?"</em></p>
+
+    <h4>What you ask while showing the designs</h4>
+    <ul>
+      <li>Tell me what you see. What is this app for?</li>
+      <li>Who is it for? (Do they describe themselves?)</li>
+      <li>If you saw this in the App Store, what would you assume it does?</li>
+      <li>What would make you download this?</li>
+      <li>When you see "kirjakieli" and "puhekieli" on the card — does that mean something to you?</li>
+      <li>What is confusing? What is missing?</li>
+    </ul>
+
+    <h4>What you listen for</h4>
+    <p>Whether the kirjakieli/puhekieli distinction lands as a real problem they recognise. Whether they describe the Day One Sprint as motivating or overwhelming. Whether they describe the app back to you in roughly the way you intended — if they cannot, the value proposition is not visible at the design level. Adjust before Phase 03.</p>
+
+    <h4>What you do with what you hear</h4>
+    <p>Add a section to <code>/research/positioning-brief.md</code> called <em>"What learners saw and did not see."</em> Adjust design only where two of three said the same thing. Then move into Phase 03 with sharper screens.</p>
+
+    <div class="stop-point-milestone">Resume only after 2–3 learner walk-throughs complete</div>
+  </section>
+</div>
+
+<section class="phase container" id="phase-03">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 03</div>
+    <div>
+      <h2 class="phase-title">The handoff: <span class="accent">design to code.</span></h2>
+      <p class="phase-subtitle">Where most teams lose two weeks. You lose two hours.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Use the Claude Design handoff button.</h3>
+      <p>Inside Claude Design, when the screens are locked, there is a button to hand the design off to Claude Code. Claude Code receives the layout, component structure, spacing tokens, color palette, and type scale — and produces front-end code that matches the design as built, not as approximated. This is what kills the generic-Claude-app look in production.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Verify the design tokens are CSS custom properties.</h3>
+      <p>Open the generated code. If you see <code>bg-slate-100</code> and <code>text-zinc-700</code> everywhere, the brand has leaked into stock Tailwind. Tell Claude Code:</p>
+      <div class="prompt mode-code">Refactor the generated code so every brand value lives in CSS custom properties under :root, matching the tokens in ARCHITECTURE.md. Lake, forest, sauna, terracotta, birch are :root tokens. No raw Tailwind color utilities for brand colors or typography. Tailwind utilities allowed only for layout (flex, grid, padding, margin).</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Commit the design system before writing a feature.</h3>
+      <p>Get the design system, the component library, and the routing scaffold committed to git in a clean commit before any feature code is written. If the foundation is shaky, every feature inherits the shake.</p>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-04">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 04</div>
+    <div>
+      <h2 class="phase-title">Parallel build <span class="accent">with sub-agents.</span></h2>
+      <p class="phase-subtitle">One main orchestrator. Four sub-agents. Two are already partially done. A week of solo work in a day.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Understand what is already built before dispatching agents.</h3>
+      <p>Sub-agents A and D are not starting from zero. Brief them on what exists or they will try to rebuild it.</p>
+      <div class="agents">
+        <div class="agent done">
+          <div class="agent-label">SUB-AGENT D</div>
+          <div class="agent-name">FSRS Engine</div>
+          <div class="agent-task">Complete. Custom FSRS-5 implementation at src/lib/fsrs/. 16 passing unit tests. Do not replace or modify the algorithm. Integration task only: expose a /schedule endpoint through the Worker API so the frontend review screen can call fsrs.schedule(card, rating) without importing the engine directly.</div>
+        </div>
+        <div class="agent done">
+          <div class="agent-label">SUB-AGENT A</div>
+          <div class="agent-name">Backend</div>
+          <div class="agent-task">Migration files exist at supabase/migrations/. Task: create the Supabase project (if not done), apply migrations, configure Auth (email + password for v1), verify RLS policies, create a Storage bucket named "audio" for TTS files. Done when auth produces a logged-in session in the frontend.</div>
+        </div>
+        <div class="agent">
+          <div class="agent-label">SUB-AGENT B</div>
+          <div class="agent-name">AI Layer</div>
+          <div class="agent-task">Build a Cloudflare Worker as the Anthropic API proxy. Within the same Worker, implement a single MCP server with six tools: grammar_explain, conjugate, vocabulary_context, puhekieli_transform, culture_note, error_correct. API key in Worker secrets only. Also create .github/workflows/deploy-workers.yml using cloudflare/wrangler-action. Done when grammar_explain returns a real response and the API key does not appear in the browser network tab.</div>
+        </div>
+        <div class="agent">
+          <div class="agent-label">SUB-AGENT C</div>
+          <div class="agent-name">Frontend</div>
+          <div class="agent-task">Implement the five core screens from the Claude Design handoff. Wire to Supabase client and Worker proxy. Honour all CSS custom property tokens. Done when five screens render, navigation works, design tokens are honoured, and a manual smoke test passes on mobile and desktop.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Dispatch all four sub-agents.</h3>
+      <div class="prompt mode-plan">Read CLAUDE.md, BRIEF.md, and ARCHITECTURE.md before proceeding.
+
+Spin up four sub-agents. Sub-agents A and D have existing work to build on — brief them on it explicitly before they start.
+
+Sub-agent A (Backend):
+Migration files exist at supabase/migrations/. Do not regenerate them. Task: (1) Verify the Supabase project URL and anon key are in .env (create .env.example if missing). (2) Apply the two existing migrations in order. (3) Configure Supabase Auth for email + password sign-in. (4) Create a Supabase Storage bucket named "audio" for TTS audio files, public read access. (5) Write a basic RLS test that confirms users can only read their own cards. Done when auth produces a logged-in session and the migrations have run cleanly.
+
+Sub-agent B (AI Layer):
+Build a Cloudflare Worker at workers/api-proxy/. It does two things: (1) proxies POST /chat to the Anthropic API with the API key from Worker secrets; (2) exposes a MCP server at POST /mcp with six tools: grammar_explain, conjugate, vocabulary_context, puhekieli_transform, culture_note, error_correct. Each tool accepts a JSON body with a "context" field (Finnish-language text) and returns structured JSON. API key in Worker secrets only — never in source, never in browser. Also write .github/workflows/deploy-workers.yml using cloudflare/wrangler-action reading CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID from GitHub secrets. Done when grammar_explain returns a real Anthropic response and the API key does not appear in the browser network tab.
+
+Sub-agent C (Frontend):
+Implement the five core screens from the Claude Design handoff. Wire the Supabase client (src/lib/supabase/client.ts already exists) and the Worker proxy (from sub-agent B). Use only CSS custom property tokens — no raw Tailwind color utilities. The Day One Sprint screen must display mnemonic cards with both Finnish word and the sound-bridge mnemonic visible. The daily session screen must show the kirjakieli/puhekieli dual card with audio play button for kirjakieli. Done when five screens render, navigation works, design tokens are honoured, and a manual smoke test passes on mobile and desktop.
+
+Sub-agent D (FSRS Integration):
+The engine is complete at src/lib/fsrs/. Do not modify algorithm.ts, scheduler.ts, or the tests. Task: wire the engine to the frontend review screen. The review screen should call fsrs.schedule(card, rating, now) when the learner grades a card and immediately update the card's due date, stability, and state in Supabase. Also wire the daily session orchestrator: at session start, query cards WHERE state = 'new' LIMIT daily_new_cards, then cards WHERE due <= now ORDER BY due. Done when marking a card Again produces a due date ~1 minute from now and marking Good on a Review-state card produces a due date multiple days out.
+
+Report back when all four sub-agents are ready to stitch.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>The main agent stitches.</h3>
+      <p>When all four sub-agents report back, the main agent wires them together: the FSRS engine result writes to the Supabase cards table via sub-agent D's integration; the frontend review screen (sub-agent C) triggers that write; the grammar explanation (sub-agent B's MCP) renders in the session screen when a learner taps "Why?"; sub-agent A's auth gate wraps the whole app.</p>
+      <div class="callout note">
+        <div class="callout-label">Cloudflare deployment from the cloud sandbox</div>
+        <p>Because you are working in Remote environment, the cloud sandbox cannot use a local Wrangler install. Sub-agent B creates the GitHub Actions workflow instead. The build commits, GitHub Actions deploys. You never run Wrangler locally. Set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as GitHub repository secrets before the first push to main.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>One task per session after the initial burst.</h3>
+      <p>After the parallel build, return to sequential discipline. Each subsequent Claude Code session takes one clear task. Mixing three big features in one prompt produces three mediocre features.</p>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="pull">
+    <blockquote>You are not doing the work. You are managing the work. Your employees are Claude Code, Claude Design, and Claude Dispatch.</blockquote>
+  </div>
+</div>
+
+<div class="container">
+  <section class="stop-point milestone" id="stop-03">
+    <div class="stop-point-num">Stop point / 03 — V1 Milestone</div>
+    <h3>The app is usable. <span class="accent">Now put it in a learner's hands.</span></h3>
+    <p class="stop-point-deck">Five core screens connected to backend. FSRS producing next-due dates. The Day One Sprint loop working end-to-end. You can hand someone a phone and they can study Finnish. Not feature-complete. Functional enough to test the core thesis. Everything after this in the manual gets re-prioritised based on what real learners say after using the real app.</p>
+
+    <h4>The artifact you have</h4>
+    <p>PuhuScribe v1 running on Vercel. A real user can sign up, complete the Day One Sprint, see their first FSRS review session the next day, and return for day two. Mobile-tested. Not perfect everywhere. Working everywhere that counts.</p>
+
+    <h4>Who you talk to</h4>
+    <p>Five to ten adult Finnish learners. Ideally drawn from the waitlist you built in Phase 07, or from the Reddit and Facebook communities you have been posting in. Mix people at different urgency levels: someone with a YKI deadline in 3 months, someone who has just moved to Helsinki and is starting from zero, someone who has been trying for a year and is stuck at A1. The Stop Point 01 and Stop Point 02 learners should be among them — they are your warm base and will give the sharpest before/after feedback.</p>
+
+    <h4>How you invite them</h4>
+    <p><em>"I built it. I need real Finnish learners to try it before I open it up. I'll give you six months of free access and I'll personally onboard you. All I ask is 30 minutes of your time and honest feedback — what works, what breaks, what is missing."</em></p>
+
+    <h4>How the session runs</h4>
+    <ul>
+      <li>One minute of context. Then stop talking.</li>
+      <li>Let them use the app. Do not narrate. Do not defend anything.</li>
+      <li>Watch where they hesitate. Watch where they smile. Watch where they stop.</li>
+      <li>When they pause: <em>"What were you expecting to happen there?"</em></li>
+      <li>At the end, three questions: Would you use this tomorrow? At what price? What is the one thing that would make you not recommend it?</li>
+    </ul>
+
+    <h4>What you listen for</h4>
+    <p>Whether the Day One Sprint produces a genuine "I actually learned something" reaction — or whether 150 words in one day felt overwhelming. Whether the dual-register card (kirjakieli + puhekieli) reads as useful or confusing. The price number they say first when you ask. Whether they spontaneously imagine continuing tomorrow. That last one is the strongest signal.</p>
+
+    <h4>What you do after each batch of three sessions</h4>
+    <p>Synthesise. Look for patterns across three. Update <code>/research/v1-discovery.md</code>. Act on patterns, not on individual feedback. If three of three find the Day One Sprint volume too high, reduce to 100 words. If three of three skip the puhekieli text, rethink the card design. If three of three ask about pronunciation, that is your next feature.</p>
+
+    <div class="stop-point-milestone">Resume only after 5–10 learner sessions complete and synthesised</div>
+  </section>
+</div>
+
+<section class="phase container" id="phase-05">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 05</div>
+    <div>
+      <h2 class="phase-title">Dispatch: <span class="accent">build from your phone.</span></h2>
+      <p class="phase-subtitle">The remote employee that never sleeps. Or eats. Or asks for vacation.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Connect Dispatch to your desktop.</h3>
+      <p>Claude Dispatch links your phone to your desktop machine. From your phone you send a task. Your desktop executes it through your actual files, apps, and dev tools. No work pauses because you walked away from your laptop.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Use Dispatch the moment Claude Code finishes a task.</h3>
+      <p>Claude Code finishes a step. You are not at your machine. Without Dispatch, the agent sits idle until you come back. With Dispatch, you queue the next task from wherever you are.</p>
+      <div class="prompt dispatch">Claude Code just finished the frontend screen implementation. Pull the latest, run npm run dev, take a screenshot of the Day One Sprint screen at 390px wide (mobile), save it to ~/Desktop/sprint-mobile.png, then start the next task: wire the Azure TTS call so the audio play button on each vocabulary card fetches and plays the kirjakieli pronunciation. Ping me when the first word plays audio.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Use Dispatch for the long-running, low-attention work.</h3>
+      <p>Test runs. Deploys. Content generation. The kind of work that needs to happen but does not need your hands on the keyboard. You are at the gym. You are at Oodi. You are walking home.</p>
+      <div class="callout">
+        <div class="callout-label">Mental model</div>
+        <p>Dispatch is not your second brain. It is your second pair of hands. The thinking still has to come from you. But the typing does not.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-06">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 06</div>
+    <div>
+      <h2 class="phase-title">Marketing <span class="accent">while you build.</span></h2>
+      <p class="phase-subtitle">You start posting the day you start coding. Not the day you ship.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Build a voice knowledge base in the project.</h3>
+      <p>The <code>/marketing/voice/</code> folder was created in Phase 01. Fill it with:</p>
+      <ul>
+        <li>Your last 20 best-performing Substack posts</li>
+        <li>Your top 10 LinkedIn posts</li>
+        <li>A one-page voice doc: tone, taboos, signature phrases, sentence-length range</li>
+        <li><code>/research/positioning-brief.md</code> — already exists</li>
+        <li><code>/research/reddit-voice.md</code> — already exists. The marketing copy seed.</li>
+      </ul>
+      <p>Claude Code reads this folder before drafting any content. The output is in your voice, with real learner language, not Claude's house style.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Feed Claude Code your build log every day.</h3>
+      <p>End of session, record a 2-minute voice memo. What you built today. What broke. What you learned about Finnish learners. Drop the transcription into <code>/marketing/log/YYYY-MM-DD.md</code>.</p>
+      <div class="prompt mode-code">Read /marketing/voice/. Read /marketing/log/[today's date].md. Draft: (1) three X posts in my voice, (2) one LinkedIn post with a soft CTA to the PuhuScribe waitlist, (3) one short-form script for an Instagram reel or YouTube short. The angle this week is the kirjakieli vs puhekieli gap — why Finnish learners can study for a year and still not understand real conversations. Use one verbatim learner complaint from /research/reddit-voice.md. Do not use the word "AI" in any post.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Push drafts through Claude Design for visuals.</h3>
+      <div class="prompt design">Generate three visual options for a LinkedIn post about why Finnish learners plateau at A1. Use the PuhuScribe brand kit. Birch background. Lake blue type. One sauna-wood accent. Big sans-serif headline pulled from the post. Square format, 1080×1080.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>Stage Sunday-night content for the week.</h3>
+      <div class="prompt dispatch">Open /marketing/log/, read this past week's session logs, draft three LinkedIn posts and three X posts for the coming week tied to PuhuScribe build milestones. Generate two thumbnail options for Tuesday's video. Stage everything in /marketing/staged/[week folder]/ for me to review Monday morning. Do not auto-post.</div>
+      <p>Monday morning you open the laptop, review for 8 minutes, approve. The content engine ran while you were on the couch.</p>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-07">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 07</div>
+    <div>
+      <h2 class="phase-title">Growing <span class="accent">the learner base.</span></h2>
+      <p class="phase-subtitle">Direct to the person we built this for. Adult immigrants learning Finnish, in the places they already talk.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Write the learner ICP in plain language.</h3>
+      <p>Claude Code cannot draft acquisition copy without knowing exactly who it is writing to. Create <code>/marketing/learners/icp.md</code> first.</p>
+      <div class="prompt template"># PuhuScribe Learner ICP
+
+## The person we are building for
+
+Adult immigrant in Finland, arrived 0–18 months ago. Most likely context: employed (tech, healthcare, Wolt, construction, retail), working in English, under pressure from residency timeline or employer to reach functional Finnish literacy. Residency clock is either running or a background worry. Age 25–45. Educated. Has likely tried Duolingo, found the ceiling within two weeks, and stopped using it. Core emotional state: frustrated but motivated. Not "I want to learn Finnish for fun." "I need Finnish to stay in Finland."
+
+## Where to find them
+
+Reddit: r/LearnFinnish, r/Finland (filter for language threads), r/Helsinki
+Facebook: "Suomea kaikille", "Learning Finnish in Finland", various expat Helsinki groups
+Community: Internations Helsinki, Helsinki Expats, language exchange Meetups at Oodi and Lasipalatsi
+Offline: integration services (TE-toimisto, KELA offices), international offices at large employers
+
+## What they respond to
+
+Not: "AI-powered spaced repetition with FSRS-5 algorithm."
+Yes: "Teaches you how Finns actually speak, not just textbook Finnish."
+Yes: "The fastest path to conversational Finnish without drowning in grammar."
+Yes: "Every sentence in both written and spoken Finnish — because in Finland, they are not the same language."
+
+## What we offer at launch
+
+Free tier: Day One Sprint + first 14 days of daily review. No payment required. Proof-of-concept, no commitment.
+Paid: €7.90/month (annual), €13.90/month (monthly).
+One-time: €99 YKI exam bundle (exam-specific content, B1 readiness score, gap list).
+
+## First milestone
+
+50 free users who have completed the Day One Sprint. Of these, 10 who have completed 14+ days of daily review. Of these, 3 who provide a written review or testimonial. These 3 reviews are worth more than €1,000 in paid acquisition.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Build the waitlist landing page before the app launches.</h3>
+      <p>A waiting list has two jobs: it collects email addresses, and it asks one question that becomes your first user research data. The question is not "what do you want?" It is "what is your biggest challenge with Finnish right now?"</p>
+      <div class="prompt mode-code">Read /marketing/voice/, /research/positioning-brief.md, /marketing/learners/icp.md.
+
+Build a single-page waitlist landing page at /public/waitlist.html (no framework, self-contained HTML + CSS). The page must:
+
+(1) Open with a headline using one of the three verbatim marketing headlines from the positioning brief.
+(2) Have a 2-sentence sub-headline that speaks directly to the residency/YKI urgency angle.
+(3) Show a 3-item list of what makes PuhuScribe different from Duolingo (dual-register content, honest grammar, day-one retention).
+(4) Include a waitlist sign-up form: email field, one select field ("What is your biggest challenge with Finnish right now?" with options: grammar is overwhelming / can't understand real conversations / no time / tried apps and gave up / other), and a CTA button.
+(5) Use PuhuScribe brand tokens (CSS custom properties matching ARCHITECTURE.md).
+(6) Include one verbatim learner quote from /research/competitor-reviews.md as social proof.
+
+The form action can be a placeholder — we will wire it to a Supabase function or a simple form service in the next step.
+
+Commit and push.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Draft learner acquisition content.</h3>
+      <div class="prompt mode-code">Read /marketing/voice/, /research/positioning-brief.md, /research/competitor-reviews.md, /marketing/learners/icp.md.
+
+Draft a direct-to-learner acquisition package. Targets: adult immigrants in Finland using English as their bridge language.
+
+Produce six files in /marketing/learners/:
+
+(1) reddit-posts.md — Three Reddit post templates for r/LearnFinnish: one introducing PuhuScribe, one sharing a "what I learned building this" insight about the kirjakieli/puhekieli gap, one asking for feedback on the Day One Sprint concept. Tone: fellow learner and builder, not marketer. Each post includes a soft link to the waitlist, never a hard sell.
+
+(2) facebook-posts.md — Two Facebook group post templates for "Suomea kaikille" and "Learning Finnish in Finland." Warmer tone than Reddit, slightly more personal.
+
+(3) app-store-copy.md — App Store description (4,000 characters max) and short description (30 characters max). Google Play short description (80 characters max) and long description (4,000 characters max). Keyword-optimised for: learn Finnish, YKI exam, Finnish for immigrants, puhekieli, spoken Finnish. Pull the angle from the positioning brief.
+
+(4) onboarding-emails.md — Three onboarding emails: (a) welcome + Day One Sprint instructions sent immediately after signup, (b) day 2 nudge referencing yesterday's Sprint words, (c) day 7 check-in with progress summary and first paid tier offer. Tone: warm, specific, like a knowledgeable friend.
+
+(5) social-proof-request.md — A short message to send to learners after 14 days asking for a one-sentence review. Explains what the review will be used for.
+
+(6) index.md — one-line summary of each file above.
+
+Output each as a separate file. Commit with message "Add learner acquisition content".</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-body">
+      <h3>Refresh acquisition content weekly with Dispatch.</h3>
+      <div class="prompt dispatch">Review /marketing/learners/. Draft two new Reddit comments I can post this week as replies to threads about Finnish learning frustrations in r/LearnFinnish and r/Finland. Each comment should add genuine value to the conversation first, then mention PuhuScribe only if it is directly relevant. Also draft one follow-up email for learners who signed up to the waitlist more than 7 days ago but have not yet tried the app. Stage everything for my Monday review. Do not auto-post.</div>
+    </div>
+  </div>
+</section>
+
+<section class="phase container" id="phase-08">
+  <div class="phase-header">
+    <div class="phase-num">PHASE / 08</div>
+    <div>
+      <h2 class="phase-title">GDPR <span class="accent">and compliance.</span></h2>
+      <p class="phase-subtitle">Non-optional for a Finnish-market app handling EU resident data. Four documents. One afternoon. Done before you invite real users.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Understand your data exposure.</h3>
+      <p>PuhuScribe collects:</p>
+      <ul>
+        <li><strong>Email and display name</strong> — via Supabase Auth</li>
+        <li><strong>Learning behavior data</strong> — card review history, session logs, FSRS state (review_logs and cards tables)</li>
+        <li><strong>User-generated Finnish text</strong> — passed to the Anthropic API when the learner requests grammar help or error correction</li>
+        <li><strong>Device and session data</strong> — implicit from Supabase and Vercel analytics</li>
+      </ul>
+      <p>Supabase is hosted on <code>eu-central-1</code> (Frankfurt). This keeps data in the EU by default. Anthropic's API is US-based — Finnish text sent for AI processing crosses to the US. This requires either Standard Contractual Clauses (SCCs) with Anthropic or clear user disclosure.</p>
+      <div class="callout warn">
+        <div class="callout-label">Immigrant data sensitivity</div>
+        <p>Users may include asylum seekers, people with precarious residency status, and individuals whose language learning is tied to legal processes. This is not a special category under GDPR, but it is reason to be especially conservative about data retention and sharing. Collect only what you need. Delete on request, immediately.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Generate the four compliance documents.</h3>
+      <div class="prompt mode-code">Read supabase/migrations/ to understand exactly what data is stored and in which tables.
+
+Draft four compliance documents:
+
+(1) /docs/privacy-policy.md — GDPR-compliant privacy policy in plain English. Cover: what we collect, why, legal basis (legitimate interest for analytics, contract for auth and learning data), how long we retain it (delete review_logs older than 2 years, delete all data within 30 days of account deletion), who we share it with (Supabase — EU-hosted, Anthropic — US-based with SCCs, Vercel — CDN only), user rights (access, correction, deletion, portability — email address to contact), how to exercise rights, link to this file from the app footer and sign-up screen. Add a TODO note: Finnish-language version required before public launch.
+
+(2) /docs/data-deletion.md — Technical spec for account deletion. Map to the actual schema: (a) delete from auth.users — Supabase cascades to users table, which cascades to cards and review_logs. (b) Delete from mnemonics where user_id = deleted_user. (c) Delete audio files from Storage bucket where the user uploaded any. (d) Send a confirmation email within 24 hours. Spec what the delete-account UI screen must do.
+
+(3) /docs/anthropic-data-note.md — One clear paragraph for users explaining that Finnish text they produce in the app (for grammar help, error correction, vocabulary context) is processed by Anthropic in the US under their Data Processing Agreement and Standard Contractual Clauses. No personally identifying information (email, name, device ID) is sent to Anthropic — only the linguistic content. Link to Anthropic's privacy policy.
+
+(4) /docs/consent-copy.md — Exact in-app text for: (a) sign-up consent checkbox (under 30 words), (b) the one-sentence data notice before the first AI-assisted interaction (under 20 words), (c) the delete-account confirmation screen (under 40 words).
+
+Commit all four files to /docs/ with message "Add GDPR compliance documents".</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Wire the delete-account flow before launch.</h3>
+      <p>Every GDPR-compliant app must implement the right to erasure before collecting real user data. This is not an optional later feature. The data deletion spec from step 02 becomes a real endpoint.</p>
+      <div class="prompt mode-code">Read /docs/data-deletion.md. Implement the account deletion flow:
+
+(1) Add a DELETE /api/account endpoint (Supabase Edge Function) that: deletes the user from auth.users (which cascades to all user-owned tables via RLS foreign keys), deletes any audio files the user uploaded from Storage, returns 200 on success.
+
+(2) Add a "Delete my account" page in the frontend settings screen with a confirmation modal. The modal must show the exact consent copy from /docs/consent-copy.md. On confirm, call the delete endpoint and redirect to the landing page.
+
+(3) Write a test that creates a user, populates cards and review_logs, calls the delete endpoint, and confirms all rows are gone.
+
+Commit with message "Implement GDPR account deletion flow".</div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="checklist" id="checklist">
+    <h2>The build checklist</h2>
+    <div class="sub">Each item is a real milestone. Tick as you go. The stop points are non-negotiable.</div>
+    <ul>
+      <li class="done">Research folder: all five Phase 00 reports complete</li>
+      <li class="done">FSRS-5 engine: 16 passing unit tests — committed to main</li>
+      <li class="done">Supabase migration files committed (schema + 25 YKI topics)</li>
+      <li><strong style="color:#C25B3F;">STOP 01 — 3 learner problem-validation conversations complete</strong></li>
+      <li>problem-validation.md written, pattern identified</li>
+      <li>Project docs scaffolded: CLAUDE.md, BRIEF.md, ARCHITECTURE.md, PROGRESS.md</li>
+      <li>Marketing folders created: voice/, log/, staged/, learners/</li>
+      <li>Voice knowledge base seeded in marketing/voice/</li>
+      <li>Content seeds generated and reviewed: vocabulary, sentences, Sprint words</li>
+      <li>PUHEKIELI_REVIEW.md reviewed and flagged sentences corrected</li>
+      <li>Content attribution file written at docs/content-attribution.md</li>
+      <li>Supabase project created, EU region, migrations applied</li>
+      <li>Claude Design opened, Finnish brand system locked</li>
+      <li>Five core screens designed (onboarding, Day One Sprint, daily session, Language Island, dashboard)</li>
+      <li><strong style="color:#C25B3F;">STOP 02 — 2–3 learner design walk-throughs complete</strong></li>
+      <li>Design handoff to Claude Code completed</li>
+      <li>Design tokens committed as CSS custom properties</li>
+      <li>Cloudflare Worker proxy live, API key server-side only</li>
+      <li>MCP server live with 6 tools, grammar_explain returning real response</li>
+      <li>Five core screens connected to Supabase and Worker</li>
+      <li>Day One Sprint loop working: 150–200 words, wave pacing, mnemonics, audio</li>
+      <li>FSRS integration: marking Again → 1 min due; marking Good (Review) → multiple days</li>
+      <li>Azure TTS wired: kirjakieli audio plays on every word and sentence card</li>
+      <li>Waitlist landing page live</li>
+      <li>Learner acquisition content staged in marketing/learners/</li>
+      <li>First three build-in-public posts published</li>
+      <li><strong style="color:#C25B3F;">STOP 03 / V1 — 5–10 learner usage sessions complete and synthesised</strong></li>
+      <li>GDPR documents drafted: privacy-policy.md, data-deletion.md, consent-copy.md</li>
+      <li>Account deletion flow implemented and tested</li>
+      <li>App Store and Google Play listings drafted</li>
+      <li>Dispatch tested with one queued task running while away from desk</li>
+    </ul>
+  </div>
+</div>
+
+<footer class="container">
+  <div class="footer-grid">
+    <div class="footer-mark">
+      <span class="accent">Trust the system.</span><br>
+      Ship the work.
+    </div>
+    <div class="footer-meta">
+      The Build Manual<br>
+      Vol. 01 / Issue 04<br>
+      Helsinki, 2026<br>
+      by Fumnanya
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="to-top" id="toTop" aria-label="Back to top">↑</a>
+
+<script>
+  (function() {
+    var btn = document.getElementById('toTop');
+    if (!btn) return;
+    function onScroll() {
+      if (window.scrollY > 600) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>
+
+</body>
+</html>
