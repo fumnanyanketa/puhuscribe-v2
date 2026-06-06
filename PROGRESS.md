@@ -61,3 +61,13 @@ Shipped: Full audit of all 3 seed files; findings written to docs/CONTENT-CORREC
 Blocked: Content corrections require a Finnish-aware pass against a phonology reference (handoff §4) — owner is starting a fresh instance to do them cleanly. TTS audio does not play (pipeline not built — handoff §6). Em dashes the owner still sees are stale Vercel/browser cache; latest deploy strips all variants. Live DB still holds the OLD content (seeds use ON CONFLICT DO NOTHING) so fixes must ship as a new idempotent migration the owner runs in Supabase.
 
 Next: Work docs/CONTENT-CORRECTIONS-HANDOFF.md in order — §1 spellings + §2 missing words (one migration), §3 translations, then the big §4 pronunciation rewrite, verify §7 em dashes, build §6 TTS, audit §5 sentences, then finish §9 auth/FSRS wiring.
+
+---
+
+## Session: 2026-06-07 (Phase 04.6 — §0 ingestion pipeline + safe content fixes)
+
+Shipped: Built the reproducible CC ingestion pipeline at scripts/ingest/ (dependency-free Node ESM, 12 fixture-backed tests) — parse-leipzig/parse-kaikki/parse-tatoeba + build-vocabulary (Leipzig frequency × kaikki real IPA/gloss; skips any word kaikki can't gloss so no translation is ever invented) + build-sentences (real Tatoeba pairs, puhekieli=NULL with a conservative transform written to a human-review TSV) + README runbook. Shipped the SAFE factual fixes as migration 20260607000001 (base_form typos hedelma/hyva/tummansiniinen; translations terve→hello, minä→I/me, voida canonical) and a forward-looking words.ipa column migration 20260607000002; patched 01_vocabulary.sql to match. Rewrote docs/content-attribution.md + both seed headers to stop falsely claiming CC provenance for LLM-generated content (the root cause). Tests 28 green (16 FSRS unchanged), build clean.
+
+Blocked: This container's egress is an allowlist proxy — Leipzig/kaikki/Tatoeba all 403 ("Host not in allowlist"); WebFetch 403 everywhere; only GitHub + npm reachable. So the actual reingest cannot run here — the owner must download the corpora (URLs/format in scripts/ingest/README.md) and run the builders, or a networked run does it. The two new migrations + the §1/§3 fixes must be run by the owner in the Supabase SQL editor (this container can't reach Supabase).
+
+Next: Owner decides direction (asked): (a) provide the corpora so a future run regenerates seeds from real data; (b) whether to spend the next session finishing §9 auth+FSRS (fully offline-doable) while reingest waits; (c) interim handling of the still-live wrong mnemonic bridges (hide vs leave until real IPA lands). Deferred deliberately: §4 pronunciation rewrite (needs real IPA, not hand-guesses), the 12 missing words+mnemonics (mnemonics deferred per §0), puhekieli shipping (needs human verification), §6 TTS.

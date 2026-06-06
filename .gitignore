@@ -8,3 +8,8 @@ dist/
 coverage/
 tsconfig.tsbuildinfo
 .env.local
+
+# Ingestion pipeline: raw corpora (large, redistribute from source) and
+# generated output (regenerated on demand). Never commit either.
+scripts/ingest/raw/
+scripts/ingest/out/

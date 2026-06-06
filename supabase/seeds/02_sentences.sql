@@ -1,5 +1,9 @@
--- Source: Claude-generated, verified against uusikielemmi.fi puhekieli documentation.
--- Some pairs adapted from Tatoeba Project (tatoeba.org), CC BY 2.0 FR.
+-- PROVENANCE: These 500 pairs are LLM-GENERATED, pending replacement by real CC
+-- data. They are NOT pulled from Tatoeba despite earlier headers implying so, and
+-- the puhekieli forms are unverified. The reproducible replacement is
+-- scripts/ingest/ (Tatoeba CC BY 2.0 FR for real Finnish/English pairs; puhekieli
+-- via a rule transform that a Finnish speaker must verify). See
+-- docs/content-attribution.md and docs/CONTENT-CORRECTIONS-HANDOFF.md §5.
 -- 25 topics × 20 sentence pairs = 500 sentences.
 
 -- Topic: greetings

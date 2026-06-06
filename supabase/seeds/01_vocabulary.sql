@@ -1,6 +1,10 @@
--- Source: Leipzig Corpora Collection Finnish (CC BY 4.0). Frequency ranks are approximate and based on Leipzig corpus ordering.
--- 500 A1–A2 vocabulary entries covering all 25 YKI topic areas.
--- Ranks 1–250 = A1, ranks 251–500 = A2 (approximate).
+-- PROVENANCE: This file is LLM-GENERATED, pending replacement by real CC data.
+-- It is NOT ingested from the Leipzig corpus despite earlier headers claiming so
+-- (frequency ranks are approximations; translations were hand/AI-written). The
+-- reproducible replacement is scripts/ingest/ (Leipzig CC BY 4.0 for frequency,
+-- kaikki/Wiktionary CC BY-SA for glosses + real IPA). See docs/content-attribution.md.
+-- A1–A2 vocabulary covering 25 YKI topic areas; this copy includes the §1/§3
+-- factual corrections from migration 20260607000001_content_fixes.sql.
 
 INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_speech, topic_id) VALUES
 
@@ -9,7 +13,7 @@ INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_spe
 -- ============================================================
 ('hei',           'hi / hello',                          3,   'A1', 'particle',    (SELECT id FROM topics WHERE slug = 'greetings')),
 ('moi',           'hi (informal)',                        5,   'A1', 'particle',    (SELECT id FROM topics WHERE slug = 'greetings')),
-('terve',         'hi / healthy',                        12,  'A1', 'adjective',   (SELECT id FROM topics WHERE slug = 'greetings')),
+('terve',         'hello',                        12,  'A1', 'adjective',   (SELECT id FROM topics WHERE slug = 'greetings')),
 ('hyvää',         'good (partitive)',                    15,  'A1', 'adjective',   (SELECT id FROM topics WHERE slug = 'greetings')),
 ('huomenta',      'good morning (partitive)',             18,  'A1', 'noun',        (SELECT id FROM topics WHERE slug = 'greetings')),
 ('päivää',        'good day (partitive)',                 20,  'A1', 'noun',        (SELECT id FROM topics WHERE slug = 'greetings')),
@@ -21,7 +25,7 @@ INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_spe
 ('ole hyvä',      'you''re welcome / here you go',        30,  'A1', 'particle',    (SELECT id FROM topics WHERE slug = 'greetings')),
 ('anteeksi',      'excuse me / sorry',                   35,  'A1', 'particle',    (SELECT id FROM topics WHERE slug = 'greetings')),
 ('nimi',          'name',                                 40,  'A1', 'noun',        (SELECT id FROM topics WHERE slug = 'greetings')),
-('minä',          'I (formal)',                           1,   'A1', 'pronoun',     (SELECT id FROM topics WHERE slug = 'greetings')),
+('minä',          'I / me',                           1,   'A1', 'pronoun',     (SELECT id FROM topics WHERE slug = 'greetings')),
 ('sinä',          'you (singular)',                       6,   'A1', 'pronoun',     (SELECT id FROM topics WHERE slug = 'greetings')),
 ('hän',           'he / she',                            8,   'A1', 'pronoun',     (SELECT id FROM topics WHERE slug = 'greetings')),
 ('me',            'we',                                  10,  'A1', 'pronoun',     (SELECT id FROM topics WHERE slug = 'greetings')),
@@ -98,7 +102,7 @@ INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_spe
 ('pasta',         'pasta',                              162, 'A1', 'noun',        (SELECT id FROM topics WHERE slug = 'food_drink')),
 ('keitto',        'soup',                               164, 'A1', 'noun',        (SELECT id FROM topics WHERE slug = 'food_drink')),
 ('salaatti',      'salad',                              310, 'A2', 'noun',        (SELECT id FROM topics WHERE slug = 'food_drink')),
-('hedelma',       'fruit',                              312, 'A2', 'noun',        (SELECT id FROM topics WHERE slug = 'food_drink')),
+('hedelmä',       'fruit',                              312, 'A2', 'noun',        (SELECT id FROM topics WHERE slug = 'food_drink')),
 
 -- ============================================================
 -- SHOPPING (topic slug: shopping)
@@ -165,7 +169,7 @@ INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_spe
 ('terveys',       'health',                             246, 'A1', 'noun',        (SELECT id FROM topics WHERE slug = 'health')),
 ('terve',         'healthy',                            248, 'A1', 'adjective',   (SELECT id FROM topics WHERE slug = 'health')),
 ('sairas',        'ill / sick',                         250, 'A1', 'adjective',   (SELECT id FROM topics WHERE slug = 'health')),
-('voida',         'to be able to / to feel',            19,  'A1', 'verb',        (SELECT id FROM topics WHERE slug = 'health')),
+('voida',         'to be able to / can',            19,  'A1', 'verb',        (SELECT id FROM topics WHERE slug = 'health')),
 ('sattua',        'to hurt / to happen',                346, 'A2', 'verb',        (SELECT id FROM topics WHERE slug = 'health')),
 ('parantua',      'to recover / to get better',        348, 'A2', 'verb',        (SELECT id FROM topics WHERE slug = 'health')),
 ('ajanvaraus',    'appointment',                        350, 'A2', 'noun',        (SELECT id FROM topics WHERE slug = 'health')),
@@ -500,7 +504,7 @@ INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_spe
 ('miten',         'how',                                 69,  'A1', 'adverb',      NULL),
 ('kuinka',        'how much / how many',                 71,  'A1', 'adverb',      NULL),
 ('hyvin',         'well / very',                         73,  'A1', 'adverb',      NULL),
-('hyva',          'good',                                74,  'A1', 'adjective',   NULL),
+('hyvä',          'good',                                74,  'A1', 'adjective',   NULL),
 ('iso',           'big / large',                         76,  'A1', 'adjective',   NULL),
 ('pieni',         'small',                               77,  'A1', 'adjective',   NULL),
 ('uusi',          'new',                                 79,  'A1', 'adjective',   NULL),
@@ -642,7 +646,7 @@ INSERT INTO words (base_form, translation_en, frequency_rank, level, part_of_spe
 ('oranssi',       'orange',                             714, 'A2', 'adjective',   NULL),
 ('violetti',      'purple / violet',                    716, 'A2', 'adjective',   NULL),
 ('vaaleanpunainen', 'pink',                             718, 'A2', 'adjective',   NULL),
-('tummansiniinen', 'dark blue / navy',                  720, 'A2', 'adjective',   NULL),
+('tummansininen', 'dark blue / navy',                  720, 'A2', 'adjective',   NULL),
 ('parempi',       'better',                             722, 'A2', 'adjective',   NULL),
 ('huonompi',      'worse',                              724, 'A2', 'adjective',   NULL),
 ('isompi',        'bigger',                             726, 'A2', 'adjective',   NULL),

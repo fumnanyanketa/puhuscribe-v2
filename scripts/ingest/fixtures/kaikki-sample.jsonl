@@ -1,0 +1,7 @@
+{"word":"minä","lang_code":"fi","pos":"pron","senses":[{"glosses":["I"]}],"sounds":[{"ipa":"/ˈminæ/"}]}
+{"word":"olla","lang_code":"fi","pos":"verb","senses":[{"glosses":["to be"]}],"sounds":[{"ipa":"/ˈolːɑ/"}]}
+{"word":"hyvä","lang_code":"fi","pos":"adj","senses":[{"glosses":["good"]}],"sounds":[{"ipa":"/ˈhyʋæ/"}]}
+{"word":"hyvä","lang_code":"fi","pos":"noun","senses":[{"glosses":["the good"]}],"sounds":[]}
+{"word":"talo","lang_code":"fi","pos":"noun","senses":[{"glosses":["house"]},{"glosses":["building"]}],"sounds":[{"ipa":"/ˈtɑlo/"}]}
+{"word":"house","lang_code":"en","pos":"noun","senses":[{"glosses":["a dwelling"]}],"sounds":[{"ipa":"/haʊs/"}]}
+{not valid json at all
