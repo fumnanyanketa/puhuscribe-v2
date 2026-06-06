@@ -13,13 +13,19 @@ export interface SprintWord {
   bridge: string   // the sound-bridge body
 }
 
-// Split a seeded mnemonic ("TAL-oh — imagine a TALL building...") into its
-// phonetic head and the sound-bridge body. Falls back gracefully if there is
-// no em-dash separator.
+// Replace every em dash with a comma so one can never render in the UI, and
+// collapse any doubled spaces that leaves behind.
+function stripEmDash(s: string): string {
+  return s.replace(/\s*—\s*/g, ', ').replace(/\s{2,}/g, ' ').trim()
+}
+
+// Split a seeded mnemonic ("TAL-oh ... imagine a TALL building...") into its
+// phonetic head and the sound-bridge body on the first em dash separator, then
+// scrub any remaining em dashes from both halves.
 function parseMnemonic(text: string): { ipa: string; bridge: string } {
-  const sep = text.indexOf(' — ')
-  if (sep === -1) return { ipa: '', bridge: text.trim() }
-  return { ipa: text.slice(0, sep).trim(), bridge: text.slice(sep + 3).trim() }
+  const sep = text.indexOf('—')
+  if (sep === -1) return { ipa: '', bridge: stripEmDash(text) }
+  return { ipa: stripEmDash(text.slice(0, sep)), bridge: stripEmDash(text.slice(sep + 1)) }
 }
 
 /**
@@ -127,7 +133,7 @@ function norm(tok: string): string {
 }
 
 /**
- * Tokenise both registers and flag the tokens that differ between them — the
+ * Tokenise both registers and flag the tokens that differ between them: the
  * "azure flag" that marks what changes from written to spoken Finnish. A token
  * is hot when its normalised form is absent from the other register.
  */

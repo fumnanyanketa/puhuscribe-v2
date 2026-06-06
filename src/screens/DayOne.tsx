@@ -165,7 +165,7 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
             <div style={{ marginTop: 14, minHeight: 54 }}>
               {picked && (
                 <Btn variant={picked === w.en ? 'accent' : 'primary'} block iconRight="arrow" onClick={next}>
-                  {picked === w.en ? 'Hienoa — jatka' : 'Jatka'}
+                  {picked === w.en ? 'Hienoa, jatka' : 'Jatka'}
                 </Btn>
               )}
             </div>

@@ -20,7 +20,7 @@ const steps = [
               Puhu niin kuin <span style={{ color: 'var(--written)' }}>täällä</span> puhutaan
             </h1>
             <p className="ps-body-l" style={{ color: 'var(--ink-2)', marginTop: 14, maxWidth: 300 }}>
-              Finnish as it is really spoken — for your new life in Finland. Two registers, one habit a day.
+              Finnish as it is really spoken, for your new life in Finland. Two registers, one habit a day.
             </p>
           </div>
         </div>
@@ -64,7 +64,7 @@ const steps = [
             <Label color="var(--written)" style={{ display: 'block' }}>Day One Sprint</Label>
             <h2 className="ps-title-1" style={{ margin: '12px 0 0' }}>150 words. One sitting.</h2>
             <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 12, maxWidth: 290, marginInline: 'auto' }}>
-              A fast first wave of recognition — mnemonic, then a quick check. No typing. You only do this once.
+              A fast first wave of recognition: mnemonic, then a quick check. No typing. You only do this once.
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 26, flexWrap: 'wrap' }}>
