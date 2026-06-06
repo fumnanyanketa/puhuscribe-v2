@@ -13,10 +13,15 @@ export interface SprintWord {
   bridge: string   // the sound-bridge body
 }
 
-// Replace every em dash with a comma so one can never render in the UI, and
-// collapse any doubled spaces that leaves behind.
+// Replace every dash-family character (em dash U+2014, en dash U+2013,
+// horizontal bar U+2015, figure dash U+2012) with a comma so none can
+// render in the UI. Also strip surrounding quotes left by the seed format.
 function stripEmDash(s: string): string {
-  return s.replace(/\s*—\s*/g, ', ').replace(/\s{2,}/g, ' ').trim()
+  return s
+    .replace(/\s*[—–―‒]\s*/g, ', ')
+    .replace(/^["'"]+|["'"]+$/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
 }
 
 // Split a seeded mnemonic ("TAL-oh ... imagine a TALL building...") into its
