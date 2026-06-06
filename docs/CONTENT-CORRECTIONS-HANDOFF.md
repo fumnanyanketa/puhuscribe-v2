@@ -30,6 +30,84 @@ substitute — and right now it does not play at all (see §6).
 
 ---
 
+## §0 — PRIMARY STRATEGY: rebuild content from CC sources (read first)
+
+**This supersedes the patch-by-patch approach in §1–§4.** The product owner is
+(rightly) not comfortable shipping AI-generated Finnish that they have to proofread
+against their own knowledge. The fix is to **replace the source of the content**, not
+to keep patching generated text.
+
+### What actually happened (root cause)
+The project docs declared Creative Commons sources, but the earlier sessions
+**generated** the content and attached the attribution on top instead of ingesting
+the real data. Evidence in the seed headers:
+- `02_sentences.sql`: *"Source: Claude-generated… Some pairs adapted from Tatoeba."*
+  → the 500 sentences are mostly generated, not pulled from Tatoeba. (It also
+  misspells the grammar reference: `uusikielemmi` → should be `uusikielemme.fi`.)
+- `01_vocabulary.sql`: Leipzig is cited but ranks are "approximate" and the list +
+  translations were hand/AI-written, not ingested from Leipzig.
+- mnemonics: 100% generated (no CC corpus of mnemonics exists — this is why they are
+  the worst offenders).
+
+The intended plan was always (see `BRIEF.md`, `ARCHITECTURE.md`,
+`docs/content-attribution.md`): **Leipzig for frequency, Tatoeba for sentences,**
+Claude only for verified augmentation. Honour that plan.
+
+### The real CC sources and what each provides
+| Need | Source | License | URL |
+|---|---|---|---|
+| Vocabulary + true frequency order | Leipzig Corpora (Finnish) | CC BY 4.0 | https://wortschatz.uni-leipzig.de/en/download/Finnish |
+| Word translations + **real IPA** + inflections | Wiktionary via **kaikki.org** (Wiktextract JSON) | CC BY-SA | https://kaikki.org/dictionary/Finnish/ |
+| Sentence pairs (Finnish + English) | **Tatoeba** `fin` export + `links` | CC BY 2.0 FR | https://downloads.tatoeba.org/exports/per_language/fin/ |
+| **Audio** (real native-speaker voices) | Tatoeba audio export | CC BY | https://downloads.tatoeba.org/exports/ (audio.tar / per-sentence) |
+
+Key wins from switching to these:
+- **kaikki.org gives real IPA** (`hyvä` → /ˈhyʋæ/) — this replaces the entire
+  invented "sounds-like" pronunciation layer (§4) with accurate data. Show real IPA;
+  optionally keep mnemonic *stories* as flavour but built ON the real IPA.
+- **Tatoeba gives real sentences with human translations** — replaces the generated
+  500 (§5).
+- **Tatoeba also has CC-BY native-speaker audio** — partly solves §6 with real human
+  voices, not just TTS.
+
+### The one honest gap — puhekieli
+There is **no large CC parallel corpus of kirjakieli↔puhekieli pairs.** Puhekieli is
+the product wedge, so this is the single layer that cannot be sourced cleanly. Options
+(pick with the owner):
+1. Rule-based transform (minä→mä, sinä→sä, -n drop, t→d/Ø, word-final vowel drop,
+   question -kö/-ko→-ks, etc.) applied to Tatoeba kirjakieli, **then verified by a
+   Finnish speaker.** Deterministic for common cases; has exceptions + regional
+   variation.
+2. Mine Tatoeba for sentences already tagged/written colloquially (limited coverage).
+3. Treat puhekieli as a smaller, hand-verified set rather than 500 auto-generated.
+Whatever the choice: puhekieli pairs must be **human-verified**, never shipped raw.
+
+### Mnemonics
+No CC source exists. Recommendation: **defer mnemonics** for the first trustworthy
+release. Lead with real IPA (kaikki) + real audio (Tatoeba/Azure). If mnemonics
+return later, generate then have a Finnish speaker verify before they go live. Do not
+block the core (real words, sentences, audio, IPA) on un-verifiable flavour content.
+
+### Network note
+This container's egress is blocked (tested: 403 on Tatoeba, kaikki, Leipzig). Either
+the owner downloads the corpora locally and drops them in, or the new instance pulls
+them only if its network policy permits. Plan a small ingestion script
+(`scripts/ingest/`) that reads the raw exports and emits the seed SQL — so the data is
+reproducible and never hand-typed again.
+
+### Revised order of work
+1. **§0 ingest**: Leipzig (frequency) + kaikki (translations/IPA/POS) → regenerate
+   `01_vocabulary.sql` from real data. Tatoeba (`fin` + links + English) → regenerate
+   `02_sentences.sql` kirjakieli + gloss from real data.
+2. puhekieli layer: rule-transform + Finnish-speaker verification (the gap above).
+3. audio: Tatoeba CC-BY clips where available; Azure TTS (kirjakieli) for the rest.
+4. mnemonics: defer (or verify-then-ship).
+5. Then the §9 auth/FSRS wiring.
+The §1–§4 patch tables below remain useful **only** as a fallback / as a checklist of
+known-bad items if a full reingest is not done immediately.
+
+---
+
 ## Files involved
 
 | File | What it holds |
