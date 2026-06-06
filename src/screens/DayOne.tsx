@@ -3,30 +3,57 @@ import { Orb, OrbCluster, Label } from '../components/primitives'
 import { Btn, IconBtn } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
+import { StatePane } from '../components/StatePane'
+import { useAsync } from '../lib/data/useAsync'
+import { fetchSprintWords, SprintWord } from '../lib/data/content'
 
-const WORDS = [
-  { fi: 'kahvi',  en: 'coffee',     ipa: 'KAH-vee',  bridge: 'A "cuppa" at the café — kah-vee.',    orb: ['var(--orb-magenta)', 'var(--orb-pink)'],    puhe: null },
-  { fi: 'koti',   en: 'home',       ipa: 'KOH-ti',   bridge: 'Cosy "koti" — your home.',            orb: ['var(--orb-violet)',  'var(--orb-magenta)'], puhe: null },
-  { fi: 'ruoka',  en: 'food',       ipa: 'RUO-ka',   bridge: 'You "roar-ka" when hungry for food.', orb: ['var(--orb-deep)',    'var(--orb-violet)'],  puhe: null },
-  { fi: 'kauppa', en: 'shop',       ipa: 'KOWP-pa',  bridge: '"Cow-pa" pops to the shop.',          orb: ['var(--orb-pink)',    '#7FC6D8'],            puhe: null },
-  { fi: 'terve',  en: 'hi / hello', ipa: 'TER-veh',  bridge: 'Wave and say "ter-veh".',             orb: ['var(--orb-magenta)', 'var(--orb-violet)'], puhe: null },
+// Orb gradient pairs cycled per card (the DB carries no presentation colour).
+const ORB_PALETTE: [string, string][] = [
+  ['var(--orb-magenta)', 'var(--orb-pink)'],
+  ['var(--orb-violet)',  'var(--orb-magenta)'],
+  ['var(--orb-deep)',    'var(--orb-violet)'],
+  ['var(--orb-pink)',    '#7FC6D8'],
+  ['var(--orb-magenta)', 'var(--orb-violet)'],
 ]
 
 export function DayOne({ go }: { go: (s: AppScreen) => void }) {
+  const { data: words, loading, error } = useAsync<SprintWord[]>(fetchSprintWords, [])
+
+  if (loading) return <StatePane title="Ladataan sanoja…" />
+  if (error) return <StatePane tone="error" title="Sanojen lataus epäonnistui" detail={error} />
+  if (!words || words.length === 0) return <StatePane title="Ei sanoja vielä" detail="No sprint words available yet." />
+
+  return <Sprint words={words} go={go} />
+}
+
+function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
   const [idx, setIdx] = useState(0)
   const [phase, setPhase] = useState<'card' | 'quiz'>('card')
   const [picked, setPicked] = useState<string | null>(null)
-  const [mastered, setMastered] = useState(34)
+  const [mastered, setMastered] = useState(0)
 
-  const w = WORDS[idx % WORDS.length]
-  const wave = Math.min(8, Math.floor(mastered / 19) + 1)
+  const total = words.length
+  const w = words[idx % total]
+  const orb = ORB_PALETTE[idx % ORB_PALETTE.length]
+  const wave = Math.min(8, Math.floor((mastered / total) * 8) + 1)
 
   const options = useMemo(() => {
-    const others = WORDS.filter((x) => x.fi !== w.fi).slice(0, 3).map((x) => x.en)
-    return [w.en, ...others].sort((a, b) => ((a.length + idx) % 3) - ((b.length + idx) % 3))
-  }, [idx, w.fi, w.en])
+    const pool = words.filter((x) => x.en !== w.en)
+    const picks = new Set<string>()
+    let k = 0
+    while (picks.size < 3 && k < pool.length * 2 && pool.length > 0) {
+      picks.add(pool[(idx * 7 + k) % pool.length].en)
+      k++
+    }
+    return [w.en, ...picks].sort((a, b) => ((a.length + idx) % 3) - ((b.length + idx) % 3))
+  }, [idx, words, w.en])
 
-  const next = () => { setMastered((m) => m + 1); setPicked(null); setPhase('card'); setIdx((x) => x + 1) }
+  const next = () => {
+    setMastered((m) => Math.min(total, m + 1))
+    setPicked(null)
+    setPhase('card')
+    setIdx((x) => x + 1)
+  }
 
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
@@ -35,13 +62,13 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
           <Label color="var(--written)">{`Day One · Aalto ${wave} / 8`}</Label>
-          <span className="ps-label ps-num" style={{ color: 'var(--ink)' }}>{mastered}/150</span>
+          <span className="ps-label ps-num" style={{ color: 'var(--ink)' }}>{mastered}/{total}</span>
         </div>
 
         {/* Gradient progress bar */}
         <div style={{ marginTop: 12, height: 7, borderRadius: 999, background: 'var(--glass-deep)', overflow: 'hidden' }}>
           <div style={{
-            width: `${(mastered / 150) * 100}%`, height: '100%', borderRadius: 999,
+            width: `${(mastered / total) * 100}%`, height: '100%', borderRadius: 999,
             background: 'linear-gradient(90deg, var(--written), var(--spoken))',
             transition: 'width .5s',
           }} />
@@ -66,7 +93,7 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
               <div style={{ padding: 22 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 44, lineHeight: 1, letterSpacing: '-0.04em' }}>{w.fi}</div>
-                  <span className="ps-label ps-num" style={{ color: 'var(--ink-3)' }}>{w.ipa}</span>
+                  {w.ipa && <span className="ps-label ps-num" style={{ color: 'var(--ink-3)' }}>{w.ipa}</span>}
                 </div>
                 <div className="ps-body-l" style={{ marginTop: 8, color: 'var(--ink-2)' }}>"{w.en}"</div>
 
@@ -90,8 +117,8 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
                   <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15 }}>{w.fi}</span>
                   <span style={{ color: 'var(--ink-3)' }}><I name="arrow" size={15} /></span>
                   <span className="ps-label" style={{ color: 'var(--spoken)' }}>Puhe</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15 }}>{w.puhe || w.fi}</span>
-                  {!w.puhe && <span className="ps-caption">· sama</span>}
+                  <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15 }}>{w.fi}</span>
+                  <span className="ps-caption">· sama</span>
                 </div>
               </div>
             </div>
@@ -104,7 +131,7 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
             <div style={{ textAlign: 'center', marginTop: 10 }}>
               <Label color="var(--ink-3)">Tunnista · Recognise</Label>
               <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 8px' }}>
-                <Orb size={76} from={w.orb[0]} to={w.orb[1]} />
+                <Orb size={76} from={orb[0]} to={orb[1]} />
               </div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 46, lineHeight: 1.05, letterSpacing: '-0.04em' }}>{w.fi}</div>
               <div className="ps-caption" style={{ marginTop: 6 }}>Mitä tämä tarkoittaa?</div>

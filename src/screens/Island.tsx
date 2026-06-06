@@ -3,15 +3,9 @@ import { OrbCluster, Label, RegDot, Sentence } from '../components/primitives'
 import { Btn, SpeakerBtn, IconBtn } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
-import { Token } from '../components/primitives'
-
-interface Phrase { gloss: string; kirja: Token[]; puhe: Token[] }
-
-const ISLAND: Phrase = {
-  gloss: 'Do you want to come along?',
-  kirja: [{ t: 'Haluatko', hot: true }, { t: 'tulla' }, { t: 'mukaan?' }],
-  puhe:  [{ t: 'Haluuks', hot: true }, { t: 'sä', hot: true }, { t: 'tulla' }, { t: 'mukaan?' }],
-}
+import { StatePane } from '../components/StatePane'
+import { useAsync } from '../lib/data/useAsync'
+import { fetchSentences, RegisterSentence } from '../lib/data/content'
 
 type State = 'idle' | 'playing' | 'recording' | 'review'
 
@@ -34,9 +28,26 @@ function Wave({ active, color }: { active: boolean; color: string }) {
 }
 
 export function Island({ go }: { go: (s: AppScreen) => void }) {
+  // A short shadowing set drawn from the seeded sentence pairs.
+  const { data: phrases, loading, error } = useAsync<RegisterSentence[]>(
+    () => fetchSentences({ limit: 8 }),
+    [],
+  )
+
+  if (loading) return <StatePane title="Ladataan saarta…" bottom={110} />
+  if (error) return <StatePane tone="error" title="Saaren lataus epäonnistui" detail={error} bottom={110} />
+  if (!phrases || phrases.length === 0) return <StatePane title="Ei lauseita vielä" detail="No sentences available yet." bottom={110} />
+
+  return <Shadowing phrases={phrases} go={go} />
+}
+
+function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppScreen) => void }) {
+  const [i, setI] = useState(0)
   const [st, setSt] = useState<State>('idle')
   const [sec, setSec] = useState(0)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const p = phrases[i]
 
   const playNative = () => {
     setSt('playing')
@@ -53,6 +64,12 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
     setSt('recording')
     setSec(0)
     timer.current = setInterval(() => setSec((s) => +(s + 0.1).toFixed(1)), 100)
+  }
+
+  const nextPhrase = () => {
+    setI((x) => (x + 1) % phrases.length)
+    setSt('idle')
+    setSec(0)
   }
 
   useEffect(() => () => {
@@ -78,7 +95,7 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
               background: 'rgba(15,14,32,.36)', color: '#fff',
               border: '1px solid rgba(255,255,255,.28)', backdropFilter: 'blur(6px)',
             }}>
-              <I name="island" size={15} /> Saari 3 / 8
+              <I name="island" size={15} /> Lause {i + 1} / {phrases.length}
             </span>
           </div>
           <div style={{ marginTop: 22 }}>
@@ -97,13 +114,13 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
               <span className="ps-caption">You are shadowing</span>
               <span className="ps-label" style={{ color: 'var(--written)', background: 'var(--written-bg)', padding: '5px 10px', borderRadius: 7 }}>Kirjakieli</span>
             </div>
-            <span className="ps-caption" style={{ fontStyle: 'italic' }}>{ISLAND.gloss}</span>
+            <span className="ps-caption" style={{ fontStyle: 'italic' }}>{p.gloss}</span>
           </div>
 
           <div>
             <RegDot reg="kirja" />
             <div style={{ marginTop: 9 }}>
-              <Sentence tokens={ISLAND.kirja} font="var(--font-display)" weight={600} size={26} color="var(--ink)" />
+              <Sentence tokens={p.kirja} font="var(--font-display)" weight={600} size={26} color="var(--ink)" />
             </div>
           </div>
 
@@ -111,14 +128,13 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
             border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)', opacity: 0.92 }}>
             <RegDot reg="puhe" />
             <div style={{ marginTop: 8 }}>
-              <Sentence tokens={ISLAND.puhe} font="var(--font-body)" weight={600} size={18} color="var(--ink-2)" />
+              <Sentence tokens={p.puhe} font="var(--font-body)" weight={600} size={18} color="var(--ink-2)" />
             </div>
           </div>
 
           <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 14 }}>
             <SpeakerBtn reg="kirja" playing={st === 'playing'} onClick={playNative} size={48} />
             <Wave active={st === 'playing'} color="var(--written)" />
-            <span className="ps-caption ps-num" style={{ marginLeft: 'auto' }}>0:03</span>
           </div>
         </div>
 
@@ -132,14 +148,14 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
                 background: 'var(--written-bg)', border: '1px solid var(--written)' }}>
                 <span style={{ color: 'var(--written)' }}><I name="check" size={26} /></span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--written)' }}>Hyvä ääntämys</div>
-                  <div className="ps-caption" style={{ marginTop: 2 }}>Close match to the native clip</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--written)' }}>Nauhoitus valmis</div>
+                  <div className="ps-caption" style={{ marginTop: 2 }}>Pronunciation scoring arrives with audio</div>
                 </div>
                 <SpeakerBtn reg="puhe" size={42} />
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
                 <Btn variant="light" icon="mic" style={{ flex: 1 }} onClick={() => setSt('idle')}>Uudelleen</Btn>
-                <Btn variant="primary" iconRight="arrow" style={{ flex: 1.2 }} onClick={() => setSt('idle')}>Seuraava</Btn>
+                <Btn variant="primary" iconRight="arrow" style={{ flex: 1.2 }} onClick={nextPhrase}>Seuraava</Btn>
               </div>
             </div>
           ) : (

@@ -1,43 +1,49 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { OrbCluster, Label } from '../components/primitives'
 import { RegisterCard } from '../components/RegisterCard'
 import { Btn, Bar, Steps } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
-import { Token } from '../components/primitives'
+import { StatePane } from '../components/StatePane'
+import { useAsync } from '../lib/data/useAsync'
+import { fetchSentences, RegisterSentence } from '../lib/data/content'
 
-interface Phrase {
-  gloss: string
-  kirja: Token[]
-  puhe: Token[]
-}
-
-const PHRASES: Phrase[] = [
-  { gloss: 'I am at home',
-    kirja: [{ t: 'Minä', hot: true }, { t: 'olen', hot: true }, { t: 'kotona' }],
-    puhe:  [{ t: 'Mä', hot: true }, { t: 'oon', hot: true }, { t: 'kotona' }] },
-  { gloss: 'Do you want to come along?',
-    kirja: [{ t: 'Haluatko', hot: true }, { t: 'tulla' }, { t: 'mukaan?' }],
-    puhe:  [{ t: 'Haluuks', hot: true }, { t: 'sä', hot: true }, { t: 'tulla' }, { t: 'mukaan?' }] },
-  { gloss: 'He / she goes to the shop',
-    kirja: [{ t: 'Hän', hot: true }, { t: 'menee' }, { t: 'kauppaan' }],
-    puhe:  [{ t: 'Se', hot: true }, { t: 'menee' }, { t: 'kauppaan' }] },
-  { gloss: 'Are you hungry?',
-    kirja: [{ t: 'Onko', hot: true }, { t: 'sinulla', hot: true }, { t: 'nälkä?' }],
-    puhe:  [{ t: 'Onks', hot: true }, { t: 'sulla', hot: true }, { t: 'nälkä?' }] },
-]
+const SESSION_SIZE = 8
 
 export function Daily({ go }: { go: (s: AppScreen) => void }) {
+  // Pull a broad pool, then sample evenly across it so the session spans
+  // several topics rather than eight greetings in a row.
+  const { data: pool, loading, error } = useAsync<RegisterSentence[]>(
+    () => fetchSentences({ limit: 160 }),
+    [],
+  )
+
+  const session = useMemo(() => {
+    if (!pool || pool.length === 0) return []
+    const step = Math.max(1, Math.floor(pool.length / SESSION_SIZE))
+    const out: RegisterSentence[] = []
+    for (let k = 0; k < pool.length && out.length < SESSION_SIZE; k += step) out.push(pool[k])
+    return out
+  }, [pool])
+
+  if (loading) return <StatePane title="Ladataan sessiota…" bottom={110} />
+  if (error) return <StatePane tone="error" title="Session lataus epäonnistui" detail={error} bottom={110} />
+  if (session.length === 0) return <StatePane title="Ei lauseita vielä" detail="No sentences available yet." bottom={110} />
+
+  return <Session phrases={session} go={go} />
+}
+
+function Session({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppScreen) => void }) {
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState<'kirja' | 'puhe' | null>(null)
-  const [mastered, setMastered] = useState(843)
+  const [mastered, setMastered] = useState(0)
   const [done, setDone] = useState(false)
 
-  const p = PHRASES[i]
+  const p = phrases[i]
   const play = (reg: 'kirja' | 'puhe') => { setPlaying(reg); setTimeout(() => setPlaying(null), 1100) }
   const advance = (got: boolean) => {
     if (got) setMastered((m) => m + 1)
-    if (i < PHRASES.length - 1) setI(i + 1)
+    if (i < phrases.length - 1) setI(i + 1)
     else setDone(true)
   }
 
@@ -50,7 +56,7 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
           <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>Sessio valmis</Label>
           <h2 className="ps-title-1">Hyvää työtä.</h2>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10 }}>
-            {PHRASES.length} phrases reviewed · {mastered - 843} newly mastered
+            {phrases.length} phrases reviewed · {mastered} newly mastered
           </p>
         </div>
         <div className="ps-glass" style={{ padding: '18px 24px', display: 'flex', gap: 28 }}>
@@ -60,8 +66,8 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
           </div>
           <div style={{ width: 1, background: 'var(--glass-edge)' }} />
           <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 32, lineHeight: 1, color: 'var(--spoken)', letterSpacing: '-0.03em' }}>12</div>
-            <div className="ps-caption" style={{ marginTop: 4 }}>day streak</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 32, lineHeight: 1, color: 'var(--spoken)', letterSpacing: '-0.03em' }}>{phrases.length}</div>
+            <div className="ps-caption" style={{ marginTop: 4 }}>in session</div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -77,28 +83,24 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Label color="var(--written)">Huomenta · Tiistai</Label>
+          <Label color="var(--written)">Huomenta · Tervetuloa</Label>
           <h1 className="ps-title-1" style={{ marginTop: 8 }}>Päivän sessio</h1>
-        </div>
-        <div className="ps-glass" style={{ padding: '10px 15px', display: 'flex', alignItems: 'center', gap: 8, borderRadius: 999 }}>
-          <span style={{ color: 'var(--spoken)' }}><I name="flame" size={18} /></span>
-          <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>12</span>
         </div>
       </div>
 
-      {/* Mastered strip */}
+      {/* Session mastered strip */}
       <div className="ps-glass" style={{ padding: 16, marginTop: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 9 }}>
-          <span className="ps-caption">Phrases mastered</span>
-          <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18 }}>{mastered}</span>
+          <span className="ps-caption">Mastered this session</span>
+          <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18 }}>{mastered}/{phrases.length}</span>
         </div>
-        <Bar value={(mastered / 1200) * 100} color="var(--written)" />
+        <Bar value={(mastered / phrases.length) * 100} color="var(--written)" />
       </div>
 
       {/* Session progress */}
       <div style={{ marginTop: 20, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Steps total={PHRASES.length} current={i} />
-        <span className="ps-label" style={{ color: 'var(--ink-2)', flexShrink: 0 }}>{i + 1}/{PHRASES.length}</span>
+        <Steps total={phrases.length} current={i} />
+        <span className="ps-label" style={{ color: 'var(--ink-2)', flexShrink: 0 }}>{i + 1}/{phrases.length}</span>
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

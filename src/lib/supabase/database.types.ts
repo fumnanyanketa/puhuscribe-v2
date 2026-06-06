@@ -39,6 +39,7 @@ export type Database = {
           timezone?: string
           updated_at?: string
         }
+        Relationships: []
       }
       topics: {
         Row: {
@@ -64,6 +65,7 @@ export type Database = {
           yki_category?: string
           sort_order?: number
         }
+        Relationships: []
       }
       words: {
         Row: {
@@ -94,6 +96,7 @@ export type Database = {
           part_of_speech?: string | null
           topic_id?: number | null
         }
+        Relationships: []
       }
       sentences: {
         Row: {
@@ -124,6 +127,7 @@ export type Database = {
           topic_id?: number | null
           audio_id?: number | null
         }
+        Relationships: []
       }
       audio: {
         Row: {
@@ -148,6 +152,7 @@ export type Database = {
           speaker_gender?: 'M' | 'F' | null
           dialect?: 'standard' | 'colloquial' | null
         }
+        Relationships: []
       }
       mnemonics: {
         Row: {
@@ -176,6 +181,7 @@ export type Database = {
           is_public?: boolean
           upvotes?: number
         }
+        Relationships: []
       }
       language_islands: {
         Row: {
@@ -200,6 +206,7 @@ export type Database = {
           sort_order?: number
           unlock_threshold?: number
         }
+        Relationships: []
       }
       island_sentences: {
         Row: {
@@ -215,6 +222,7 @@ export type Database = {
         Update: {
           sort_order?: number
         }
+        Relationships: []
       }
       cards: {
         Row: {
@@ -262,6 +270,7 @@ export type Database = {
           state?: 'new' | 'learning' | 'review' | 'relearning'
           last_review?: string | null
         }
+        Relationships: []
       }
       review_logs: {
         Row: {
@@ -289,6 +298,7 @@ export type Database = {
           review_time?: string
         }
         Update: never
+        Relationships: []
       }
     }
     Views: Record<string, never>
