@@ -1,0 +1,38 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState } from 'react';
+import { OrbCluster, Label } from '../components/primitives';
+import { Bar, Ring, IconBtn } from '../components/ui';
+import { I } from '../components/icons';
+import { ScreenScroll } from '../components/Shell';
+const RECENT = [
+    { gloss: 'I am at home',
+        kirja: [{ t: 'Minä', hot: true }, { t: 'olen', hot: true }, { t: 'kotona' }],
+        puhe: [{ t: 'Mä', hot: true }, { t: 'oon', hot: true }, { t: 'kotona' }] },
+    { gloss: 'Do you want to come along?',
+        kirja: [{ t: 'Haluatko', hot: true }, { t: 'tulla' }, { t: 'mukaan?' }],
+        puhe: [{ t: 'Haluuks', hot: true }, { t: 'sä', hot: true }, { t: 'tulla' }, { t: 'mukaan?' }] },
+];
+const DAYS = [['Mon', '11'], ['Tue', '11'], ['Wed', '12'], ['Thu', '13'], ['Fri', '14'], ['Sat', '15'], ['Sun', '16']];
+const WEEK = [40, 65, 30, 80, 55, 90, 70];
+export function Progress({ go: _go }) {
+    const [day, setDay] = useState(4);
+    return (_jsxs(ScreenScroll, { bottom: 110, children: [_jsxs("div", { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' }, children: [_jsxs("div", { style: { display: 'flex', alignItems: 'center', gap: 8 }, children: [_jsx("h1", { className: "ps-title-1", children: "Kes\u00E4kuu 2026" }), _jsx("span", { style: { color: 'var(--ink-2)' }, children: _jsx(I, { name: "chevD", size: 20 }) })] }), _jsx(IconBtn, { icon: "plus", tone: "solid", size: 44 })] }), _jsx("div", { className: "ps-glass", style: { marginTop: 16, padding: 12, display: 'flex', justifyContent: 'space-between', gap: 4 }, children: DAYS.map(([d, n], i) => {
+                    const on = i === day;
+                    return (_jsxs("button", { onClick: () => setDay(i), className: "ps-press", style: {
+                            flex: 1, padding: '10px 0', borderRadius: 16, border: 'none', cursor: 'pointer',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7,
+                            background: on ? 'var(--ink)' : 'transparent',
+                            color: on ? 'var(--on-dark)' : 'var(--ink-2)',
+                            transition: 'background .15s, color .15s',
+                        }, children: [_jsx("span", { className: "ps-label", style: { fontSize: 9.5, opacity: on ? 0.75 : 0.6 }, children: d }), _jsx("span", { style: { fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16 }, children: n })] }, i));
+                }) }), _jsxs("div", { style: { marginTop: 16, padding: 20, borderRadius: 'var(--r-xl)', background: 'var(--lav)',
+                    border: '1px solid rgba(255,255,255,.5)', display: 'flex', alignItems: 'center', gap: 16,
+                    position: 'relative', overflow: 'hidden' }, children: [_jsx(OrbCluster, { size: 116, style: { position: 'absolute', right: -46, top: -34, opacity: 0.35 } }), _jsxs(Ring, { value: 847, max: 1200, size: 100, stroke: 9, color: "var(--written)", track: "rgba(255,255,255,.55)", children: [_jsx("span", { style: { fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 25, lineHeight: 1, letterSpacing: '-0.02em' }, children: "847" }), _jsx("span", { className: "ps-label", style: { color: 'var(--ink-3)', marginTop: 3, fontSize: 9.5 }, children: "of 1200" })] }), _jsxs("div", { style: { position: 'relative', flex: 1, minWidth: 0 }, children: [_jsx(Label, { color: "var(--lav-ink)", children: "Phrases mastered" }), _jsx("div", { style: { fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, marginTop: 8,
+                                    lineHeight: 1.15, letterSpacing: '-0.01em', overflowWrap: 'anywhere' }, children: "Conversational foundations" }), _jsx("div", { className: "ps-caption", style: { marginTop: 8 }, children: "+34 this week" })] })] }), _jsxs("div", { className: "ps-glass", style: { marginTop: 14, padding: 18 }, children: [_jsx(Label, { color: "var(--ink-3)", children: "Register balance" }), _jsx("div", { style: { marginTop: 16, display: 'grid', gap: 16 }, children: [['Kirjakieli · understood', 78, 'var(--written)'], ['Puhekieli · spoken', 52, 'var(--spoken)']].map(([t, v, c]) => (_jsxs("div", { children: [_jsxs("div", { style: { display: 'flex', justifyContent: 'space-between', marginBottom: 8 }, children: [_jsx("span", { className: "ps-label", style: { color: c }, children: t }), _jsxs("span", { className: "ps-num", style: { fontWeight: 700, fontSize: 14 }, children: [v, "%"] })] }), _jsx(Bar, { value: v, color: c, h: 10 })] }, t))) }), _jsx("div", { className: "ps-caption", style: { marginTop: 14, lineHeight: 1.45 }, children: "You read the books well. Time on Kielisaari to close the gap with the street." })] }), _jsx("div", { style: { display: 'flex', gap: 12, marginTop: 14 }, children: [
+                    ['12', 'day streak', 'flame', 'var(--blush)', 'var(--blush-ink)'],
+                    ['3', 'islands', 'island', 'var(--mint)', 'var(--mint-ink)'],
+                    ['34', 'this week', 'sparkle', 'var(--lav)', 'var(--lav-ink)'],
+                ].map(([n, l, ic, bg, ink]) => (_jsxs("div", { style: { flex: 1, padding: '15px 12px', textAlign: 'center', borderRadius: 'var(--r-md)',
+                        background: bg, border: '1px solid rgba(255,255,255,.5)' }, children: [_jsx("span", { style: { color: ink }, children: _jsx(I, { name: ic, size: 20 }) }), _jsx("div", { style: { fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, marginTop: 6, lineHeight: 1, letterSpacing: '-0.03em' }, children: n }), _jsx("div", { className: "ps-caption", style: { marginTop: 3, fontSize: 11.5 }, children: l })] }, l))) }), _jsxs("div", { className: "ps-glass", style: { marginTop: 14, padding: 18 }, children: [_jsxs("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }, children: [_jsx(Label, { color: "var(--ink-3)", children: "This week" }), _jsx("span", { className: "ps-caption", children: "min / day" })] }), _jsx("div", { style: { display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8, height: 86, marginTop: 14 }, children: WEEK.map((v, i) => (_jsxs("div", { style: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }, children: [_jsx("div", { style: { width: '100%', maxWidth: 22, height: `${v}%`, borderRadius: 7,
+                                        background: i === day ? 'var(--ink)' : 'rgba(107,70,193,.3)' } }), _jsx("span", { className: "ps-label", style: { color: 'var(--ink-3)', fontSize: 10 }, children: DAYS[i][0][0] })] }, i))) })] }), _jsxs("div", { style: { marginTop: 16 }, children: [_jsx(Label, { color: "var(--ink-3)", style: { marginLeft: 2 }, children: "Recently mastered" }), _jsx("div", { style: { marginTop: 10, display: 'grid', gap: 10 }, children: RECENT.map((p, i) => (_jsxs("div", { className: "ps-glass", style: { padding: '13px 15px', display: 'flex', alignItems: 'center', gap: 12 }, children: [_jsx("span", { style: { color: 'var(--written)', flexShrink: 0 }, children: _jsx(I, { name: "check", size: 18 }) }), _jsxs("div", { style: { flex: 1, minWidth: 0 }, children: [_jsx("div", { style: { fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, lineHeight: 1.15 }, children: p.kirja.map((t) => t.t).join(' ') }), _jsx("div", { style: { fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13.5, color: 'var(--spoken)', marginTop: 3 }, children: p.puhe.map((t) => t.t).join(' ') })] }), _jsx("span", { className: "ps-caption", style: { fontStyle: 'italic', flexShrink: 0, maxWidth: 92, textAlign: 'right' }, children: p.gloss })] }, i))) })] })] }));
+}

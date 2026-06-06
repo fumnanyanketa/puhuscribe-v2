@@ -1,0 +1,169 @@
+/* PuhuScribe v2 — Design Tokens (Snow theme, white-surface base) */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Ground — Snow (white) theme baked in as base */
+  --bg-grad: linear-gradient(180deg, #FFFFFF 0%, #FAF9FC 58%, #F1F0F6 100%);
+
+  /* Surfaces */
+  --paper:      #FFFFFF;
+  --glass:      #FFFFFF;
+  --glass-2:    #FFFFFF;
+  --glass-3:    #FFFFFF;
+  --glass-line: rgba(26,22,52,0.07);
+  --glass-edge: rgba(26,22,52,0.09);
+  --glass-deep: #ECEBF2;
+
+  /* Ink */
+  --ink:        #1B1A20;
+  --ink-2:      #56525E;
+  --ink-3:      #8B8798;
+  --ink-press:  #000007;
+  --on-dark:    #F6F4FB;
+
+  /* Register coding */
+  --written:      #6B46C1;
+  --written-bg:   rgba(107,70,193,0.10);
+  --written-line: rgba(107,70,193,0.22);
+  --spoken:       #1F7C8E;
+  --spoken-bg:    rgba(31,124,142,0.10);
+  --spoken-line:  rgba(31,124,142,0.22);
+
+  /* Azure flag — the changed tokens between registers. Reserved, never decorative. */
+  --flag:    #2F5AD6;
+  --flag-bg: rgba(47,90,214,0.14);
+
+  /* Pastel color-block cards */
+  --blush:     #C4D2E6; --blush-tint: #E2EAF4; --blush-ink: #415A72;
+  --mint:      #CCDFD3; --mint-tint:  #E4EEE8;  --mint-ink:  #4C6B57;
+  --lav:       #D6D0E8; --lav-tint:   #E7E3F2;  --lav-ink:   #5A4F86;
+
+  /* Bubble gradient stops */
+  --orb-pink:    #4FB0C8;
+  --orb-magenta: #2F86C2;
+  --orb-violet:  #6B4FC6;
+  --orb-deep:    #383583;
+
+  /* Typography */
+  --font-display: 'Poppins', system-ui, sans-serif;
+  --font-body:    'Switzer', 'Poppins', system-ui, sans-serif;
+
+  /* Spacing (4px base) */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-7: 32px; --sp-8: 40px; --sp-9: 56px;
+
+  /* Radii */
+  --r-sm: 14px; --r-md: 20px; --r-lg: 26px; --r-xl: 32px; --r-2xl: 38px; --r-pill: 999px;
+
+  /* Elevation (Snow-calibrated: softer, neutral-tinted) */
+  --sh-1: 0 2px 8px rgba(38,33,70,.06), 0 1px 2px rgba(38,33,70,.05);
+  --sh-2: 0 8px 24px rgba(38,33,70,.08), 0 2px 6px rgba(38,33,70,.05);
+  --sh-3: 0 18px 44px rgba(38,33,70,.12), 0 6px 14px rgba(38,33,70,.07);
+  --sh-glass: 0 4px 16px rgba(38,33,70,.07), 0 1px 3px rgba(38,33,70,.05);
+}
+
+html, body, #root {
+  height: 100%;
+  background: var(--bg-grad);
+  font-family: var(--font-body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+::selection { background: var(--flag-bg); }
+
+/* App frame — 390px iPhone width, full height */
+.ps-app-frame {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-grad);
+}
+
+/* Type scale */
+.ps-display { font-family: var(--font-display); font-weight: 700; font-size: 44px; line-height: 0.98; letter-spacing: -0.035em; }
+.ps-title-1 { font-family: var(--font-display); font-weight: 700; font-size: 33px; line-height: 1.0;  letter-spacing: -0.03em; }
+.ps-title-2 { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.05; letter-spacing: -0.02em; }
+.ps-heading  { font-family: var(--font-display); font-weight: 600; font-size: 19px; line-height: 1.15; letter-spacing: -0.01em; }
+.ps-body-l   { font-family: var(--font-body); font-weight: 500; font-size: 16px; line-height: 1.5; }
+.ps-body     { font-family: var(--font-body); font-weight: 500; font-size: 14.5px; line-height: 1.5; }
+.ps-caption  { font-family: var(--font-body); font-weight: 500; font-size: 13px; line-height: 1.4; color: var(--ink-3); }
+.ps-label    { font-family: var(--font-body); font-weight: 600; font-size: 11px; line-height: 1; letter-spacing: 0.09em; text-transform: uppercase; }
+.ps-num      { font-variant-numeric: tabular-nums; }
+
+/* Glass / card surfaces */
+.ps-glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--sh-glass);
+  border-radius: var(--r-lg);
+}
+.ps-card {
+  background: var(--paper);
+  border: 1px solid var(--glass-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+}
+
+/* Buttons */
+.ps-btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  border: none;
+  border-radius: var(--r-pill);
+  padding: 16px 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  transition: background .15s ease, color .15s ease, transform .12s ease, box-shadow .15s ease;
+  user-select: none;
+  min-height: 54px;
+  -webkit-tap-highlight-color: transparent;
+}
+.ps-btn:active { transform: translateY(1px); }
+.ps-btn--primary { background: var(--ink); color: var(--on-dark); box-shadow: 0 8px 22px rgba(27,26,32,.28); }
+.ps-btn--primary:active { background: var(--ink-press); }
+.ps-btn--light   { background: var(--glass-3); color: var(--ink); border: 1px solid var(--glass-line); box-shadow: var(--sh-1); }
+.ps-btn--accent  { background: var(--written); color: #fff; box-shadow: 0 8px 22px rgba(107,70,193,.3); }
+.ps-btn--rose    { background: var(--spoken); color: #fff; box-shadow: 0 8px 22px rgba(31,124,142,.28); }
+.ps-btn--ghost   { background: transparent; color: var(--ink-2); }
+.ps-btn--block   { width: 100%; }
+.ps-btn--sm      { min-height: 42px; padding: 11px 18px; font-size: 14px; }
+
+/* Chip */
+.ps-chip { font-family: var(--font-body); font-weight: 600; font-size: 13px; padding: 9px 15px; border-radius: var(--r-pill); display: inline-flex; align-items: center; gap: 7px; }
+.ps-chip--glass { background: var(--glass-2); border: 1px solid var(--glass-line); color: var(--ink); }
+.ps-chip--ink   { background: var(--ink); color: var(--on-dark); }
+
+/* Azure flag highlight on changed tokens */
+.ps-hot { color: var(--flag); font-weight: 700; position: relative; white-space: nowrap; }
+.ps-hot::after { content: ''; position: absolute; left: -2px; right: -2px; bottom: -2px; height: 100%; background: var(--flag-bg); border-radius: 6px; z-index: -1; }
+
+/* Press states */
+.ps-press { transition: transform .12s ease; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ps-press:active { transform: scale(0.97); }
+
+/* Scrollable screen */
+.ps-noscroll::-webkit-scrollbar { display: none; }
+.ps-noscroll { scrollbar-width: none; -ms-overflow-style: none; }
+.ps-noscroll > *, .ps-noscroll .ps-card, .ps-noscroll .ps-glass { flex-shrink: 0; }
+
+.ps-rule { height: 1px; background: var(--glass-edge); border: 0; }
