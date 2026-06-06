@@ -61,3 +61,13 @@ Shipped: Full audit of all 3 seed files; findings written to docs/CONTENT-CORREC
 Blocked: Content corrections require a Finnish-aware pass against a phonology reference (handoff §4) — owner is starting a fresh instance to do them cleanly. TTS audio does not play (pipeline not built — handoff §6). Em dashes the owner still sees are stale Vercel/browser cache; latest deploy strips all variants. Live DB still holds the OLD content (seeds use ON CONFLICT DO NOTHING) so fixes must ship as a new idempotent migration the owner runs in Supabase.
 
 Next: Work docs/CONTENT-CORRECTIONS-HANDOFF.md in order — §1 spellings + §2 missing words (one migration), §3 translations, then the big §4 pronunciation rewrite, verify §7 em dashes, build §6 TTS, audit §5 sentences, then finish §9 auth/FSRS wiring.
+
+---
+
+## Session: 2026-06-07 (Content Corrections §1–§4)
+
+Shipped: supabase/migrations/20260607000001_content_fixes.sql — one SQL file the owner runs once in Supabase SQL editor covering: §1 three base_form typos fixed (hedelma→hedelmä, hyva→hyvä, tummansiniinen→tummansininen); §3 three translation errors corrected (terve→"hello", minä→"I / me", voida canonical gloss); §2 eleven missing high-frequency words inserted (kyllä, tämä, tuo, se, ehkä, tässä, siellä, sitten, kotona, herätä, rakastaa) so all 153 sprint mnemonics now have matching words; §4 42 mnemonic sound-bridges rewritten applying correct Finnish phonology (y="ew" rounded, ö="ur", ä="a as in cat", au="ow" cow, ai="eye", j=English "y"). Seeds updated to match for future reingest. scripts/ingest/README.md scaffolds Leipzig/kaikki/Tatoeba ingestion for the full CC source rebuild (§0). 16 FSRS tests pass, build clean.
+
+Blocked: Container cannot reach Supabase — owner must run 20260607000001_content_fixes.sql in Supabase SQL editor to apply fixes to live DB. Network still blocks Leipzig/kaikki/Tatoeba, so §0 full CC reingest requires owner to download raw corpora locally. §5 sentence audit (500 pairs) and §6 TTS pipeline not yet done. §9 auth/FSRS wiring still pending.
+
+Next: Owner runs migration in Supabase SQL editor and verifies all 153 mnemonics appear in Day One screen. Then §6 TTS audio pipeline (Cloudflare Worker → Azure fi-FI-NooraNeural → Supabase Storage — rotate Azure key first). Then §9 auth/FSRS wiring (wrap App in AuthProvider, gate on useAuth, rewrite Daily with FSRS buttons). §5 sentence audit with Finnish speaker is parallel track.
