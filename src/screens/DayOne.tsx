@@ -93,7 +93,6 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
               <div style={{ padding: 22 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 44, lineHeight: 1, letterSpacing: '-0.04em' }}>{w.fi}</div>
-                  {w.ipa && <span className="ps-label ps-num" style={{ color: 'var(--ink-3)' }}>{w.ipa}</span>}
                 </div>
                 <div className="ps-body-l" style={{ marginTop: 8, color: 'var(--ink-2)' }}>"{w.en}"</div>
 
