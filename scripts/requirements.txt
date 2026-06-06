@@ -1,0 +1,12 @@
+# Python deps for the Finnish content pipeline (Phase 1 + Phase 2).
+#
+# System packages first (Debian/Ubuntu) — Voikko must load; no pyvoikko fallback:
+#   apt-get install -y libvoikko1 voikko-fi
+#
+# Then, in a venv:
+#   pip install -r scripts/requirements.txt
+#
+libvoikko>=4.3        # Finnish morphology: lemmatisation + validation gate
+wordfreq>=3.0         # raw Finnish frequency data (Phase 1)
+anthropic>=0.40       # content generation via the Claude API (Phase 2)
+pytest>=8.0           # tests for the Voikko gate + generation loop

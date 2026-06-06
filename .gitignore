@@ -18,3 +18,4 @@ scripts/ingest/out/
 .venv/
 __pycache__/
 *.pyc
+scripts/generate/out/
