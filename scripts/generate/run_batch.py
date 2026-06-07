@@ -30,7 +30,7 @@ def main():
     ap = argparse.ArgumentParser(description="Generate a validated Finnish content set across all YKI topics.")
     ap.add_argument("--per-topic", type=int, default=8, help="validated items per (topic, level)")
     ap.add_argument("--levels", nargs="+", default=["A1", "A2"])
-    ap.add_argument("--model", default="claude-opus-4-8")
+    ap.add_argument("--model", default="claude-sonnet-4-6")
     ap.add_argument("--topics", nargs="*", default=None, help="limit to these slugs (default: all 25)")
     ap.add_argument("--demo", action="store_true", help="offline stub generator (no API key)")
     args = ap.parse_args()

@@ -85,7 +85,7 @@ OUTPUT_SCHEMA = {
 
 @dataclass
 class GenConfig:
-    model: str = "claude-opus-4-8"
+    model: str = "claude-sonnet-4-6"
     temperature: float | None = 0.2  # applied only on models that accept it
     effort: str = "low"              # lower variance / cost for content generation
     max_tokens: int = 4096
@@ -233,7 +233,7 @@ def main():
     ap.add_argument("--topic", default="everyday life")
     ap.add_argument("--topic-slug", default=None, help="topics.slug for loading into Supabase")
     ap.add_argument("--level", default="A2")
-    ap.add_argument("--model", default="claude-opus-4-8")
+    ap.add_argument("--model", default="claude-sonnet-4-6")
     ap.add_argument("--max-rank", type=int, default=1500)
     ap.add_argument("--no-enforce-allowed", action="store_true", help="validate realness only, not vocabulary membership")
     ap.add_argument("--demo", action="store_true", help="run offline with a stub generator (no API key needed)")

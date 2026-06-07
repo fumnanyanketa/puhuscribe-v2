@@ -93,14 +93,16 @@ path (consistent with `docs/CONTENT-CORRECTIONS-HANDOFF.md` and
 
 ## Model & "lower the temperature"
 
-The default model is `claude-opus-4-8` (the most capable). Opus 4.7/4.8 **removed
-the `temperature` parameter**, so the "lower the temperature" intent is honoured
-via lower `effort`, a determinism instruction, and structured outputs. The code
-sends `temperature` only on models that still accept it (e.g. `claude-sonnet-4-6`)
-— see `_supports_temperature`. Model choice is configurable (`--model`) and
-secondary: grounded Claude + the Voikko gate is the fix. If Finnish naturalness
-later needs more, a Finnish-native open model (Poro / Viking) could do the *raw
-generation* step only, still validated by this same gate.
+The default model is `claude-sonnet-4-6` — a strong, cheaper model that **does**
+accept the `temperature` parameter, so the "lower the temperature" intent is
+honoured directly (`temperature=0.2`) alongside low `effort` and structured
+outputs. `claude-opus-4-8` is available via `--model` (most capable, but it
+removed `temperature`, so there the determinism comes from `effort` + structured
+outputs); `claude-haiku-4-5` is the cheapest. The code only sends params each
+model accepts — see `_supports_temperature` / `_supports_effort`. Model choice is
+configurable and secondary: grounded Claude + the Voikko gate is the fix. If
+Finnish naturalness later needs more, a Finnish-native open model (Poro / Viking)
+could do the *raw generation* step only, still validated by this same gate.
 
 ## Two logged rates
 
