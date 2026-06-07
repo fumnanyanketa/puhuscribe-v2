@@ -1,5 +1,13 @@
 # CONTENT CORRECTIONS — HANDOFF
 
+> ⚠️ **2026-06-07 UPDATE — READ THIS FIRST.** "Content generation" is now an
+> implemented pipeline. To generate content, **run `bash scripts/generate/run.sh`**
+> (Voikko-grounded generation + a hard Finnish-validity gate; needs
+> `ANTHROPIC_API_KEY`). It writes `scripts/generate/out/generated_sentences.sql`
+> to load into Supabase. The **§0 "reingest from CC corpora" plan below is a
+> SEPARATE, DEFERRED path — do NOT start there** unless explicitly asked. See
+> `scripts/generate/README.md` and the latest entries in `PROGRESS.md`.
+
 **Date opened:** 2026-06-06
 **Status:** OPEN — content quality pass not yet done
 **For:** the next Claude Code session (start fresh, read this first)

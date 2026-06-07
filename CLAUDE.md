@@ -23,6 +23,7 @@ An adult immigrant who arrived in Finland 0–18 months ago. Working in English.
 - `npm run dev` — start the Vite dev server
 - `npm run test` — run Vitest (16 FSRS tests currently passing)
 - `npm run build` — production build
+- `bash scripts/generate/run.sh` — **"content generation"**: generate validated Finnish content (Voikko-grounded pipeline at scripts/generate/; needs `ANTHROPIC_API_KEY`). Emits scripts/generate/out/generated_sentences.sql to load into Supabase. Do NOT start from CONTENT-CORRECTIONS-HANDOFF.md §0 (CC reingest) unless explicitly asked — that is a separate, deferred path.
 
 ## Conventions
 - All brand values live in CSS custom properties under :root. Never use stock Tailwind utilities for brand colors or typography.
