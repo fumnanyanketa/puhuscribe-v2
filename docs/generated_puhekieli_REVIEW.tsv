@@ -1,0 +1,401 @@
+# kirjakieli	puhekieli_GENERATED (UNVERIFIED — Finnish speaker must approve)	topic	level
+Minä olen Mia. Mikä sinun nimesi on?	Mä oon Mia. Mikä sun nimi on?	greetings	A1
+Hyvää päivää! Miten sinä voit?	Hei! Miten sä voit?	greetings	A1
+Minä olen uusi täällä.	Mä oon uus täällä.	greetings	A1
+Hän on suomalainen mies.	Se on suomalainen mies.	greetings	A1
+Minä osaan vähän suomea.	Mä osaan vähän suomee.	greetings	A1
+Kiitos! Sinä olet hyvä ihminen.	Kiitos! Sä oot hyvä ihminen.	greetings	A1
+Me tulemme samasta maasta.	Me tullaan samasta maasta.	greetings	A1
+Hyvää iltaa! Minä olen iloinen, että näen sinut.	Hei! Mä oon iloinen, et näen sut.	greetings	A1
+Minä olen uusi täällä.	Mä oon uusi täällä.	greetings	A2
+Mikä sinun nimesi on?	Mikä sun nimi on?	greetings	A2
+Minun nimeni on Anna.	Mun nimi on Anna.	greetings	A2
+Hän on suomalainen mies.	Se on suomalainen mies.	greetings	A2
+Minä tulen tänään töihin.	Mä tuun tänään töihin.	greetings	A2
+Hyvää päivää! Miten sinä voit?	Hei! Miten sä voit?	greetings	A2
+Minä osaan vähän suomea.	Mä osaan vähän suomea.	greetings	A2
+Onko sinulla aikaa puhua?	Onks sul aikaa puhua?	greetings	A2
+Minulla on kaksi lasta.	Mul on kaks lasta.	family	A1
+Hän on minun mies.	Se on mun mies.	family	A1
+Me olemme vanha pariskunta.	Me ollaan vanha pariskunta.	family	A1
+Minä haluan nähdä lapseni tänään.	Mä haluun nähä mun lapset tänään.	family	A1
+Hän on hyvä nainen.	Se on hyvä nainen.	family	A1
+Meillä on pieni lapsi kotona.	Meillä on pieni lapsi kotona.	family	A1
+Sinä olet tosi tärkeä minulle.	Sä oot tosi tärkeä mulle.	family	A1
+He elävät yhdessä kaupungissa.	Ne elää yhdessä kaupungissa.	family	A1
+Minulla on kaksi lasta.	Mul on kaks lasta.	family	A2
+Hän on minun mieheni.	Se on mun mieheni.	family	A2
+Me menemme yhdessä kaupunkiin.	Me mennään yhdessä kaupunkiin.	family	A2
+Minä haluan nähdä vanhemmat vanhempani.	Mä haluun nähä vanhat vanhemmat.	family	A2
+Lapsi tarvitsee paljon rakkautta.	Lapsi tarttee paljon rakkautta.	family	A2
+Sinä olet tosi hyvä ihminen.	Sä oot tosi hyvä ihminen.	family	A2
+He elävät yhdessä pienessä asunnossa.	Ne elää yhdessä pienessä asunnossa.	family	A2
+Meillä on aina aikaa toisillemme.	Meillä on aina aikaa toisillemme.	family	A2
+Minulla on oma huone.	Mul on oma huone.	home	A1
+Tämä paikka on hyvä.	Tää paikka on hyvä.	home	A1
+Meillä on iso talo.	Meillä on iso talo.	home	A1
+Hän asuu vanhassa talossa.	Se asuu vanhassa talossa.	home	A1
+Minä haluan uuden kodin.	Mä haluun uuden kodin.	home	A1
+Lapsi on nyt kotona.	Lapsi on nyt kotona.	home	A1
+Tämä on pieni huone.	Tää on pieni huone.	home	A1
+Meillä ei ole rahaa uuteen asuntoon.	Meillä ei oo rahaa uuteen asuntoon.	home	A1
+Minulla on oma huone.	Mul on oma huone.	home	A2
+Tämä asunto on iso ja vanha.	Tää asunto on iso ja vanha.	home	A2
+Meillä on pieni koti kaupungissa.	Meillä on pieni koti kaupungissa.	home	A2
+Hän haluaa uuden asunnon.	Se haluaa uuden asunnon.	home	A2
+Vuokra on tosi kova tässä alueella.	Vuokra on tosi kova tällä alueella.	home	A2
+Lapset tarvitsevat oman huoneen.	Lapset tarttee oman huoneen.	home	A2
+Minä etsin hyvää paikkaa asua.	Mä etsin hyvää paikkaa asua.	home	A2
+Onko sinulla vielä vanha auto tallissa?	Onks sul vielä vanha auto tallissa?	home	A2
+Minä haluan ottaa lisää ruokaa.	Mä haluun ottaa lisää ruokaa.	food_drink	A1
+Tämä on hyvä ruoka.	Tää on hyvää ruokaa.	food_drink	A1
+Hän ottaa kaksi kahvia.	Se ottaa kaks kahvia.	food_drink	A1
+Minä en halua sitä.	Mä en haluu sitä.	food_drink	A1
+Voimmeko saada lisää vettä?	Voitaisko saada lisää vettä?	food_drink	A1
+Se on ihan hyvä.	Se on ihan hyvä.	food_drink	A1
+Minä syön vähän nyt.	Mä syön vähän nyt.	food_drink	A1
+Hän tuo ruokaa meille.	Se tuo ruokaa meille.	food_drink	A1
+Minä haluan ottaa lisää ruokaa.	Mä haluun ottaa lisää ruokaa.	food_drink	A2
+Tämä ruoka on tosi hyvä.	Tää ruoka on tosi hyvä.	food_drink	A2
+Hän tekee ruokaa joka päivä.	Se tekee ruokaa joka päivä.	food_drink	A2
+Voimmeko ottaa vähän lisää?	Voitaisko ottaa vähän lisää?	food_drink	A2
+Minä en halua sitä ruokaa.	Mä en haluu sitä ruokaa.	food_drink	A2
+Se on ihan hyvä juttu syödä yhdessä.	Se on ihan hyvä juttu syödä yhdessä.	food_drink	A2
+Tänään me teemme ruokaa kotona.	Tänään me tehään ruokaa kotona.	food_drink	A2
+Kyllä, minä otan vielä vähän.	Joo, mä otan vielä vähän.	food_drink	A2
+Paljonko tämä maksaa?	Paljonko tää maksaa?	shopping	A1
+Minä haluan ottaa tämän.	Mä haluun ottaa tän.	shopping	A1
+Onko teillä uusia tuotteita?	Onks teil uusii tuotteita?	shopping	A1
+Minulla ei ole paljon rahaa.	Mul ei oo paljon rahaa.	shopping	A1
+Voitko antaa minulle kuitti?	Voitko antaa mulle kuitin?	shopping	A1
+Tämä on hyvä ja halpa.	Tää on hyvä ja halpa.	shopping	A1
+Minä tarvitsen vain kaksi.	Mä tarvin vaan kaks.	shopping	A1
+Kiitos, nähdään taas!	Kiitos, nähdään taas!	shopping	A1
+Paljonko tämä maksaa?	Paljonko tää maksaa?	shopping	A2
+Minä haluan ottaa kaksi.	Mä haluun ottaa kaks.	shopping	A2
+Onko teillä muita värejä?	Onks teillä muita värejä?	shopping	A2
+Tämä on liian iso minulle.	Tää on liian iso mulle.	shopping	A2
+Minulla ei ole tarpeeksi rahaa.	Mulla ei oo tarpeeks rahaa.	shopping	A2
+Voitko kertoa, missä kassa on?	Voitsä kertoo, missä kassa on?	shopping	A2
+Minä tarvitsen uuden laukun.	Mä tarvin uuden laukun.	shopping	A2
+Tämä on hyvä ja halpa.	Tää on hyvä ja halpa.	shopping	A2
+Minä menen töihin joka päivä.	Mä meet töihin joka päivä.	daily_routines	A1
+Hän katsoo televisiota illalla.	Se kattoo televisiota illalla.	daily_routines	A1
+Me teemme ruokaa yhdessä.	Me tehään ruokaa yhdessä.	daily_routines	A1
+Minä luen kirjaa iltaisin.	Mä luen kirjaa iltaisin.	daily_routines	A1
+Lapsi menee nukkumaan aikaisin.	Lapsi menee nukkumaan aikaisin.	daily_routines	A1
+Sinä voit tulla kanssani kaupunkiin.	Sä voit tulla mun kaa kaupunkiin.	daily_routines	A1
+Hän käy töissä joka viikko.	Se käy töissä joka viikko.	daily_routines	A1
+Tänään minulla on vapaata aikaa.	Tänään mul on vapaata aikaa.	daily_routines	A1
+Minä lähden töihin joka päivä aamulla.	Mä lähden töihin joka päivä aamulla.	daily_routines	A2
+Hän katsoo televisiota iltaisin.	Se kattoo televisiota iltaisin.	daily_routines	A2
+Minä luen kirjaa, kun minulla on aikaa.	Mä luen kirjaa, ku mulla on aikaa.	daily_routines	A2
+Me käymme kaupungissa viikonloppuna.	Me käydään kaupungissa viikonloppuna.	daily_routines	A2
+Lapset menevät ulos joka päivä.	Lapset menee ulos joka päivä.	daily_routines	A2
+Minä haluan ottaa hetken itselleni illalla.	Mä haluun ottaa hetken ittelleni illalla.	daily_routines	A2
+Minä olen aina väsynyt pitkän päivän jälkeen.	Mä oon aina väsyny pitkän päivän jälkeen.	daily_routines	A2
+Minä lähden töihin joka päivä.	Mä lähden töihin joka päivä.	daily_routines	A2
+Minulla on ongelma.	Mul on ongelma.	health	A1
+Hän on sairas.	Se on sairas.	health	A1
+Minä tarvitsen apua.	Mä tarvin apua.	health	A1
+Onko sinulla kipua?	Onks sul kipua?	health	A1
+Lääkäri on hyvä.	Lääkäri on hyvä.	health	A1
+Minä menen lääkäriin tänään.	Mä meet lääkäriin tänään.	health	A1
+Lapsi on sairas tänään.	Lapsi on sairas tänään.	health	A1
+Minä otan lääkettä.	Mä otan lääkettä.	health	A1
+Minulla on ongelma, ja haluan mennä lääkärille.	Mul on ongelma, ja mä haluun mennä lääkärille.	health	A2
+Hän tuntuu huonolta tänään.	Se tuntuu huonolta tänään.	health	A2
+Minä tarvitsen apua, koska minulla on kipua.	Mä tarvin apua, ku mul on kipua.	health	A2
+Onko sinulla lääkäri tässä kaupungissa?	Onks sul lääkäri tässä kaupungissa?	health	A2
+Lapsi on sairas, joten me menemme lääkärille.	Lapsi on sairas, joten me mennään lääkärille.	health	A2
+Voit ottaa tämän lääkkeen kaksi kertaa päivässä.	Sä voit ottaa tän lääkkeen kaks kertaa päivässä.	health	A2
+Minä käyn lääkärissä ensi viikolla.	Mä käyn lääkärissä ensi viikolla.	health	A2
+Hyvä terveys on tärkeä asia kaikille ihmisille.	Hyvä terveys on tärkee asia kaikille ihmisille.	health	A2
+Minä menen kaupunkiin autolla.	Mä meet kaupunkiin autolla.	transport	A1
+Hän lähtee nyt pois.	Se lähtee nyt pois.	transport	A1
+Me menemme yhdessä.	Me mennään yhessä.	transport	A1
+Auto on vanha mutta hyvä.	Auto on vanha mut hyvä.	transport	A1
+Minä haluan lähteä nyt.	Mä haluun lähteä nyt.	transport	A1
+Onko sinulla auto?	Onks sul auto?	transport	A1
+Kaupunki on kaukana.	Kaupunki on kaukana.	transport	A1
+Hän tulee tänään.	Se tulee tänään.	transport	A1
+Minä haluan lähteä kaupunkiin huomenna.	Mä haluun lähtee kaupunkiin huomenna.	transport	A2
+Hän menee töihin autolla joka päivä.	Se menee töihin autolla joka päivä.	transport	A2
+Milloin seuraava auto lähtee?	Milloin seuraava auto lähtee?	transport	A2
+Minulla ei ole rahaa uuteen autoon.	Mulla ei oo rahaa uuteen autoon.	transport	A2
+Matka on pitkä, joten me lähdemme aikaisin.	Matka on pitkä, joten me lähdetään aikaisin.	transport	A2
+Onko sinulla oma auto?	Onks sul oma auto?	transport	A2
+He tulevat kaupunkiin ensi viikolla.	Ne tulee kaupunkiin ensi viikolla.	transport	A2
+Tämä paikka on helppo löytää autolla.	Tää paikka on helppo löytää autolla.	transport	A2
+Tänään ilma on hyvä.	Tänään ilma on hyvä.	weather	A1
+Ilma on nyt kova ja kylmä.	Ilma on nyt kova ja kylmä.	weather	A1
+Minä haluan mennä ulos, koska ilma on hyvä.	Mä haluun mennä ulos, koska ilma on hyvä.	weather	A1
+Tämä kausi on pitkä ja paha.	Tää kausi on pitkä ja paha.	weather	A1
+Ilta on nyt kylmä.	Ilta on nyt kylmä.	weather	A1
+Päivä on lyhyt talvella.	Päivä on lyhyt talvella.	weather	A1
+Minä tiedän, että ilma muuttuu.	Mä tiedän, et ilma muuttuu.	weather	A1
+Vuosi alkaa tammikuussa.	Vuosi alkaa tammikuussa.	weather	A1
+Tänään ilma on hyvä.	Tänään ilma on hyvä.	weather	A2
+Talvi on kova ja pitkä Suomessa.	Talvi on kova ja pitkä Suomessa.	weather	A2
+Minä haluan mennä ulos, mutta ilma on huono.	Mä haluun mennä ulos, mut ilma on huono.	weather	A2
+Kun sataa, minä jään kotiin.	Ku sataa, mä jään kotiin.	weather	A2
+Ilta on jo kylmä tänään.	Ilta on jo kylmä tänään.	weather	A2
+Sinä voit ottaa takki mukaan, koska ilma on kylmä.	Sä voit ottaa takin mukaan, koska ilma on kylmä.	weather	A2
+Keväällä päivät alkavat olla pitkiä.	Keväällä päivät alkaa olla pitkiä.	weather	A2
+Tänään ilma on hyvä.	Tänään ilma on hyvä.	weather	A2
+Minä pelaan peliä joka päivä.	Mä pelaan peliä joka päivä.	hobbies	A1
+Hän katsoo peliä illalla.	Se kattoo peliä illalla.	hobbies	A1
+Minä haluan mennä ulos nyt.	Mä haluun mennä ulos nyt.	hobbies	A1
+Me käymme yhdessä pelissä.	Me käydään yhdessä pelissä.	hobbies	A1
+Lapsi haluaa pelata.	Lapsi haluaa pelata.	hobbies	A1
+Peli alkaa kohta.	Peli alkaa kohta.	hobbies	A1
+Minä luen joka ilta.	Mä luen joka ilta.	hobbies	A1
+Se on tosi hyvä peli.	Se on tosi hyvä peli.	hobbies	A1
+Minä pelaan peliä joka ilta.	Mä pelaan peliä joka ilta.	hobbies	A2
+Hän käy pelissä joka viikko.	Se käy pelissä joka viikko.	hobbies	A2
+Minä haluan katsoa peliä nyt.	Mä haluun katsoo peliä nyt.	hobbies	A2
+Me menemme ulos yhdessä viikonloppuna.	Me mennään ulos yhdessä viikonloppuna.	hobbies	A2
+Tämä peli on tosi hyvä.	Tää peli on tosi hyvä.	hobbies	A2
+Lapset haluavat myös pelata.	Lapset haluaa myös pelata.	hobbies	A2
+Minä luen joka päivä vähän.	Mä luen joka päivä vähän.	hobbies	A2
+Onko sinulla oma peli?	Onks sul oma peli?	hobbies	A2
+Tänään on hyvä päivä.	Tänään on hyvä päivä.	events	A1
+Minä haluan mennä juhlaan.	Mä haluun mennä juhlaan.	events	A1
+Hän tuo kaksi lasta mukaan.	Se tuo kaks lasta mukaan.	events	A1
+Me olemme kaikki täällä.	Me ollaan kaikki täällä.	events	A1
+Uusi vuosi alkaa pian.	Uus vuosi alkaa pian.	events	A1
+Lapsi saa lahjan.	Lapsi saa lahjan.	events	A1
+Ilta on tosi hyvä.	Ilta on tosi hyvä.	events	A1
+He ovat iloisia yhdessä.	Ne on iloisia yhdessä.	events	A1
+Tänään on suuri juhlapäivä.	Tänään on iso juhlapäivä.	events	A2
+Minä haluan mennä juhliin kavereiden kanssa.	Mä haluun mennä juhliin kavereiden kanssa.	events	A2
+Hän tuo kaksi pulloa juhlaan.	Se tuo kaks pulloa juhlaan.	events	A2
+Uusi vuosi alkaa pian.	Uus vuosi alkaa pian.	events	A2
+Lapset saavat lahjoja jouluna.	Lapset saa lahjoja jouluna.	events	A2
+Me menemme kaupunkiin katsomaan juhlia.	Me mennään kaupunkiin kattomaan juhlia.	events	A2
+Ilta on tosi mukava, kun kaikki ovat yhdessä.	Ilta on tosi mukava, ku kaikki on yhdessä.	events	A2
+Ensimmäinen päivä uudessa vuodessa on aina tärkeä.	Ekana päivänä uudessa vuodessa on aina tärkee.	events	A2
+Minä teen työtä joka päivä.	Mä teen työtä joka päivä.	work_general	A1
+Hän on töissä kaupungissa.	Se on töissä kaupungissa.	work_general	A1
+Minulla on hyvä työ.	Mul on hyvä työ.	work_general	A1
+Työ alkaa aamulla.	Työ alkaa aamulla.	work_general	A1
+Hän haluaa uuden työn.	Se haluaa uuden työn.	work_general	A1
+Minä osaan puhua suomea työssä.	Mä osaan puhua suomee töissä.	work_general	A1
+Työ on tärkeä asia.	Työ on tärkee asia.	work_general	A1
+Me teemme työtä yhdessä.	Me tehään työtä yhdessä.	work_general	A1
+Minä teen työtä joka päivä.	Mä teen työtä joka päivä.	work_general	A2
+Hän on hyvä ihminen ja tekee työnsä hyvin.	Se on hyvä ihminen ja tekee työnsä hyvin.	work_general	A2
+Minä haluan löytää uuden työn.	Mä haluun löytää uuden työn.	work_general	A2
+Työ alkaa aina kahdeksalta.	Työ alkaa aina kahdeksalta.	work_general	A2
+Onko sinulla oma yritys?	Onks sul oma yritys?	work_general	A2
+Raha on tärkeä asia, mutta työ on myös tärkeä.	Raha on tärkee asia, mut työ on myös tärkee.	work_general	A2
+Minä osaan puhua suomea vähän.	Mä osaan puhua suomee vähän.	work_general	A2
+He tarvitsevat uusia ihmisiä töihin.	Ne tarvitsee uusia ihmisiä töihin.	work_general	A2
+Minä menen töihin nyt.	Mä meet töihin nyt.	workplace	A1
+Hän on uusi ihminen työssä.	Se on uus ihminen työssä.	workplace	A1
+Meillä on hyvä paikka töissä.	Meillä on hyvä paikka töissä.	workplace	A1
+Minä teen työtä joka päivä.	Mä teen työtä joka päivä.	workplace	A1
+Hän osaa puhua suomea hyvin.	Se osaa puhua suomee hyvin.	workplace	A1
+Työ alkaa aamulla.	Työ alkaa aamulla.	workplace	A1
+Minä tarvitsen apua työssä.	Mä tarvin apua töissä.	workplace	A1
+Meillä on kaksi uutta ihmistä töissä.	Meillä on kaks uutta ihmistä töissä.	workplace	A1
+Minä menen töihin joka päivä.	Mä meet töihin joka päivä.	workplace	A2
+Hän on uusi ihminen meidän yrityksessä.	Se on uus ihminen meidän yrityksessä.	workplace	A2
+Meillä on hyvä tiimi töissä.	Meillä on hyvä tiimi töissä.	workplace	A2
+Minä en osaa vielä kaikkea.	Mä en osaa vielä kaikkee.	workplace	A2
+Työ alkaa kello kahdeksan.	Työ alkaa kello kahdeksan.	workplace	A2
+Voinko ottaa tauon nyt?	Voinko ottaa tauon nyt?	workplace	A2
+Hän kertoo minulle tärkeän asian.	Se kertoo mulle tärkeän asian.	workplace	A2
+Minä yritän tehdä työni hyvin.	Mä yritän tehä mun työn hyvin.	workplace	A2
+Minulla on uusi työ.	Mul on uus työ.	job_search	A1
+Mikä on sinun nimesi?	Mikä on sun nimi?	job_search	A1
+Minä haluan tehdä työtä.	Mä haluun tehä työtä.	job_search	A1
+Hän osaa puhua suomea.	Se osaa puhua suomee.	job_search	A1
+Minä olen vanha työntekijä.	Mä oon vanha työntekijä.	job_search	A1
+Tämä yritys on hyvä.	Tää yritys on hyvä.	job_search	A1
+Minä tarvitsen työtä nyt.	Mä tartten työtä nyt.	job_search	A1
+Hän kertoo oman nimensä.	Se kertoo oman nimensä.	job_search	A1
+Minulla on uusi työ.	Mul on uus työ.	job_search	A2
+Minä haluan löytää hyvän työpaikan.	Mä haluun löytää hyvän työpaikan.	job_search	A2
+Osaatko puhua suomea?	Osaaks sä puhua suomee?	job_search	A2
+Minä olen tehnyt työtä kaksi vuotta.	Mä oon tehny työtä kaks vuotta.	job_search	A2
+Tämä yritys on hyvä paikka työskennellä.	Tää yritys on hyvä paikka työskennellä.	job_search	A2
+Hän osaa myös ruotsia ja suomea.	Se osaa myös ruotsia ja suomee.	job_search	A2
+Kannattaa yrittää, vaikka se on vaikea.	Kannattaa yrittää, vaikka se on vaikee.	job_search	A2
+Minä haluan löytää uuden työn.	Mä haluun löytää uuden työn.	job_search	A2
+Minä luen suomea joka päivä.	Mä luen suomee joka päivä.	education	A1
+Tämä on helppo asia.	Tää on helppo asia.	education	A1
+Hän osaa puhua suomea vähän.	Se osaa puhua suomee vähän.	education	A1
+Minä haluan oppia uusia asioita.	Mä haluun oppia uusii asioita.	education	A1
+Tänään me luemme yhdessä.	Tänään me luetaan yhdessä.	education	A1
+Sinä tiedät jo sen.	Sä tiiät jo sen.	education	A1
+Koulu alkaa aamulla.	Koulu alkaa aamulla.	education	A1
+On tärkeää ymmärtää suomea.	On tärkeetä ymmärtää suomee.	education	A1
+Minä haluan oppia suomea.	Mä haluun oppia suomea.	education	A2
+Hän lukee kirjaa joka päivä.	Se lukee kirjaa joka päivä.	education	A2
+Tämä asia on vaikea ymmärtää.	Tää asia on vaikee ymmärtää.	education	A2
+Minä käyn suomen kurssilla.	Mä käyn suomen kurssilla.	education	A2
+Sinä osaat puhua suomea hyvin.	Sä osaat puhua suomea hyvin.	education	A2
+Me tarvitsemme lisää aikaa.	Me tarvitaan lisää aikaa.	education	A2
+Hän yrittää lukea uusia sanoja.	Se yrittää lukea uusia sanoja.	education	A2
+Tämä on helppo tehtävä.	Tää on helppo tehtävä.	education	A2
+Minulla on uusi puhelin.	Mul on uus puhelin.	technology	A1
+Hän katsoo kuvia tietokoneella.	Se kattoo kuvia tietokoneella.	technology	A1
+Minä käytän puhelinta joka päivä.	Mä käytän puhelinta joka päivä.	technology	A1
+Tämä peli on tosi hyvä.	Tää peli on tosi hyvä.	technology	A1
+Lapsi haluaa katsoa videoita.	Lapsi haluaa kattoo videoita.	technology	A1
+Minä en osaa käyttää tätä laitetta.	Mä en osaa käyttää tätä laitetta.	technology	A1
+Tieto löytyy helposti verkosta.	Tieto löytyy helposti verkosta.	technology	A1
+Hän ottaa kuvan puhelimella.	Se ottaa kuvan puhelimella.	technology	A1
+Minä käytän puhelinta joka päivä.	Mä käytän puhelinta joka päivä.	technology	A2
+Tämä peli on tosi hyvä.	Tää peli on tosi hyvä.	technology	A2
+Hän katsoo kuvia puhelimesta.	Se kattoo kuvia puhelimesta.	technology	A2
+Uusi tietokone on iso ja nopea.	Uus tietokone on iso ja nopee.	technology	A2
+Minä en osaa käyttää tätä laitetta.	Mä en osaa käyttää tätä laitetta.	technology	A2
+Tieto löytyy helposti verkosta.	Tieto löytyy helposti verkosta.	technology	A2
+Lapset käyttävät paljon aikaa pelien kanssa.	Lapset käyttää paljon aikaa pelien kaa.	technology	A2
+Onko sinulla oma tietokone?	Onks sul oma tietokone?	technology	A2
+Minulla on vähän rahaa.	Mul on vähän rahaa.	banking	A1
+Hän ottaa rahaa.	Se ottaa rahaa.	banking	A1
+Minä haluan uuden tilin.	Mä haluun uuden tilin.	banking	A1
+Onko sinulla rahaa?	Onks sul rahaa?	banking	A1
+Tämä on tärkeä asia.	Tää on tärkeä asia.	banking	A1
+Minä tarvitsen rahaa nyt.	Mä tarvin rahaa nyt.	banking	A1
+Hän antaa minulle rahaa.	Se antaa mulle rahaa.	banking	A1
+Raha on tärkeä.	Raha on tärkeä.	banking	A1
+Minulla ei ole rahaa nyt.	Mul ei oo rahaa nyt.	banking	A2
+Hän ottaa rahaa pankista.	Se ottaa rahaa pankista.	banking	A2
+Minä haluan käyttää omaa tiliä.	Mä haluun käyttää omaa tiliä.	banking	A2
+Onko sinulla uusi kortti?	Onks sul uus kortti?	banking	A2
+Raha on tärkeä asia.	Raha on tärkee asia.	banking	A2
+Minä tarvitsen lisää rahaa tänään.	Mä tarvin lisää rahaa tänään.	banking	A2
+Hän sanoo, että maksaminen on helppoa.	Se sanoo, et maksaminen on helppoo.	banking	A2
+Me voimme myös maksaa yhdessä.	Me voidaan myös maksaa yhdessä.	banking	A2
+Minä haluan lähettää paketin.	Mä haluun lähettää paketin.	post_office	A1
+Missä on lähin posti?	Missä on lähin posti?	post_office	A1
+Paketti tulee huomenna.	Paketti tulee huomenna.	post_office	A1
+Minä tarvitsen kirjekuoren.	Mä tarvin kirjekuoren.	post_office	A1
+Hän ottaa paketin vastaan.	Se ottaa paketin vastaan.	post_office	A1
+Onko paketti jo tullut?	Onks paketti jo tullu?	post_office	A1
+Minä menen postiin tänään.	Mä meet postiin tänään.	post_office	A1
+Tämä paketti on pieni.	Tää paketti on pieni.	post_office	A1
+Minä haluan lähettää tämän paketin.	Mä haluun lähettää tän paketin.	post_office	A2
+Paketti tulee huomenna.	Paketti tulee huomenna.	post_office	A2
+Sinä voit ottaa paketin sieltä.	Sä voit ottaa paketin sieltä.	post_office	A2
+Minulla ei ole vielä pakettia.	Mulla ei oo vielä pakettia.	post_office	A2
+Hän tuo paketin tänään.	Se tuo paketin tänään.	post_office	A2
+Tämä paketti on iso ja raskas.	Tää paketti on iso ja raskas.	post_office	A2
+Minä tarvitsen tietää paketin nimi.	Mä tarvin tietää paketin nimen.	post_office	A2
+Minä haluan lähettää paketin tänään.	Mä haluun lähettää paketin tänään.	post_office	A2
+Missä on toimisto?	Missä on toimisto?	housing_services	A1
+Hän on uusi ihminen tässä alueella.	Se on uus ihminen tällä alueella.	housing_services	A1
+Minä tarvitsen apua tämän asian kanssa.	Mä tarvin apua tän asian kanssa.	housing_services	A1
+Onko sinulla oma paikka?	Onks sul oma paikka?	housing_services	A1
+Tämä on tärkeä asia.	Tää on tärkee asia.	housing_services	A1
+Minä haluan puhua hallituksen kanssa.	Mä haluun puhuu hallituksen kanssa.	housing_services	A1
+Hän voi auttaa sinua tänään.	Se voi auttaa sua tänään.	housing_services	A1
+Raha on ongelma nyt.	Raha on ongelma nyt.	housing_services	A1
+Tämä on tärkeä asia, joten sinun pitää ottaa se vakavasti.	Tää on tärkee asia, joten sun pitää ottaa se vakavasti.	housing_services	A2
+Hän sanoi, että uusi asunto on pienellä alueella kaupungissa.	Se sano, et uus asunto on pienellä alueella kaupungissa.	housing_services	A2
+Minulla ei ole vielä omaa asuntoa.	Mulla ei oo vielä omaa asuntoa.	housing_services	A2
+Voitko kertoa, miten minä voin löytää hyvän paikan asua?	Voitko kertoo, miten mä voin löytää hyvän paikan asua?	housing_services	A2
+Raha on ongelma, koska vuokra on iso.	Raha on ongelma, ku vuokra on iso.	housing_services	A2
+Hallitus voi antaa lisää tietoa asumisesta.	Hallitus voi antaa lisää tietoo asumisesta.	housing_services	A2
+Minä tarvitsen apua, koska en ymmärrä kaikkia asioita.	Mä tarvin apua, ku en ymmärrä kaikkia asioita.	housing_services	A2
+Minä tarvitsen apua asiaani kanssa.	Mä tarvin apuu mun asiaan.	housing_services	A2
+Soita poliisille nyt!	Soita poliisille nyt!	emergency	A1
+Tämä paikka on vaarallinen.	Tää paikka on vaarallinen.	emergency	A1
+Minä tarvitsen apua.	Mä tarvin apua.	emergency	A1
+Hän ei voi lähteä yksin.	Se ei voi lähtee yksin.	emergency	A1
+Mene pois nyt!	Mee pois nyt!	emergency	A1
+Ongelma on iso.	Ongelma on iso.	emergency	A1
+Lapsi tarvitsee apua.	Lapsi tarttee apua.	emergency	A1
+Poliisi tulee kohta.	Poliisi tulee kohta.	emergency	A1
+Soita poliisille nyt!	Soita poliisille nyt!	emergency	A2
+Onko sinulla ongelma?	Onks sul ongelma?	emergency	A2
+Meidän täytyy lähteä pois tästä paikasta.	Meidän täytyy lähtee pois tästä paikasta.	emergency	A2
+Hän tarvitsee apua nyt.	Se tarttee apua nyt.	emergency	A2
+Poliisi tulee kohta.	Poliisi tulee kohta.	emergency	A2
+Tämä on tosi paha tilanne.	Tää on tosi paha tilanne.	emergency	A2
+Minä en osaa auttaa yksin.	Mä en osaa auttaa yksin.	emergency	A2
+Jää tähän paikkaan ja odota.	Jää tähän paikkaan ja odota.	emergency	A2
+Kaupunki on suuri ja vanha.	Kaupunki on iso ja vanha.	city_life	A1
+Ilma on tänään hyvä.	Ilma on tänään hyvä.	city_life	A1
+Minä näen paljon ihmisiä kadulla.	Mä nään paljon ihmisii kadulla.	city_life	A1
+Auto on paha ilmalle.	Auto on paha ilmalle.	city_life	A1
+Tässä alueella on paljon uusia taloja.	Tässä alueella on paljon uusii taloja.	city_life	A1
+Minä haluan mennä kaupunkiin tänään.	Mä haluun mennä kaupunkiin tänään.	city_life	A1
+Kaupungissa on myös pieniä puistoja.	Kaupungissa on myös pienii puistoja.	city_life	A1
+Ongelma on, että ilma on huono.	Ongelma on, et ilma on huono.	city_life	A1
+Kaupungissa on paljon ihmisiä ja autoja.	Kaupungis on paljon ihmisii ja autoja.	city_life	A2
+Ilma on tänään huono.	Ilma on tänään huono.	city_life	A2
+Minä haluan asua pienessä paikassa, vaan se ei ole aina mahdollista.	Mä haluun asuu pienessä paikassa, mut se ei oo aina mahdollista.	city_life	A2
+Kaupungissa on helppo käydä töissä joka päivä.	Kaupungis on helppo käydä töissä joka päivä.	city_life	A2
+Nuoret ihmiset tulevat kaupunkiin töiden takia.	Nuoret ihmiset tulee kaupunkiin töiden takia.	city_life	A2
+Autojen takia ilma on usein huono kaupungissa.	Autojen takia ilma on usein huono kaupungissa.	city_life	A2
+Tässä alueella on paljon uusia yrityksiä.	Tässä alueella on paljon uusii yrityksiä.	city_life	A2
+Ongelma on se, että kaupungissa raha ei aina riitä.	Ongelma on se, et kaupungissa raha ei aina riitä.	city_life	A2
+Minä luen uutisia joka päivä.	Mä luen uutisia joka päivä.	media_news	A1
+Hän katsoo uutisia illalla.	Se kattoo uutisia illalla.	media_news	A1
+Tämä on tärkeä asia.	Tää on tärkee asia.	media_news	A1
+Minä en tiedä, mikä se on.	Mä en tiiä, mikä se on.	media_news	A1
+Uusi tieto tulee joka päivä.	Uus tieto tulee joka päivä.	media_news	A1
+He lukevat uutisia suomeksi.	Ne lukee uutisia suomeks.	media_news	A1
+Tänään on paljon uutisia.	Tänään on paljon uutisia.	media_news	A1
+Kuvat näyttävät, mitä maailmassa tapahtuu.	Kuvat näyttää, mitä maailmassa tapahtuu.	media_news	A1
+Minä luen uutisia joka päivä.	Mä luen uutisia joka päivä.	media_news	A2
+Tämä uutinen on tosi tärkeä.	Tää uutinen on tosi tärkeä.	media_news	A2
+Hän katsoo uutisia joka ilta.	Se kattoo uutisia joka ilta.	media_news	A2
+Tiedätkö sinä, mitä maailmassa tapahtuu nyt?	Tiiätkö sä, mitä maailmassa tapahtuu nyt?	media_news	A2
+Hallitus sanoi, että asia on tärkeä.	Hallitus sano, et asia on tärkeä.	media_news	A2
+Minä en usko kaikkea, mitä lehdessä lukee.	Mä en usko kaikkee, mitä lehdessä lukee.	media_news	A2
+Uusi tieto tuli tänään.	Uus tieto tuli tänään.	media_news	A2
+Onko sinulla hyvä tapa seurata uutisia?	Onks sul hyvä tapa seurata uutisia?	media_news	A2
+Minä opettelen suomea joka päivä.	Mä opettelen suomee joka päivä.	integration	A1
+Tämä on minun uusi kotikaupunkini.	Tää on mun uus kotikaupunki.	integration	A1
+Hän tulee uudesta maasta.	Se tulee uudesta maasta.	integration	A1
+Minä haluan ymmärtää suomalaisia ihmisiä.	Mä haluun ymmärtää suomalaisia ihmisiä.	integration	A1
+Suomi on minulle uusi maa.	Suomi on mulle uus maa.	integration	A1
+Me voimme puhua suomea yhdessä.	Me voidaan puhua suomee yhdessä.	integration	A1
+Tänään minä käyn kaupungilla ensimmäistä kertaa.	Tänään mä käyn kaupungilla ekaa kertaa.	integration	A1
+On tärkeää oppia uusia tapoja.	On tärkeetä oppia uusia tapoja.	integration	A1
+Minä yritän puhua suomea joka päivä.	Mä yritän puhua suomee joka päivä.	integration	A2
+Uuteen maahan muuttaminen on vaikea asia.	Uuteen maahan muuttaminen on vaikee asia.	integration	A2
+Hän haluaa ymmärtää suomalaista tapaa elää.	Se haluaa ymmärtää suomalaista tapaa elää.	integration	A2
+Minä käyn töissä ja opin samalla kieltä.	Mä käyn töissä ja opin samalla kieltä.	integration	A2
+Tämä kaupunki on minulle vielä uusi paikka.	Tää kaupunki on mulle vielä uus paikka.	integration	A2
+On tärkeää, että lapset voivat käydä koulua.	On tärkeetä, et lapset voi käydä koulua.	integration	A2
+Minä tarvitsen lisää tietoa tästä alueesta.	Mä tarvin lisää tietoo tästä alueesta.	integration	A2
+Moni ihminen yrittää löytää töitä uudessa maassa.	Moni ihminen yrittää löytää töitä uudessa maassa.	integration	A2
+Kaikilla ihmisillä on oikeus elää hyvin.	Kaikilla ihmisillä on oikeus elää hyvin.	rights_duties	A1
+Sinä voit puhua suomea täällä.	Sä voit puhua suomee täällä.	rights_duties	A1
+Minulla on oikeus saada tietoa.	Mulla on oikeus saada tietoo.	rights_duties	A1
+Lapsi saa apua, jos hän tarvitsee sitä.	Lapsi saa apua, jos se tarvitsee sitä.	rights_duties	A1
+Meidän pitää vastata omista teoistamme.	Meidän pitää vastata omista teoistamme.	rights_duties	A1
+Jokainen ihminen voi käydä töissä.	Jokainen ihminen voi käydä töissä.	rights_duties	A1
+Hallitus tekee tärkeät päätökset.	Hallitus tekee tärkeät päätökset.	rights_duties	A1
+Kaikilla ihmisillä on oikeus elää hyvin.	Kaikilla ihmisillä on oikeus elää hyvin.	rights_duties	A1
+Jokaisella ihmisellä on oikeus elää turvassa.	Jokaisella ihmisellä on oikeus elää turvassa.	rights_duties	A2
+Sinä voit saada apua, jos sinulla on ongelma.	Sä voit saada apua, jos sul on ongelma.	rights_duties	A2
+Meidän pitää maksaa verot ajoissa.	Meidän pitää maksaa verot ajoissa.	rights_duties	A2
+Lapsella on oikeus käydä koulua.	Lapsella on oikeus käydä koulua.	rights_duties	A2
+Minä voin puhua suomea täällä.	Mä voin puhua suomee täällä.	rights_duties	A2
+Sinun pitää vastata omista teoistasi.	Sun pitää vastata omista teoistasi.	rights_duties	A2
+Jokainen ihminen voi saada apua poliisilta.	Jokainen ihminen voi saada apua poliisilta.	rights_duties	A2
+Kaikilla ihmisillä on oikeus saada apua.	Kaikilla ihmisillä on oikeus saada apua.	rights_duties	A2
+Minä haluan puhua suomea.	Mä haluun puhua suomea.	yki_exam_prep	A1
+Tämä on helppo asia.	Tää on helppo asia.	yki_exam_prep	A1
+Sinä voit tehdä sen.	Sä voit tehä sen.	yki_exam_prep	A1
+Hän on uusi ihminen täällä.	Se on uus ihminen täällä.	yki_exam_prep	A1
+Me menemme kaupunkiin tänään.	Me mennään kaupunkiin tänään.	yki_exam_prep	A1
+Minä tarvitsen vähän apua.	Mä tarvin vähän apua.	yki_exam_prep	A1
+Onko sinulla aikaa nyt?	Onks sul aikaa nyt?	yki_exam_prep	A1
+Kyllä, minä ymmärrän sen.	Joo, mä ymmärrän sen.	yki_exam_prep	A1
+Minä olen yrittänyt lukea suomea joka päivä.	Mä oon yrittäny lukee suomee joka päivä.	yki_exam_prep	A2
+Kokeessa on monia eri osia.	Kokeessa on monta eri osaa.	yki_exam_prep	A2
+Sinä voit käyttää vähän aikaa harjoitteluun joka viikko.	Sä voit käyttää vähän aikaa harjoitteluun joka viikko.	yki_exam_prep	A2
+On tärkeää ymmärtää, mitä tehtävässä sanotaan.	On tärkeetä ymmärtää, mitä tehtävässä sanotaan.	yki_exam_prep	A2
+Ehkä kannattaa katsoa suomalaisia kuvia ja lukea tekstejä.	Ehkä kannattaa kattoo suomalaisia kuvia ja lukee tekstejä.	yki_exam_prep	A2
+Minä tiedän, että koe on vaikea, mutta se on mahdollinen.	Mä tiiän, et koe on vaikee, mut se on mahdollinen.	yki_exam_prep	A2
+He voivat auttaa sinua, jos sinulla on ongelma.	Ne voi auttaa sua, jos sul on ongelma.	yki_exam_prep	A2
+Minä olen yrittänyt lukea suomea joka päivä.	Mä oon yrittäny lukee suomea joka päivä.	yki_exam_prep	A2
