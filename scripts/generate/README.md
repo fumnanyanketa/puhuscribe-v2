@@ -41,16 +41,42 @@ pip install -r scripts/requirements.txt
 ## Run
 
 ```bash
-# Live (needs ANTHROPIC_API_KEY): generate 20 A2 pairs about daily life, all Voikko-validated.
-python scripts/generate/generate.py --n 20 --topic "daily life" --level A2
+# One topic (needs ANTHROPIC_API_KEY): 20 A2 pairs, all Voikko-validated.
+python scripts/generate/generate.py --n 20 --topic "daily life" --topic-slug daily_routines --level A2
 
-# Offline demonstration of the gate + loop (no API key — uses a stub generator
-# that deliberately invents two words so you can see them rejected):
+# FULL SET across all 25 YKI topics, then emit the loadable seed SQL:
+python scripts/generate/run_batch.py --per-topic 8 --levels A1 A2
+
+# Offline demo (no API key — stub generator deliberately invents two words):
 python scripts/generate/generate.py --demo --n 4
+python scripts/generate/run_batch.py --demo --per-topic 2 --levels A1 --topics greetings home
 
-# Run the tests:
+# Tests:
 .venv/bin/pytest scripts/generate/
 ```
+
+`run_batch.py` writes `out/generated_content.json` (validated items + aggregate
+rejection stats) and produces the load artifacts below.
+
+## Load into Supabase
+
+`run_batch.py` (or `python scripts/generate/to_seed_sql.py` on an existing
+`out/generated_content.json`) emits:
+
+- `out/generated_sentences.sql` — idempotent `INSERT ... ON CONFLICT DO NOTHING`
+  for the `sentences` table. **Only the Voikko-validated kirjakieli ships;
+  puhekieli is `NULL`.** Review it, then run it once in the Supabase SQL editor.
+- `out/generated_puhekieli_REVIEW.tsv` — the generated puhekieli for a Finnish
+  speaker to verify before it is loaded (puhekieli has no validator and no CC
+  source — it never ships unverified).
+
+## Setting the API key (to run live)
+
+`generate.py`/`run_batch.py` call the Claude API only when `ANTHROPIC_API_KEY`
+is set in the environment; otherwise they fall back to the offline stub. Set it
+as an **environment variable / secret** (never in code or git). In Claude Code on
+the web, add it to the environment's configuration so the key is present at run
+time.
 
 Validated output is written to `scripts/generate/out/generated_content.json`
 (git-ignored), including the per-run rejection stats.

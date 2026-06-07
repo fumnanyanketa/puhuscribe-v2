@@ -91,6 +91,7 @@ class GenConfig:
     max_tokens: int = 4096
     n: int = 10
     topic: str = "everyday life"
+    topic_slug: str | None = None
     level: str = "A2"
     max_rank: int = 1500             # ground in the most common ~1500 lemmas
     vocab_size: int = 200            # how many allowed words to offer the model
@@ -193,6 +194,8 @@ def generate_validated(cfg: GenConfig, gate: VoikkoGate, generate_fn) -> tuple[l
             stats.tokens_oov += len(res.oov_tokens)
             if res.ok:
                 c["_validated"] = True
+                c["_topic_slug"] = cfg.topic_slug
+                c["_level"] = cfg.level
                 accepted.append(c)
                 stats.accepted += 1
                 if len(accepted) >= cfg.n:
@@ -228,6 +231,7 @@ def main():
     ap = argparse.ArgumentParser(description="Grounded generate-then-validate Finnish content (Voikko-gated).")
     ap.add_argument("--n", type=int, default=10)
     ap.add_argument("--topic", default="everyday life")
+    ap.add_argument("--topic-slug", default=None, help="topics.slug for loading into Supabase")
     ap.add_argument("--level", default="A2")
     ap.add_argument("--model", default="claude-opus-4-8")
     ap.add_argument("--max-rank", type=int, default=1500)
@@ -236,8 +240,8 @@ def main():
     args = ap.parse_args()
 
     cfg = GenConfig(
-        model=args.model, n=args.n, topic=args.topic, level=args.level,
-        max_rank=args.max_rank, enforce_allowed=not args.no_enforce_allowed,
+        model=args.model, n=args.n, topic=args.topic, topic_slug=args.topic_slug,
+        level=args.level, max_rank=args.max_rank, enforce_allowed=not args.no_enforce_allowed,
     )
     gate = VoikkoGate(allowed_lemmas=set(load_allowed_lemmas()))
 

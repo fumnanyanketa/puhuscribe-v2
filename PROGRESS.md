@@ -81,3 +81,13 @@ Shipped: Phase 1 — scripts/build_frequency_list.py builds data/finnish_frequen
 Blocked: No ANTHROPIC_API_KEY in this container, so the live generation step is build-ready but unrun here — the Voikko gate + loop are fully verified offline with a stub generator. To run live, set ANTHROPIC_API_KEY and `python scripts/generate/generate.py --n N`. Voikko + wordfreq + anthropic live in .venv (git-ignored); reproduce via apt libvoikko1/voikko-fi + scripts/requirements.txt.
 
 Next: Folded-in refinements to flag — (1) puhekieli is NOT Voikko-gated (spoken forms aren't standard Finnish; stays on the human-verified path); (2) Opus 4.8 removed `temperature`, so "lower temperature" is honoured via low effort + structured outputs, and temperature is sent only on models that accept it (e.g. sonnet-4-6). Possible follow-ups: expose VoikkoGate.validate() as a backend service the Worker calls at runtime; make this loop the content-seeding path into Supabase.
+
+---
+
+## Session: 2026-06-07 (Run-generation-live turnkey: batch driver + Supabase loader)
+
+Shipped: Owner chose "run generation live". Built the load half so a live run is turnkey: run_batch.py generates a validated set across all 25 YKI topics × levels (frequency ceiling per level), tags each item with topic_slug+level, aggregates the invention/oov rates; to_seed_sql.py converts the validated items to out/generated_sentences.sql (idempotent ON CONFLICT; ONLY Voikko-validated kirjakieli ships, puhekieli=NULL) + out/generated_puhekieli_REVIEW.tsv for human verification; topic_plan.py holds the canonical slugs. generate.py now tags items with topic/level. 13 Python tests (added 4 for the SQL emitter) + JS 28 green, build clean. Offline stub batch verified the whole path produces valid SQL.
+
+Blocked: Still no ANTHROPIC_API_KEY in this container — the live generation cannot run here. To produce real content: set ANTHROPIC_API_KEY as an environment secret, then `python scripts/generate/run_batch.py --per-topic 8 --levels A1 A2`, review out/generated_sentences.sql, and run it once in the Supabase SQL editor. (This container also can't reach Supabase, so the SQL is owner-run.)
+
+Next: Owner sets the key → run the batch live, spot-check the real invention rate, load the SQL. Then puhekieli human-verification pass from the REVIEW tsv. Auth+FSRS (§9) still pending and fully offline-doable if the key isn't available yet.
