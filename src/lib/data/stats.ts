@@ -1,6 +1,7 @@
 import { supabase } from '../supabase/client'
 import { toRegisterTokens } from './content'
 import type { Token } from '../../components/primitives'
+import { bucketByUtcDay, computeWeek, computeStreak, sumCounts } from './streak'
 
 /* ---------------------------------------------------------------------------
  * Real per-user progress, derived from the FSRS card + review_log tables.
@@ -23,12 +24,6 @@ export interface ProgressStats {
   streakDays: number      // consecutive days (UTC) with at least one review, ending today/yesterday
   week: { label: string; count: number }[]  // last 7 days, oldest → newest
   recent: RecentReview[]
-}
-
-const DAY_INITIAL = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] // getUTCDay() 0=Sun
-
-function utcDayKey(d: Date): string {
-  return d.toISOString().slice(0, 10)
 }
 
 export async function fetchProgressStats(userId: string): Promise<ProgressStats> {
@@ -58,30 +53,11 @@ export async function fetchProgressStats(userId: string): Promise<ProgressStats>
     .order('review_time', { ascending: false })
   if (logErr) throw new Error(logErr.message)
 
-  const byDay = new Map<string, number>()
-  for (const r of logRows ?? []) {
-    const key = utcDayKey(new Date(r.review_time as string))
-    byDay.set(key, (byDay.get(key) ?? 0) + 1)
-  }
-
-  // Last 7 calendar days, oldest → newest.
-  const week: { label: string; count: number }[] = []
-  let reviewsThisWeek = 0
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 86_400_000)
-    const count = byDay.get(utcDayKey(d)) ?? 0
-    reviewsThisWeek += count
-    week.push({ label: DAY_INITIAL[d.getUTCDay()], count })
-  }
-
-  // Streak: consecutive days with ≥1 review, ending today or yesterday.
-  let streakDays = 0
-  for (let i = 0; i < 60; i++) {
-    const key = utcDayKey(new Date(Date.now() - i * 86_400_000))
-    if (byDay.has(key)) streakDays++
-    else if (i === 0) continue // today not yet reviewed — keep counting from yesterday
-    else break
-  }
+  const now = new Date()
+  const byDay = bucketByUtcDay((logRows ?? []).map((r) => r.review_time as string))
+  const week = computeWeek(byDay, now)
+  const reviewsThisWeek = sumCounts(week)
+  const streakDays = computeStreak(byDay, now)
 
   // --- Recently reviewed cards ---------------------------------------------
   const { data: recentCards, error: recErr } = await supabase
