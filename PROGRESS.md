@@ -101,3 +101,13 @@ Shipped: Wired the WIP auth/FSRS scaffolding live. main.tsx wraps the app in <Au
 Blocked: Two owner actions before the logged-in flow works live: (1) run supabase/migrations/20260606000002_grant_user_tables.sql once in Supabase (GRANTs on users/cards/review_logs + the cards upsert unique constraint — without it the queue 500s "permission denied"); (2) ensure Supabase email auth is enabled (signup uses email confirmation). This container can't reach Supabase, so verification is in the browser. NOTE: this push gates the live app behind login — if this branch auto-deploys, returning users now see the Auth screen.
 
 Next: Owner runs the grant migration + tests login → Daily review flow in the browser. Then the still-pending content work: run generation live (needs ANTHROPIC_API_KEY) and/or CC reingest; §6 TTS; puhekieli human verification.
+
+---
+
+## Session: 2026-06-07 (Offline polish: real Progress stats, idempotent migration, mobile roadmap)
+
+Shipped: Made 20260606000002_grant_user_tables.sql safe to re-run (ADD CONSTRAINT wrapped in a DO/EXCEPTION guard). Replaced the mocked Progress screen with real per-user data: new src/lib/data/stats.ts (fetchProgressStats — card-state counts for mastered/learning/new, reviews-per-day for the last 7 days, consecutive-day streak, recently-reviewed cards), and rewrote Progress.tsx to render it (mastered ring, real streak/this-week/reviewed tiles, real weekly chart, deck-progress bar, recently-reviewed list) with loading/error/empty states; dropped the fabricated register-balance + fake numbers. Wrote docs/mobile-app-stores.md (Capacitor path to App Store/Play + the owner-only prerequisites: Apple/Google accounts, bundle ID, IAP-vs-web billing decision, Supabase deep-link auth caveat). Build clean (JS 459KB), 28 JS + 16 FSRS tests green.
+
+Blocked: Can't verify the live Progress queries here (no Supabase reach) — verify in browser after login. Everything else now needs owner inputs: ANTHROPIC_API_KEY (run generation live / AI Worker), corpora or host-allowlist (CC reingest), Azure key as a Worker secret (§6 TTS), Apple/Google accounts + bundle ID + billing decision (app stores), and running the two pending migrations in Supabase (content_fixes + grant_user_tables).
+
+Next: On owner input — pick up whichever is unblocked first. Offline options still available if asked: scaffold Capacitor; build the Cloudflare Worker + Azure TTS proxy ready-to-deploy (key-gated); make older content migrations idempotent.
