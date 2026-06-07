@@ -91,3 +91,13 @@ Shipped: Owner chose "run generation live". Built the load half so a live run is
 Blocked: Still no ANTHROPIC_API_KEY in this container — the live generation cannot run here. To produce real content: set ANTHROPIC_API_KEY as an environment secret, then `python scripts/generate/run_batch.py --per-topic 8 --levels A1 A2`, review out/generated_sentences.sql, and run it once in the Supabase SQL editor. (This container also can't reach Supabase, so the SQL is owner-run.)
 
 Next: Owner sets the key → run the batch live, spot-check the real invention rate, load the SQL. Then puhekieli human-verification pass from the REVIEW tsv. Auth+FSRS (§9) still pending and fully offline-doable if the key isn't available yet.
+
+---
+
+## Session: 2026-06-07 (§9 — wire auth + FSRS into the app)
+
+Shipped: Wired the WIP auth/FSRS scaffolding live. main.tsx wraps the app in <AuthProvider>; App.tsx gates on useAuth() (loading pane → Auth screen when logged out → app when signed in). Rewrote Daily.tsx into the real per-user FSRS review queue: fetchDailySession(user.id) loads due reviews + new cards (seeds on first run), each card shows the RegisterCard with an Again/Hard/Good/Easy row whose labels come from previewIntervals(), and rateCard() persists the FSRS schedule + review_log on tap; busy-guarded with inline error + completion screen. Added a sign-out (+ email) to Progress. Build clean (tsc strict; JS 458KB now that Auth+cards are in the graph), 28 JS + 16 FSRS tests green.
+
+Blocked: Two owner actions before the logged-in flow works live: (1) run supabase/migrations/20260606000002_grant_user_tables.sql once in Supabase (GRANTs on users/cards/review_logs + the cards upsert unique constraint — without it the queue 500s "permission denied"); (2) ensure Supabase email auth is enabled (signup uses email confirmation). This container can't reach Supabase, so verification is in the browser. NOTE: this push gates the live app behind login — if this branch auto-deploys, returning users now see the Auth screen.
+
+Next: Owner runs the grant migration + tests login → Daily review flow in the browser. Then the still-pending content work: run generation live (needs ANTHROPIC_API_KEY) and/or CC reingest; §6 TTS; puhekieli human verification.

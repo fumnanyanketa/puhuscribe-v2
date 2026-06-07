@@ -4,6 +4,7 @@ import { Bar, Ring, IconBtn } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { Token } from '../components/primitives'
+import { useAuth } from '../lib/auth/useAuth'
 
 interface Phrase { gloss: string; kirja: Token[]; puhe: Token[] }
 
@@ -21,6 +22,7 @@ const WEEK = [40, 65, 30, 80, 55, 90, 70]
 
 export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
   const [day, setDay] = useState(4)
+  const { user, signOut } = useAuth()
 
   return (
     <ScreenScroll bottom={110}>
@@ -142,6 +144,19 @@ export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Account / sign out */}
+      <div style={{ marginTop: 22, marginBottom: 8, textAlign: 'center' }}>
+        {user?.email && (
+          <div className="ps-caption" style={{ marginBottom: 8 }}>{user.email}</div>
+        )}
+        <button onClick={() => void signOut()} className="ps-press" style={{
+          background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
+          fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13,
+        }}>
+          Kirjaudu ulos · Sign out
+        </button>
       </div>
     </ScreenScroll>
   )
