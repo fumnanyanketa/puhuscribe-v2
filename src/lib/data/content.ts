@@ -2,70 +2,38 @@ import { supabase } from '../supabase/client'
 import type { Token } from '../../components/primitives'
 
 /* ---------------------------------------------------------------------------
- * Day One Sprint words (words paired with a public sound-bridge mnemonic)
+ * Day One Sprint words — the highest-frequency vocabulary, shown with their
+ * REAL IPA pronunciation (words.ipa, sourced from kaikki.org / Wiktionary).
+ * No longer driven by the old "sounds-like" mnemonics, which taught wrong
+ * pronunciations and are retired from the UI.
  * ------------------------------------------------------------------------- */
 
 export interface SprintWord {
   id: number
   fi: string
   en: string
-  ipa: string      // phonetic head parsed from the mnemonic, e.g. "TAL-oh"
-  bridge: string   // the sound-bridge body
-}
-
-// Replace every dash-family character (em dash U+2014, en dash U+2013,
-// horizontal bar U+2015, figure dash U+2012) with a comma so none can
-// render in the UI. Also strip surrounding quotes left by the seed format.
-function stripEmDash(s: string): string {
-  return s
-    .replace(/\s*[—–―‒]\s*/g, ', ')
-    .replace(/^["'"]+|["'"]+$/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim()
-}
-
-// Split a seeded mnemonic ("TAL-oh ... imagine a TALL building...") into its
-// phonetic head and the sound-bridge body on the first em dash separator, then
-// scrub any remaining em dashes from both halves.
-function parseMnemonic(text: string): { ipa: string; bridge: string } {
-  const sep = text.indexOf('—')
-  if (sep === -1) return { ipa: '', bridge: stripEmDash(text) }
-  return { ipa: stripEmDash(text.slice(0, sep)), bridge: stripEmDash(text.slice(sep + 1)) }
+  ipa: string      // real IPA, e.g. /ˈhyʋæ/; '' until the kaikki IPA migration is loaded
 }
 
 /**
- * The Day One Sprint vocabulary: every word that has a public mnemonic.
- * Two flat queries (no embedded select) so type inference stays solid even
- * without Relationships metadata in the generated types.
+ * The Day One Sprint vocabulary: the most frequent words first, each shown with
+ * its real IPA. Until words.ipa is populated the ipa is simply blank (word +
+ * meaning only) — never a wrong "sounds-like" guess.
  */
-export async function fetchSprintWords(): Promise<SprintWord[]> {
-  const { data: mnem, error: mErr } = await supabase
-    .from('mnemonics')
-    .select('word_id, text')
-    .eq('is_public', true)
-  if (mErr) throw new Error(mErr.message)
-
-  const rows = mnem ?? []
-  if (rows.length === 0) return []
-
-  // First public mnemonic per word.
-  const textByWord = new Map<number, string>()
-  for (const r of rows) {
-    if (!textByWord.has(r.word_id)) textByWord.set(r.word_id, r.text)
-  }
-
-  const wordIds = Array.from(textByWord.keys())
-  const { data: words, error: wErr } = await supabase
+export async function fetchSprintWords(limit = 150): Promise<SprintWord[]> {
+  const { data, error } = await supabase
     .from('words')
-    .select('id, base_form, translation_en')
-    .in('id', wordIds)
-    .order('id', { ascending: true })
-  if (wErr) throw new Error(wErr.message)
+    .select('id, base_form, translation_en, ipa')
+    .order('frequency_rank', { ascending: true, nullsFirst: false })
+    .limit(limit)
+  if (error) throw new Error(error.message)
 
-  return (words ?? []).map((w) => {
-    const { ipa, bridge } = parseMnemonic(textByWord.get(w.id) ?? '')
-    return { id: w.id, fi: w.base_form, en: w.translation_en, ipa, bridge }
-  })
+  return (data ?? []).map((w) => ({
+    id: w.id,
+    fi: w.base_form,
+    en: w.translation_en,
+    ipa: w.ipa ?? '',
+  }))
 }
 
 /* ---------------------------------------------------------------------------

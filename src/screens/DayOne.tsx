@@ -83,7 +83,7 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
                 background: 'radial-gradient(120% 90% at 70% 20%, rgba(255,255,255,.5), transparent), var(--lav-tint)',
               }}>
                 <div style={{ position: 'absolute', top: 14, left: 16 }}>
-                  <Label color="var(--written)">Muistikuva · mnemonic</Label>
+                  <Label color="var(--written)">Sana · word</Label>
                 </div>
                 <OrbCluster size={150} />
                 <div style={{ position: 'absolute', bottom: 12, right: 16 }} className="ps-caption">[ 3D render ]</div>
@@ -94,18 +94,12 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 44, lineHeight: 1, letterSpacing: '-0.04em' }}>{w.fi}</div>
                 </div>
+                {w.ipa && (
+                  <div className="ps-num" style={{ marginTop: 8, fontSize: 18, color: 'var(--written)', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>
+                    {w.ipa}
+                  </div>
+                )}
                 <div className="ps-body-l" style={{ marginTop: 8, color: 'var(--ink-2)' }}>"{w.en}"</div>
-
-                {/* Sound-bridge mnemonic */}
-                <div style={{
-                  marginTop: 16, padding: '13px 15px', background: 'var(--flag-bg)', borderRadius: 'var(--r-md)',
-                  display: 'flex', gap: 10, alignItems: 'flex-start',
-                }}>
-                  <span style={{ color: 'var(--flag)', flexShrink: 0, marginTop: 1 }}>
-                    <I name="sparkle" size={18} />
-                  </span>
-                  <span className="ps-body" style={{ color: 'var(--ink)' }}>{w.bridge}</span>
-                </div>
 
                 {/* Register mini row */}
                 <div style={{

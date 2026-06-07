@@ -76,6 +76,7 @@ export type Database = {
           level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
           part_of_speech: string | null
           topic_id: number | null
+          ipa: string | null
           created_at: string
         }
         Insert: {
@@ -86,6 +87,7 @@ export type Database = {
           level?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
           part_of_speech?: string | null
           topic_id?: number | null
+          ipa?: string | null
           created_at?: string
         }
         Update: {
@@ -95,6 +97,7 @@ export type Database = {
           level?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
           part_of_speech?: string | null
           topic_id?: number | null
+          ipa?: string | null
         }
         Relationships: []
       }
