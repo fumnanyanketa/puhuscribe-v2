@@ -131,3 +131,13 @@ Shipped: Ran content generation live (400 Voikko-validated sentences → supabas
 Blocked: Owner must run in Supabase (this container can't reach it): 20260607000002_add_word_ipa.sql then 20260607000003_word_ipa_from_kaikki.sql, plus load the cleaned 04_generated_sentences.sql. 27 base_forms have no kaikki IPA — 9 not in kaikki (multiword/compounds: ole hyvä, TE-toimisto, pankkitunnukset…) and 18 inflected/comparative forms (hyvää, koiran, isompi, pienempi…) — left untouched, never guessed.
 
 Next: Owner loads the SQL + migrations and verifies real IPA renders in the Day One Sprint (app already wired to show words.ipa via da34d03). Optional: derive IPA for the uncovered inflected forms from their base lemmas; puhekieli human-verification pass; §6 TTS.
+
+---
+
+## Session: 2026-06-08 (Workshop deck prompt + install QR)
+
+Shipped: Wrote docs/workshop-deck-prompt.md — a paste-ready Claude Design prompt for the Wednesday 5-slide demo-led deck (real app palette: snow white, orb gradient, purple=kirjakieli/teal=puhekieli register cards; real content: "Minun nimeni on Maria."→"Mun nimi on Maria." + real IPA hyvä /ˈhyʋæ/). Generated a scannable on-brand QR (marketing/workshop/install-qr.png + .svg, lake #1B4965, ECC-H) encoding the live app URL for the "Try it now" slide, via scripts/gen-qr.mjs (qrcode --no-save, same pattern as gen-icons).
+
+Blocked: Nothing. Owner builds the deck in Claude Design from the prompt, then drops install-qr.png on slide 5. Bilingual toggle is the next task (agreed).
+
+Next: Build the bilingual toggle — settings switch "Bilingual / Finnish only", default bilingual, persisted, with a bi(fi,en) label helper.
