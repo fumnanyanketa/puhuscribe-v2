@@ -1,0 +1,6 @@
+{
+  "name": "puhuscribe-tts",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Cloudflare Worker: Azure TTS proxy for Finnish (fi-FI-NooraNeural)"
+}

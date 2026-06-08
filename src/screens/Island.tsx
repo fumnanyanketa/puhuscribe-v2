@@ -6,6 +6,7 @@ import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { fetchSentences, RegisterSentence } from '../lib/data/content'
+import { speak } from '../lib/tts'
 
 type State = 'idle' | 'playing' | 'recording' | 'review'
 
@@ -51,6 +52,7 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
 
   const playNative = () => {
     setSt('playing')
+    speak(p.kirja.map((t) => t.t).join(' '))
     if (timer.current) clearTimeout(timer.current)
     timer.current = setTimeout(() => setSt('idle'), 1400)
   }

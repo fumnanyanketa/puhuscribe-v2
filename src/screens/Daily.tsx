@@ -9,6 +9,7 @@ import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
 import { fetchDailySession, rateCard, previewIntervals, SessionCard } from '../lib/data/cards'
 import { Rating } from '../lib/fsrs/types'
+import { speak } from '../lib/tts'
 
 const SESSION_SIZE = 8
 
@@ -49,7 +50,11 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
   const card = cards[i]
   const previews = useMemo(() => previewIntervals(card), [card])
 
-  const play = (reg: 'kirja' | 'puhe') => { setPlaying(reg); setTimeout(() => setPlaying(null), 1100) }
+  const play = (reg: 'kirja' | 'puhe') => {
+    setPlaying(reg)
+    speak(card.sentence.kirja.map((t) => t.t).join(' ')) // kirjakieli audio for both registers
+    setTimeout(() => setPlaying(null), 1100)
+  }
 
   const rate = async (rating: Rating) => {
     if (busy) return

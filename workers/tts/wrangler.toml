@@ -1,0 +1,8 @@
+name = "puhuscribe-tts"
+main = "src/worker.js"
+compatibility_date = "2024-11-01"
+
+# Non-secret config. The Azure subscription key is set separately as a Worker
+# SECRET (AZURE_SPEECH_KEY) by the GitHub Actions deploy — never committed.
+[vars]
+AZURE_SPEECH_REGION = "northeurope"

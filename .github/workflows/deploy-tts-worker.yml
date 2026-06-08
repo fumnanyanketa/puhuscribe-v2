@@ -1,0 +1,28 @@
+name: Deploy TTS Worker
+
+# Deploys the Azure-TTS Cloudflare Worker. Runs on push to main when the worker
+# changes, or manually from the Actions tab. Requires these repo secrets:
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, AZURE_SPEECH_KEY
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'workers/tts/**'
+      - '.github/workflows/deploy-tts-worker.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/tts
+          secrets: |
+            AZURE_SPEECH_KEY
+        env:
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
