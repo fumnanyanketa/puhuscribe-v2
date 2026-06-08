@@ -67,6 +67,7 @@ const Bell = ({ size = 20, color = 'currentColor' }) =>
 function Pill({ children, dark }) {
   return e('div', { style: {
     display: 'inline-flex', alignItems: 'center', gap: 10, padding: '7px 8px 7px 16px',
+    flexWrap: 'wrap', justifyContent: 'center', maxWidth: '100%',
     borderRadius: 999, background: dark ? 'rgba(255,255,255,0.10)' : '#fff',
     border: dark ? '1px solid rgba(255,255,255,0.18)' : '1px solid var(--glass-line)',
     backdropFilter: dark ? 'blur(8px)' : 'none',
@@ -158,7 +159,7 @@ function Hero({ t, dark }) {
 function TwoFinnishes() {
   return e('section', { id: 'two-finnishes', style: { padding: '96px clamp(20px,5vw,64px)', background: '#fff' } },
     e('div', { style: { maxWidth: 1080, margin: '0 auto', display: 'grid', gap: 'clamp(36px,5vw,72px)',
-      gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', alignItems: 'center' } },
+      gridTemplateColumns: 'repeat(auto-fit,minmax(min(320px,100%),1fr))', alignItems: 'center' } },
       e('div', null,
         e('span', { className: 'ps-label', style: { color: 'var(--accent)' } }, 'The core idea'),
         e('h2', { style: { fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(30px,4vw,46px)',
@@ -206,7 +207,7 @@ function Research() {
           'Built on how people actually learn a language.'),
         e('p', { className: 'ps-body-l', style: { color: 'var(--ink-2)', margin: '18px auto 0', maxWidth: 560 } },
           'Every part of PuhuScribe is grounded in established second-language acquisition and memory research, not guesswork about what feels productive.')),
-      e('div', { style: { display: 'grid', gap: 18, gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', marginTop: 44 } },
+      e('div', { style: { display: 'grid', gap: 18, gridTemplateColumns: 'repeat(auto-fit,minmax(min(260px,100%),1fr))', marginTop: 44 } },
         principles.map((p) => e('div', { key: p.t, style: {
           padding: 28, borderRadius: 'var(--r-xl)', background: '#fff', border: '1px solid var(--glass-line)', boxShadow: 'var(--sh-1)' } },
           e('span', { style: { width: 48, height: 48, borderRadius: 14, background: 'var(--accent-wash)',
@@ -229,7 +230,7 @@ function HowItWorks() {
         e('span', { className: 'ps-label', style: { color: 'var(--accent)' } }, 'How it works'),
         e('h2', { style: { fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(28px,3.6vw,42px)',
           letterSpacing: '-0.03em', margin: '14px 0 0' } }, 'From first word to first conversation.')),
-      e('div', { style: { display: 'grid', gap: 18, gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))' } },
+      e('div', { style: { display: 'grid', gap: 18, gridTemplateColumns: 'repeat(auto-fit,minmax(min(260px,100%),1fr))' } },
         steps.map((s) => e('div', { key: s.k, className: 'lift', style: {
           padding: 26, borderRadius: 'var(--r-xl)', background: '#fff', border: '1px solid var(--glass-line)', boxShadow: 'var(--sh-1)' } },
           e('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } },
