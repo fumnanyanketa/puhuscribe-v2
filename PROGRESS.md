@@ -241,3 +241,13 @@ Shipped: (1) Fixed Progress screen crash ("invalid input syntax for type integer
 Blocked: Record/playback needs mic permission (HTTPS + tap gesture; works on the live Vercel site). Daily intake assumes the learner completed an initial set (progress.sprint.completed) — reset+sprint to reach it.
 
 Next: instructional onboarding; Language Islands real first-50 useful sentences (docs/roadmap-notes.md).
+
+---
+
+## Session: 2026-06-08 (Language Islands first-50 + recording fix)
+
+Shipped: (1) Fixed the speaking-practice recording: capture is now reliable (MediaRecorder.isTypeSupported mime + start(250) timeslice + empty-blob guard) and the two ambiguous round buttons became clear labeled ones ("Play your recording" / "Hear the native audio") with a hidden <audio> element; the left button now plays the learner back. (2) Language Islands first content: authored 50 useful real-life arrival sentences (greetings, intro, help/language, shops, transport, health, Kela/officialdom, housing/work, time) — every kirjakieli word Voikko-validated (0 failures; proper nouns excluded). Wrote docs/island-sentences.md (reviewable, puhekieli flagged for human verification) + supabase/seeds/05_island_sentences.sql (idempotent; creates topic slug 'arki'). content.ts fetchIslandSentences(slug 'arki', falls back to general sentences) wired into the Island screen. Build clean, 31 + 16 tests green.
+
+Blocked: Owner runs supabase/seeds/05_island_sentences.sql once in Supabase to load the 50 (until then Island falls back to general sentences). Puhekieli + naturalness need a Finnish-speaker pass (docs/island-sentences.md). The daily 10–15 intake only appears AFTER an initial sprint set is completed (progress.sprint.completed) — that's why it wasn't visible; surface-earlier is an option.
+
+Next: verify the 50 with a Finnish speaker; surface daily intake earlier if wanted; instructional onboarding.
