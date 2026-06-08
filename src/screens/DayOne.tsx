@@ -5,7 +5,7 @@ import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
-import { fetchSprintWords, SprintWord } from '../lib/data/content'
+import { fetchSprintWords, fetchNextWords, SprintWord } from '../lib/data/content'
 import { recordWordEncounter } from '../lib/data/cards'
 import { useProgress } from '../lib/data/progress'
 import { useAuth } from '../lib/auth/useAuth'
@@ -36,22 +36,28 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
   return <SprintFlow words={words} go={go} />
 }
 
+type RunSession = { deck: SprintWord[]; startIdx: number; mode: 'initial' | 'daily'; size: number }
+
 function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
   const maxWords = words.length
   const { progress, saveSprint } = useProgress()
+  const { user } = useAuth()
 
-  // Resume offer comes from the cross-device progress (DB-backed, localStorage cache).
+  // Resume offer (in-progress initial set) from cross-device progress.
   const s = progress.sprint
-  const resumable: Saved | null = (s && s.idx > 0 && s.idx < s.size)
+  const resumable: Saved | null = (s && !s.completed && s.idx > 0 && s.idx < s.size)
     ? { size: Math.min(s.size, maxWords), idx: Math.min(s.idx, Math.min(s.size, maxWords)) }
     : null
 
   // Auto-resume an in-progress set at mount, so the learner picks up exactly
-  // where they stopped instead of restarting from word 1. (App gates rendering
-  // on progress being resolved, so `resumable` is reliable here.)
-  const [session, setSession] = useState<{ size: number; startIdx: number } | null>(
-    () => resumable ? { size: resumable.size, startIdx: Math.min(resumable.idx, resumable.size - 1) } : null,
+  // where they stopped. (App gates rendering on progress being resolved.)
+  const [session, setSession] = useState<RunSession | null>(
+    () => resumable
+      ? { deck: words.slice(0, resumable.size), startIdx: Math.min(resumable.idx, resumable.size - 1), mode: 'initial', size: resumable.size }
+      : null,
   )
+  const [loading, setLoading] = useState(false)
+  const [err, setErr] = useState('')
 
   // The full set is always offered; smaller picks only if there's room for them.
   const sizeOptions = useMemo(() => {
@@ -60,27 +66,101 @@ function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => 
     return Array.from(new Set(opts)).sort((a, b) => a - b)
   }, [maxWords])
 
-  const start = (size: number) => {
+  const startInitial = (size: number) => {
     saveSprint({ size, idx: 0, completed: false })
-    setSession({ size, startIdx: 0 })
+    setSession({ deck: words.slice(0, size), startIdx: 0, mode: 'initial', size })
   }
   const resume = () => {
-    if (resumable) setSession({ size: resumable.size, startIdx: Math.min(resumable.idx, resumable.size - 1) })
+    if (resumable) setSession({ deck: words.slice(0, resumable.size), startIdx: Math.min(resumable.idx, resumable.size - 1), mode: 'initial', size: resumable.size })
+  }
+  // Daily intake: fetch the next N words the learner hasn't met, then run them.
+  const startDaily = async (n: number) => {
+    if (!user || loading) return
+    setLoading(true); setErr('')
+    try {
+      const deck = await fetchNextWords(user.id, n)
+      if (deck.length === 0) { setErr('No new words available right now — you have met them all.'); setLoading(false); return }
+      setSession({ deck, startIdx: 0, mode: 'daily', size: deck.length })
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e)); setLoading(false)
+    }
   }
 
-  if (!session) {
-    return <Start sizeOptions={sizeOptions} saved={resumable} onPick={start} onContinue={resume} go={go} />
+  if (session) {
+    return (
+      <SprintRunner
+        key={session.mode + ':' + session.size + ':' + session.startIdx}
+        deck={session.deck}
+        startIdx={session.startIdx}
+        onAdvance={session.mode === 'initial'
+          ? (idx) => saveSprint({ size: session.size, idx, completed: idx >= session.size })
+          : () => { /* daily batch: no resume state — met words are skipped next time */ }}
+        onRestart={() => setSession(null)}
+        go={go}
+      />
+    )
   }
 
+  // No active session: once the initial set is done, Day One becomes the daily
+  // intake; before that, it's the first-set picker (with resume).
+  if (progress.sprint?.completed) {
+    return <DailyStart onLearn={startDaily} loading={loading} err={err} go={go} />
+  }
+  return <Start sizeOptions={sizeOptions} saved={resumable} onPick={startInitial} onContinue={resume} go={go} />
+}
+
+/* -------------------------------------------------------------------------- */
+/* Daily intake — learn the next most-useful words you haven't met yet        */
+/* -------------------------------------------------------------------------- */
+function DailyStart({ onLearn, loading, err, go }: {
+  onLearn: (n: number) => void
+  loading: boolean
+  err: string
+  go: (s: AppScreen) => void
+}) {
+  const { bi } = useLang()
+  const OPTIONS = [10, 15, 30]
   return (
-    <SprintRunner
-      key={session.size + ':' + session.startIdx}
-      deck={words.slice(0, session.size)}
-      startIdx={session.startIdx}
-      onAdvance={(idx) => saveSprint({ size: session.size, idx, completed: idx >= session.size })}
-      onRestart={() => setSession(null)}
-      go={go}
-    />
+    <ScreenScroll bottom={110}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
+        <Label color="var(--written)">{bi('Sanasto', 'Vocabulary')}</Label>
+        <span style={{ width: 40 }} />
+      </div>
+
+      <div style={{ textAlign: 'center', marginTop: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={112} /></div>
+        <h1 className="ps-title-1" style={{ marginTop: 12 }}>{bi('Uudet sanat', 'New words')}</h1>
+        <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8, maxWidth: 300, marginInline: 'auto' }}>
+          Add the next most useful Finnish words to your bank. A little every day is how it grows.
+        </p>
+      </div>
+
+      {err && (
+        <div className="ps-body" style={{ marginTop: 16, padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{err}</div>
+      )}
+
+      <div style={{ marginTop: 22 }}>
+        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Montako tänään?', 'How many today?')}</Label>
+        <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
+          {OPTIONS.map((n) => (
+            <button key={n} className="ps-press ps-card" disabled={loading} onClick={() => onLearn(n)} style={{
+              padding: '18px 20px', cursor: loading ? 'default' : 'pointer', textAlign: 'left',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, opacity: loading ? 0.6 : 1,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, letterSpacing: '-0.03em' }}>{n}</span>
+                <span className="ps-caption">{bi('uutta sanaa', 'new words')}</span>
+              </div>
+              <span style={{ color: 'var(--written)' }}><I name="arrow" size={20} /></span>
+            </button>
+          ))}
+        </div>
+        <div className="ps-caption" style={{ textAlign: 'center', marginTop: 14 }}>
+          {loading ? bi('Haetaan…', 'Loading…') : bi('Kertaa opitut Kertaus-välilehdellä', 'Review what you have learned in the Review tab')}
+        </div>
+      </div>
+    </ScreenScroll>
   )
 }
 

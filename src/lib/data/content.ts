@@ -44,6 +44,32 @@ export async function fetchSprintWords(limit = 150): Promise<SprintWord[]> {
   }))
 }
 
+/**
+ * The daily vocabulary intake: the next `n` most-frequent words the learner has
+ * NOT met yet (no 'word_production' card). Frequency-ordered, so they always get
+ * the most useful next words, and it continues forward automatically as the bank
+ * grows. Returns [] once every word has been met.
+ */
+export async function fetchNextWords(userId: string, n: number): Promise<SprintWord[]> {
+  const { data: cardRows, error: cErr } = await supabase
+    .from('cards').select('word_id')
+    .eq('user_id', userId).eq('card_type', 'word_production').not('word_id', 'is', null)
+  if (cErr) throw new Error(cErr.message)
+  const met = new Set((cardRows ?? []).map((r) => r.word_id as number))
+
+  const { data, error } = await supabase
+    .from('words')
+    .select('id, base_form, translation_en, ipa')
+    .order('frequency_rank', { ascending: true, nullsFirst: false })
+    .limit(met.size + n + 30) // headroom so n unmet remain after filtering
+  if (error) throw new Error(error.message)
+
+  return (data ?? [])
+    .filter((w) => !met.has(w.id))
+    .slice(0, n)
+    .map((w) => ({ id: w.id, fi: w.base_form, en: w.translation_en, ipa: cleanIpa(w.ipa ?? '') }))
+}
+
 /* ---------------------------------------------------------------------------
  * Topics
  * ------------------------------------------------------------------------- */
