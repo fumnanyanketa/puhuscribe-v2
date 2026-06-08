@@ -9,7 +9,7 @@ import { useLang } from '../lib/lang/useLang'
 import { fetchSentences, RegisterSentence } from '../lib/data/content'
 import { speak } from '../lib/tts'
 
-type State = 'idle' | 'playing' | 'recording' | 'review'
+type RecState = 'idle' | 'recording' | 'review'
 
 function Wave({ active, color }: { active: boolean; color: string }) {
   return (
@@ -31,7 +31,7 @@ function Wave({ active, color }: { active: boolean; color: string }) {
 
 export function Island({ go }: { go: (s: AppScreen) => void }) {
   const { bi } = useLang()
-  // A short shadowing set drawn from the seeded sentence pairs.
+  // A short speaking-practice set drawn from the seeded sentence pairs.
   const { data: phrases, loading, error } = useAsync<RegisterSentence[]>(
     () => fetchSentences({ limit: 8 }),
     [],
@@ -41,44 +41,97 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
   if (error) return <StatePane tone="error" title="Couldn't load the island" detail={error} bottom={110} />
   if (!phrases || phrases.length === 0) return <StatePane title={bi('Ei lauseita vielä', 'No sentences yet')} detail="No sentences available yet." bottom={110} />
 
-  return <Shadowing phrases={phrases} go={go} />
+  return <Practice phrases={phrases} go={go} />
 }
 
-function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppScreen) => void }) {
+function Practice({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppScreen) => void }) {
   const { bi } = useLang()
   const [i, setI] = useState(0)
-  const [st, setSt] = useState<State>('idle')
+  const [st, setSt] = useState<RecState>('idle')
   const [sec, setSec] = useState(0)
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [playingNative, setPlayingNative] = useState(false)
+  const [playingMine, setPlayingMine] = useState(false)
+  const [recUrl, setRecUrl] = useState<string | null>(null)
+  const [recErr, setRecErr] = useState('')
+
+  const mrRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
+  const streamRef = useRef<MediaStream | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const p = phrases[i]
 
   const playNative = () => {
-    setSt('playing')
+    setPlayingNative(true)
     speak(p.kirja.map((t) => t.t).join(' '))
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => setSt('idle'), 1400)
+    setTimeout(() => setPlayingNative(false), 1400)
+  }
+
+  const startRecording = async () => {
+    setRecErr('')
+    if (typeof MediaRecorder === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      setRecErr('Recording is not supported in this browser.')
+      return
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      streamRef.current = stream
+      const mr = new MediaRecorder(stream)
+      chunksRef.current = []
+      mr.ondataavailable = (e) => { if (e.data && e.data.size) chunksRef.current.push(e.data) }
+      mr.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: chunksRef.current[0]?.type || 'audio/webm' })
+        setRecUrl(URL.createObjectURL(blob)) // previous url is revoked by the effect below
+        streamRef.current?.getTracks().forEach((t) => t.stop())
+        streamRef.current = null
+        setSt('review')
+      }
+      mrRef.current = mr
+      mr.start()
+      setSt('recording'); setSec(0)
+      timerRef.current = setInterval(() => setSec((s) => +(s + 0.1).toFixed(1)), 100)
+    } catch {
+      setRecErr('Microphone access is needed to record. Allow it in your browser, then try again.')
+      setSt('idle')
+    }
+  }
+
+  const stopRecording = () => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    try { mrRef.current?.stop() } catch { /* already stopped */ }
   }
 
   const toggleRecord = () => {
-    if (st === 'recording') {
-      if (timer.current) clearInterval(timer.current)
-      setSt('review')
-      return
-    }
-    setSt('recording')
-    setSec(0)
-    timer.current = setInterval(() => setSec((s) => +(s + 0.1).toFixed(1)), 100)
+    if (st === 'recording') stopRecording()
+    else void startRecording()
   }
+
+  const playMine = () => {
+    if (!recUrl || playingMine) return
+    const a = new Audio(recUrl)
+    setPlayingMine(true)
+    a.onended = () => setPlayingMine(false)
+    a.play().catch(() => setPlayingMine(false))
+  }
+
+  const reRecord = () => { setRecUrl(null); setSt('idle'); setSec(0); setRecErr('') }
 
   const nextPhrase = () => {
+    setRecUrl(null)
     setI((x) => (x + 1) % phrases.length)
-    setSt('idle')
-    setSec(0)
+    setSt('idle'); setSec(0); setRecErr('')
   }
 
+  // Revoke the previous recording's object URL when it changes or on unmount.
+  useEffect(() => {
+    if (!recUrl) return
+    return () => URL.revokeObjectURL(recUrl)
+  }, [recUrl])
+
+  // Stop the mic + timer on unmount.
   useEffect(() => () => {
-    if (timer.current) { clearTimeout(timer.current); clearInterval(timer.current) }
+    if (timerRef.current) clearInterval(timerRef.current)
+    streamRef.current?.getTracks().forEach((t) => t.stop())
   }, [])
 
   return (
@@ -104,24 +157,24 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
             </span>
           </div>
           <div style={{ marginTop: 22 }}>
-            <Label color="rgba(255,255,255,.75)">{bi('Varjostus', 'Shadowing')}</Label>
+            <Label color="rgba(255,255,255,.75)">{bi('Puhuharjoitus', 'Speaking practice')}</Label>
             <h1 className="ps-title-1" style={{ color: 'var(--on-dark)', marginTop: 10 }}>{bi('Toista ääneen', 'Say it aloud')}</h1>
           </div>
         </div>
 
         <div style={{ height: 50 }} />
 
-        {/* Shadowing card */}
+        {/* Practice card */}
         <div className="ps-card" style={{ padding: 20, borderRadius: 'var(--r-2xl)', boxShadow: 'var(--sh-3)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            paddingBottom: 14, marginBottom: 16, borderBottom: '1px solid var(--glass-edge)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span className="ps-caption">You are shadowing</span>
-              <span className="ps-label" style={{ color: 'var(--written)', background: 'var(--written-bg)', padding: '5px 10px', borderRadius: 7 }}>{bi('Kirjakieli', 'written')}</span>
+          {/* What you are saying + how to do it */}
+          <div style={{ paddingBottom: 14, marginBottom: 16, borderBottom: '1px solid var(--glass-edge)' }}>
+            <div className="ps-caption" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <I name="speaker" size={14} /> {bi('Kuuntele, sitten sano ääneen', 'Listen, then say it aloud')}
             </div>
-            <span className="ps-caption" style={{ fontStyle: 'italic' }}>{p.gloss}</span>
+            <div style={{ marginTop: 8, fontStyle: 'italic', color: 'var(--ink-2)', fontFamily: 'var(--font-body)', fontSize: 15 }}>“{p.gloss}”</div>
           </div>
 
+          {/* Kirjakieli (the written form to say) */}
           <div>
             <RegDot reg="kirja" />
             <div style={{ marginTop: 9 }}>
@@ -129,37 +182,55 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
             </div>
           </div>
 
+          {/* Puhekieli (how it's said in speech) */}
           <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--spoken-bg)',
-            border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)', opacity: 0.92 }}>
+            border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
             <RegDot reg="puhe" />
             <div style={{ marginTop: 8 }}>
-              <Sentence tokens={p.puhe} font="var(--font-body)" weight={600} size={18} color="var(--ink-2)" />
+              <Sentence tokens={p.puhe} font="var(--font-body)" weight={600} size={18} color="var(--ink)" />
             </div>
           </div>
 
+          {/* Hear the native audio */}
           <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 14 }}>
-            <SpeakerBtn reg="kirja" playing={st === 'playing'} onClick={playNative} size={48} />
-            <Wave active={st === 'playing'} color="var(--written)" />
+            <SpeakerBtn reg="kirja" playing={playingNative} onClick={playNative} size={48} />
+            <Wave active={playingNative} color="var(--written)" />
           </div>
         </div>
 
         <div style={{ flex: 1, minHeight: 18 }} />
 
-        {/* Record control */}
+        {/* Record / playback control */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+          {recErr && (
+            <div className="ps-body" style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{recErr}</div>
+          )}
+
           {st === 'review' ? (
             <div style={{ width: '100%' }}>
-              <div className="ps-glass" style={{ padding: 16, display: 'flex', alignItems: 'center', gap: 14,
-                background: 'var(--written-bg)', border: '1px solid var(--written)' }}>
-                <span style={{ color: 'var(--written)' }}><I name="check" size={26} /></span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--written)' }}>{bi('Nauhoitus valmis', 'Recording done')}</div>
-                  <div className="ps-caption" style={{ marginTop: 2 }}>Pronunciation scoring arrives with audio</div>
+              <div className="ps-glass" style={{ padding: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  {/* Play YOUR recording back */}
+                  <button onClick={playMine} className="ps-press" aria-label="Play your recording" style={{
+                    width: 52, height: 52, borderRadius: '50%', border: 'none', flexShrink: 0, cursor: 'pointer',
+                    background: playingMine ? 'var(--spoken)' : '#fff', color: playingMine ? '#fff' : 'var(--spoken)',
+                    boxShadow: 'var(--sh-1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <I name="play" size={22} />
+                  </button>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15 }}>{bi('Oma nauhoitus', 'Your recording')}</div>
+                    <div className="ps-caption" style={{ marginTop: 2 }}>{bi('Kuuntele itseäsi', 'Listen to yourself')}</div>
+                  </div>
+                  {/* Compare with the native audio */}
+                  <SpeakerBtn reg="kirja" playing={playingNative} onClick={playNative} size={44} />
                 </div>
-                <SpeakerBtn reg="puhe" size={42} />
+                <div className="ps-caption" style={{ marginTop: 12 }}>
+                  Compare yourself to the audio. (Pronunciation scoring comes later.)
+                </div>
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-                <Btn variant="light" icon="mic" style={{ flex: 1 }} onClick={() => setSt('idle')}>{bi('Uudelleen', 'Again')}</Btn>
+                <Btn variant="light" icon="mic" style={{ flex: 1 }} onClick={reRecord}>{bi('Uudelleen', 'Again')}</Btn>
                 <Btn variant="primary" iconRight="arrow" style={{ flex: 1.2 }} onClick={nextPhrase}>{bi('Seuraava', 'Next')}</Btn>
               </div>
             </div>
@@ -179,7 +250,9 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
               <span className="ps-caption ps-num" style={{
                 color: st === 'recording' ? 'var(--spoken)' : 'var(--ink-2)', fontWeight: 600,
               }}>
-                {st === 'recording' ? `● Recording ${sec.toFixed(1)}s · tap to stop` : 'Tap to repeat the written form'}
+                {st === 'recording'
+                  ? <>● {sec.toFixed(1)}s · {bi('lopeta', 'tap to stop')}</>
+                  : bi('Nauhoita itsesi', 'Tap to record yourself')}
               </span>
             </>
           )}

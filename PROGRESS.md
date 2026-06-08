@@ -231,3 +231,13 @@ Shipped: "Reset progress" action on the Progress screen (under the language togg
 Blocked: Owner must run TWO migrations in Supabase SQL editor: 20260608000001_user_progress.sql (cross-device resume) and 20260608000002_grant_card_delete.sql (reset). Until the grant runs, "Yes, reset" will error "permission denied for table cards".
 
 Next: daily vocabulary intake (10–15/day); instructional onboarding; Language Islands (first 50 real-life sentences) — see docs/roadmap-notes.md.
+
+---
+
+## Session: 2026-06-08 (Daily intake + Progress crash fix + speaking practice rebuild)
+
+Shipped: (1) Fixed Progress screen crash ("invalid input syntax for type integer: null") — fetchProgressStats was querying sentences with the new word cards' null sentence_ids; now it's word-card aware (counts word_production cards, recent shows words). This also unblocked the Reset button (was hidden behind the crash). (2) Daily vocabulary intake: new content.ts fetchNextWords(userId,n) returns the next n unmet frequency words; once the initial Day One set is completed, Day One shows a "New words" picker (10/15/30) that runs the next unmet words through the same card→quiz flow (each enters the scheduler; misses → Daily). Grows the bank daily, continues forward automatically. (3) Rebuilt the Island "shadowing" screen: renamed to "Speaking practice / Say it aloud" (dropped the jargon), redesigned the cramped header (gloss + listen hint, RegDot labels, no more "You are shadowing [chip]" cram), and made record→playback REAL via MediaRecorder (records the mic, "Your recording" play button plays you back; compare with the native audio; scoring still later). Build clean, 31 + 16 tests green.
+
+Blocked: Record/playback needs mic permission (HTTPS + tap gesture; works on the live Vercel site). Daily intake assumes the learner completed an initial set (progress.sprint.completed) — reset+sprint to reach it.
+
+Next: instructional onboarding; Language Islands real first-50 useful sentences (docs/roadmap-notes.md).
