@@ -131,14 +131,11 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
               <div key={i} className="ps-glass" style={{ padding: '13px 15px', display: 'flex', alignItems: 'center', gap: 12 }}>
                 <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="check" size={18} /></span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, lineHeight: 1.15 }}>
-                    {p.kirja.map((t) => t.t).join(' ')}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13.5, color: 'var(--spoken)', marginTop: 3 }}>
-                    {p.puhe.map((t) => t.t).join(' ')}
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16, lineHeight: 1.15 }}>
+                    {p.fi}
                   </div>
                 </div>
-                <span className="ps-caption" style={{ fontStyle: 'italic', flexShrink: 0, maxWidth: 92, textAlign: 'right' }}>{p.gloss}</span>
+                <span className="ps-caption" style={{ fontStyle: 'italic', flexShrink: 0, maxWidth: 120, textAlign: 'right' }}>{p.en}</span>
               </div>
             ))}
           </div>

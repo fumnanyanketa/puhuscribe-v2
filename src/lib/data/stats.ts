@@ -1,18 +1,15 @@
 import { supabase } from '../supabase/client'
-import { toRegisterTokens } from './content'
-import type { Token } from '../../components/primitives'
 import { bucketByUtcDay, computeWeek, computeStreak, sumCounts } from './streak'
 
 /* ---------------------------------------------------------------------------
  * Real per-user progress, derived from the FSRS card + review_log tables.
- * Replaces the mocked numbers on the Progress screen. Everything degrades to
- * zero/empty for a brand-new user rather than throwing.
+ * The vocabulary bank is the 'word_production' cards (English -> Finnish).
+ * Everything degrades to zero/empty for a brand-new user rather than throwing.
  * ------------------------------------------------------------------------- */
 
 export interface RecentReview {
-  gloss: string
-  kirja: Token[]
-  puhe: Token[]
+  fi: string
+  en: string
 }
 
 export interface ProgressStats {
@@ -27,12 +24,12 @@ export interface ProgressStats {
 }
 
 export async function fetchProgressStats(userId: string): Promise<ProgressStats> {
-  // --- Card state counts (one read, tallied client-side) --------------------
+  // --- Card state counts (the vocabulary bank) ------------------------------
   const { data: cardRows, error: cardErr } = await supabase
     .from('cards')
     .select('state')
     .eq('user_id', userId)
-    .not('sentence_id', 'is', null)
+    .eq('card_type', 'word_production')
   if (cardErr) throw new Error(cardErr.message)
 
   let mastered = 0, learning = 0, newRemaining = 0
@@ -59,30 +56,31 @@ export async function fetchProgressStats(userId: string): Promise<ProgressStats>
   const reviewsThisWeek = sumCounts(week)
   const streakDays = computeStreak(byDay, now)
 
-  // --- Recently reviewed cards ---------------------------------------------
+  // --- Recently reviewed words ----------------------------------------------
   const { data: recentCards, error: recErr } = await supabase
     .from('cards')
-    .select('sentence_id, last_review')
+    .select('word_id, last_review')
     .eq('user_id', userId)
+    .eq('card_type', 'word_production')
     .not('last_review', 'is', null)
+    .not('word_id', 'is', null)
     .order('last_review', { ascending: false })
     .limit(5)
   if (recErr) throw new Error(recErr.message)
 
   const recent: RecentReview[] = []
-  const ids = (recentCards ?? []).map((r) => r.sentence_id as number)
+  const ids = (recentCards ?? []).map((r) => r.word_id as number).filter((id) => id != null)
   if (ids.length > 0) {
-    const { data: sents, error: sErr } = await supabase
-      .from('sentences')
-      .select('id, kirjakieli, puhekieli, translation_en')
+    const { data: words, error: wErr } = await supabase
+      .from('words')
+      .select('id, base_form, translation_en')
       .in('id', ids)
-    if (sErr) throw new Error(sErr.message)
-    const byId = new Map((sents ?? []).map((s) => [s.id, s]))
+    if (wErr) throw new Error(wErr.message)
+    const byId = new Map((words ?? []).map((w) => [w.id, w]))
     for (const rc of recentCards ?? []) {
-      const s = byId.get(rc.sentence_id as number)
-      if (!s) continue
-      const { kirja, puhe } = toRegisterTokens(s.kirjakieli, s.puhekieli ?? s.kirjakieli)
-      recent.push({ gloss: s.translation_en, kirja, puhe })
+      const w = byId.get(rc.word_id as number)
+      if (!w) continue
+      recent.push({ fi: w.base_form, en: w.translation_en })
     }
   }
 
