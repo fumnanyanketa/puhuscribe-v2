@@ -181,3 +181,13 @@ Shipped: (1) Reworked the bilingual label look app-wide: bi(fi,en) now renders t
 Blocked: Nothing. Verify in browser: app bilingual labels (Progress → toggle) + landing on a small phone.
 
 Next: rest of the owner's landing/app fix list; workshop deck in Claude Design; Substack post.
+
+---
+
+## Session: 2026-06-08 (IPA tofu fix + Day One set sizes/resume/finish)
+
+Shipped: (1) Fixed the "weird boxes" under some IPA — they were tofu for the diphthong off-glide combining mark (U+032F) the phone monospace font can't draw. New cleanIpa() in content.ts strips nonspacing combining marks (Unicode Mn) at fetch time, keeping the real spacing IPA + stress/length marks (e.g. /ˈyø̯tæ/ → /ˈyøtæ/); never invents pronunciation. (2) Reworked Day One into a SprintFlow: a Start screen to pick the set size (50 / 100 / 150, capped to the word count), a "Continue" card that resumes where you left off (saved per user as {size, idx} in localStorage; migrates the old plain-idx value), and a real completion screen ("Sprint complete → Start daily review / Choose another set"). The runner is the same card→quiz UI, now bounded to the chosen deck with no more endless modulo loop. Build clean, 31 + 16 tests green.
+
+Blocked: Resume is per-browser (localStorage), not cross-device — same as before; server-side sprint progress would need a DB column. Verify on phone after deploy.
+
+Next: (asked) returning-user routing — land users who've done the sprint on the next step (Daily review) instead of re-greeting them with onboarding/sprint.

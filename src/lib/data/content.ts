@@ -15,6 +15,14 @@ export interface SprintWord {
   ipa: string      // real IPA, e.g. /ˈhyʋæ/; '' until the kaikki IPA migration is loaded
 }
 
+// Strip nonspacing combining marks (Unicode Mn) — e.g. the diphthong off-glide
+// U+032F in /ˈyø̯tæ/. Many phone fonts can't render these and show a tofu box,
+// so we drop them: the spacing IPA letters + stress/length marks (modifier
+// letters) stay, the un-drawable diacritics go. Never invents pronunciation.
+export function cleanIpa(ipa: string): string {
+  return ipa.replace(/\p{Mn}+/gu, '')
+}
+
 /**
  * The Day One Sprint vocabulary: the most frequent words first, each shown with
  * its real IPA. Until words.ipa is populated the ipa is simply blank (word +
@@ -32,7 +40,7 @@ export async function fetchSprintWords(limit = 150): Promise<SprintWord[]> {
     id: w.id,
     fi: w.base_form,
     en: w.translation_en,
-    ipa: w.ipa ?? '',
+    ipa: cleanIpa(w.ipa ?? ''),
   }))
 }
 

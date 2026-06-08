@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Orb, OrbCluster, Label } from '../components/primitives'
-import { Btn, IconBtn } from '../components/ui'
+import { Btn, IconBtn, Bar } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
@@ -18,6 +18,12 @@ const ORB_PALETTE: [string, string][] = [
   ['var(--orb-magenta)', 'var(--orb-violet)'],
 ]
 
+// Set sizes the learner can pick. Capped to however many words actually exist.
+const SIZES = [50, 100, 150]
+
+// Saved progress, per user, in this browser: which set, and how far in.
+type Saved = { size: number; idx: number }
+
 export function DayOne({ go }: { go: (s: AppScreen) => void }) {
   const { user } = useAuth()
   const { data: words, loading, error } = useAsync<SprintWord[]>(fetchSprintWords, [])
@@ -26,29 +32,164 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
   if (error) return <StatePane tone="error" title="Sanojen lataus epäonnistui" detail={error} />
   if (!words || words.length === 0) return <StatePane title="Ei sanoja vielä" detail="No sprint words available yet." />
 
-  return <Sprint words={words} go={go} userId={user?.id ?? 'guest'} />
+  return <SprintFlow words={words} go={go} userId={user?.id ?? 'guest'} />
 }
 
-function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen) => void; userId: string }) {
-  const { bi } = useLang()
-  // Resume where the learner left off (saved per user, in this browser).
+function readSaved(key: string, maxWords: number): Saved | null {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    if (/^\d+$/.test(raw)) {
+      // migrate the old plain-number ("idx") format to { size, idx }
+      const idx = parseInt(raw, 10)
+      return { size: maxWords, idx: Math.max(0, Math.min(idx, maxWords)) }
+    }
+    const obj = JSON.parse(raw)
+    if (typeof obj?.size === 'number' && typeof obj?.idx === 'number') {
+      const size = Math.max(1, Math.min(obj.size, maxWords))
+      return { size, idx: Math.max(0, Math.min(obj.idx, size)) }
+    }
+  } catch { /* ignore malformed storage */ }
+  return null
+}
+
+function SprintFlow({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen) => void; userId: string }) {
   const KEY = `puhuscribe:dayone:${userId}`
-  const readStart = () => {
-    const n = parseInt(localStorage.getItem(KEY) ?? '0', 10)
-    return Number.isFinite(n) ? Math.max(0, Math.min(n, words.length - 1)) : 0
+  const maxWords = words.length
+  const [saved, setSaved] = useState<Saved | null>(() => readSaved(KEY, maxWords))
+  const [session, setSession] = useState<{ size: number; startIdx: number } | null>(null)
+
+  // The full set is always offered; smaller picks only if there's room for them.
+  const sizeOptions = useMemo(() => {
+    const opts = SIZES.filter((n) => n < maxWords)
+    opts.push(maxWords)
+    return Array.from(new Set(opts)).sort((a, b) => a - b)
+  }, [maxWords])
+
+  const persist = (s: Saved) => {
+    try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* storage unavailable */ }
+    setSaved(s)
   }
-  const [idx, setIdx] = useState(readStart)
+
+  const start = (size: number) => {
+    persist({ size, idx: 0 })
+    setSession({ size, startIdx: 0 })
+  }
+  const resume = () => {
+    if (saved) setSession({ size: saved.size, startIdx: Math.min(saved.idx, saved.size - 1) })
+  }
+
+  if (!session) {
+    return (
+      <Start
+        sizeOptions={sizeOptions}
+        saved={saved && saved.idx > 0 && saved.idx < saved.size ? saved : null}
+        onPick={start}
+        onContinue={resume}
+        go={go}
+      />
+    )
+  }
+
+  return (
+    <SprintRunner
+      key={session.size + ':' + session.startIdx}
+      deck={words.slice(0, session.size)}
+      startIdx={session.startIdx}
+      onAdvance={(idx) => persist({ size: session.size, idx })}
+      onRestart={() => setSession(null)}
+      go={go}
+    />
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* Start screen — choose a set, or continue where you left off                */
+/* -------------------------------------------------------------------------- */
+function Start({ sizeOptions, saved, onPick, onContinue, go }: {
+  sizeOptions: number[]
+  saved: Saved | null
+  onPick: (size: number) => void
+  onContinue: () => void
+  go: (s: AppScreen) => void
+}) {
+  const { bi } = useLang()
+  return (
+    <ScreenScroll>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
+        <Label color="var(--written)">{bi('Päivä yksi', 'Day One')}</Label>
+        <span style={{ width: 40 }} />
+      </div>
+
+      <div style={{ textAlign: 'center', marginTop: 14 }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={140} /></div>
+        <h1 className="ps-title-1" style={{ marginTop: 14 }}>{bi('Aloitusryntäys', 'Day One Sprint')}</h1>
+        <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300, marginInline: 'auto' }}>
+          Recognise the most frequent Finnish words — see, hear, tap. Pick how many to start with; you can always continue where you left off.
+        </p>
+      </div>
+
+      {saved && (
+        <button className="ps-press ps-glass" onClick={onContinue} style={{
+          marginTop: 22, padding: 18, textAlign: 'left', border: '1px solid var(--written-line)',
+          background: 'var(--written-bg)', cursor: 'pointer', width: '100%',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <Label color="var(--written)">{bi('Jatka', 'Continue')}</Label>
+            <span className="ps-label ps-num" style={{ color: 'var(--ink-2)' }}>{saved.idx} / {saved.size}</span>
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <Bar value={(saved.idx / saved.size) * 100} color="var(--written)" />
+          </div>
+        </button>
+      )}
+
+      <div style={{ marginTop: 22 }}>
+        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Valitse setti', 'Choose your set')}</Label>
+        <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
+          {sizeOptions.map((n) => (
+            <button key={n} className="ps-press ps-card" onClick={() => onPick(n)} style={{
+              padding: '18px 20px', cursor: 'pointer', textAlign: 'left',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, letterSpacing: '-0.03em' }}>{n}</span>
+                <span className="ps-caption">{bi('sanaa', 'words')}</span>
+              </div>
+              <span style={{ color: 'var(--written)' }}><I name="arrow" size={20} /></span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </ScreenScroll>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* The running sprint — card → quick recognition quiz, per word               */
+/* -------------------------------------------------------------------------- */
+function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
+  deck: SprintWord[]
+  startIdx: number
+  onAdvance: (idx: number) => void
+  onRestart: () => void
+  go: (s: AppScreen) => void
+}) {
+  const { bi } = useLang()
+  const total = deck.length
+  const [idx, setIdx] = useState(Math.max(0, Math.min(startIdx, total - 1)))
   const [phase, setPhase] = useState<'card' | 'quiz'>('card')
   const [picked, setPicked] = useState<string | null>(null)
-  const [mastered, setMastered] = useState(readStart)
+  const [mastered, setMastered] = useState(Math.max(0, Math.min(startIdx, total)))
+  const [done, setDone] = useState(false)
 
-  const total = words.length
-  const w = words[idx % total]
+  const w = deck[idx]
   const orb = ORB_PALETTE[idx % ORB_PALETTE.length]
   const wave = Math.min(8, Math.floor((mastered / total) * 8) + 1)
 
   const options = useMemo(() => {
-    const pool = words.filter((x) => x.en !== w.en)
+    const pool = deck.filter((x) => x.en !== w.en)
     const picks = new Set<string>()
     let k = 0
     while (picks.size < 3 && k < pool.length * 2 && pool.length > 0) {
@@ -56,17 +197,42 @@ function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen)
       k++
     }
     return [w.en, ...picks].sort((a, b) => ((a.length + idx) % 3) - ((b.length + idx) % 3))
-  }, [idx, words, w.en])
+  }, [idx, deck, w.en])
 
   const next = () => {
+    const nx = idx + 1
     setMastered((m) => Math.min(total, m + 1))
+    if (nx >= total) {
+      onAdvance(total) // mark the set complete
+      setDone(true)
+      return
+    }
+    onAdvance(nx)
     setPicked(null)
     setPhase('card')
-    setIdx((x) => {
-      const nx = x + 1
-      try { localStorage.setItem(KEY, String(nx)) } catch { /* storage unavailable */ }
-      return nx
-    })
+    setIdx(nx)
+  }
+
+  if (done) {
+    return (
+      <ScreenScroll>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          alignItems: 'center', textAlign: 'center', gap: 24 }}>
+          <OrbCluster size={190} />
+          <div>
+            <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>{bi('Ryntäys valmis', 'Sprint complete')}</Label>
+            <h2 className="ps-title-1">{bi('Hyvää työtä!', 'Great work!')}</h2>
+            <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>
+              You recognised {total} words. Next: turn them into lasting memory with daily review.
+            </p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
+            <Btn variant="primary" block icon="cards" onClick={() => go('daily')}>{bi('Aloita kertaus', 'Start daily review')}</Btn>
+            <Btn variant="light" block onClick={onRestart}>{bi('Valitse toinen setti', 'Choose another set')}</Btn>
+          </div>
+        </div>
+      </ScreenScroll>
+    )
   }
 
   return (
