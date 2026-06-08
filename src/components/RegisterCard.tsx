@@ -67,7 +67,7 @@ export function RegisterCard({ kirja, puhe, gloss, badge, compact = false, glass
                   size={compact ? 18 : 21} color="var(--ink)" />
               </div>
             </div>
-            {onPlay && <SpeakerBtn reg="puhe" playing={playing === 'puhe'} onClick={() => onPlay('puhe')} />}
+            {/* puhekieli is shown as text only — no TTS until the spoken forms are human-verified */}
           </div>
         </div>
       </div>

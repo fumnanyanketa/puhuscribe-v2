@@ -13,6 +13,7 @@ export function Auth() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [signedUp, setSignedUp] = useState(false)
+  const [showPw, setShowPw] = useState(false)
 
   const submit = async (e?: FormEvent) => {
     e?.preventDefault()
@@ -110,19 +111,32 @@ export function Auth() {
             <label className="ps-caption" style={{ display: 'block', marginBottom: 7, color: 'var(--ink-2)' }}>
               Salasana · Password
             </label>
-            <input
-              type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              required autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-              placeholder="At least 6 characters"
-              style={{
-                width: '100%', padding: '15px 18px', borderRadius: 'var(--r-md)',
-                border: '1.5px solid var(--glass-line)', background: 'var(--glass)',
-                fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 15, color: 'var(--ink)',
-                outline: 'none', transition: 'border-color .15s',
-              }}
-              onFocus={(e) => e.target.style.borderColor = 'var(--written)'}
-              onBlur={(e) => e.target.style.borderColor = 'var(--glass-line)'}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPw ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
+                required autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+                placeholder="At least 6 characters"
+                style={{
+                  width: '100%', padding: '15px 46px 15px 18px', borderRadius: 'var(--r-md)',
+                  border: '1.5px solid var(--glass-line)', background: 'var(--glass)',
+                  fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 15, color: 'var(--ink)',
+                  outline: 'none', transition: 'border-color .15s',
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--written)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--glass-line)'}
+              />
+              <button type="button" onClick={() => setShowPw((v) => !v)} className="ps-press"
+                aria-label={showPw ? 'Hide password' : 'Show password'}
+                style={{
+                  position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
+                  padding: 8, display: 'flex', alignItems: 'center',
+                }}>
+                {showPw
+                  ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 11 8 11 8a18.4 18.4 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22M6.61 6.61A18.4 18.4 0 0 0 1 12s4 8 11 8a9.1 9.1 0 0 0 5.39-1.61"/></svg>
+                  : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>}
+              </button>
+            </div>
           </div>
 
           {error && (
