@@ -38,6 +38,7 @@ export function ScreenScroll({ children, pad = 22, bottom = 22, bg = 'var(--bg-g
 
 /* ---------- Floating frosted pill nav ---------- */
 const NAV = [
+  { id: 'dayone',   icon: 'sparkle' },
   { id: 'daily',    icon: 'cards'  },
   { id: 'island',   icon: 'island' },
   { id: 'progress', icon: 'chart'  },

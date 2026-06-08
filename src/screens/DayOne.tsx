@@ -6,7 +6,7 @@ import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { fetchSprintWords, SprintWord } from '../lib/data/content'
-import { useAuth } from '../lib/auth/useAuth'
+import { useProgress } from '../lib/data/progress'
 import { useLang } from '../lib/lang/useLang'
 
 // Orb gradient pairs cycled per card (the DB carries no presentation colour).
@@ -25,39 +25,25 @@ const SIZES = [50, 100, 150]
 type Saved = { size: number; idx: number }
 
 export function DayOne({ go }: { go: (s: AppScreen) => void }) {
-  const { user } = useAuth()
   const { data: words, loading, error } = useAsync<SprintWord[]>(fetchSprintWords, [])
 
   if (loading) return <StatePane title="Ladataan sanoja…" />
   if (error) return <StatePane tone="error" title="Sanojen lataus epäonnistui" detail={error} />
   if (!words || words.length === 0) return <StatePane title="Ei sanoja vielä" detail="No sprint words available yet." />
 
-  return <SprintFlow words={words} go={go} userId={user?.id ?? 'guest'} />
+  return <SprintFlow words={words} go={go} />
 }
 
-function readSaved(key: string, maxWords: number): Saved | null {
-  try {
-    const raw = localStorage.getItem(key)
-    if (!raw) return null
-    if (/^\d+$/.test(raw)) {
-      // migrate the old plain-number ("idx") format to { size, idx }
-      const idx = parseInt(raw, 10)
-      return { size: maxWords, idx: Math.max(0, Math.min(idx, maxWords)) }
-    }
-    const obj = JSON.parse(raw)
-    if (typeof obj?.size === 'number' && typeof obj?.idx === 'number') {
-      const size = Math.max(1, Math.min(obj.size, maxWords))
-      return { size, idx: Math.max(0, Math.min(obj.idx, size)) }
-    }
-  } catch { /* ignore malformed storage */ }
-  return null
-}
-
-function SprintFlow({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen) => void; userId: string }) {
-  const KEY = `puhuscribe:dayone:${userId}`
+function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
   const maxWords = words.length
-  const [saved, setSaved] = useState<Saved | null>(() => readSaved(KEY, maxWords))
+  const { progress, saveSprint } = useProgress()
   const [session, setSession] = useState<{ size: number; startIdx: number } | null>(null)
+
+  // Resume offer comes from the cross-device progress (DB-backed, localStorage cache).
+  const s = progress.sprint
+  const resumable: Saved | null = (s && s.idx > 0 && s.idx < s.size)
+    ? { size: Math.min(s.size, maxWords), idx: Math.min(s.idx, Math.min(s.size, maxWords)) }
+    : null
 
   // The full set is always offered; smaller picks only if there's room for them.
   const sizeOptions = useMemo(() => {
@@ -66,29 +52,16 @@ function SprintFlow({ words, go, userId }: { words: SprintWord[]; go: (s: AppScr
     return Array.from(new Set(opts)).sort((a, b) => a - b)
   }, [maxWords])
 
-  const persist = (s: Saved) => {
-    try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* storage unavailable */ }
-    setSaved(s)
-  }
-
   const start = (size: number) => {
-    persist({ size, idx: 0 })
+    saveSprint({ size, idx: 0, completed: false })
     setSession({ size, startIdx: 0 })
   }
   const resume = () => {
-    if (saved) setSession({ size: saved.size, startIdx: Math.min(saved.idx, saved.size - 1) })
+    if (resumable) setSession({ size: resumable.size, startIdx: Math.min(resumable.idx, resumable.size - 1) })
   }
 
   if (!session) {
-    return (
-      <Start
-        sizeOptions={sizeOptions}
-        saved={saved && saved.idx > 0 && saved.idx < saved.size ? saved : null}
-        onPick={start}
-        onContinue={resume}
-        go={go}
-      />
-    )
+    return <Start sizeOptions={sizeOptions} saved={resumable} onPick={start} onContinue={resume} go={go} />
   }
 
   return (
@@ -96,7 +69,7 @@ function SprintFlow({ words, go, userId }: { words: SprintWord[]; go: (s: AppScr
       key={session.size + ':' + session.startIdx}
       deck={words.slice(0, session.size)}
       startIdx={session.startIdx}
-      onAdvance={(idx) => persist({ size: session.size, idx })}
+      onAdvance={(idx) => saveSprint({ size: session.size, idx, completed: idx >= session.size })}
       onRestart={() => setSession(null)}
       go={go}
     />
@@ -215,7 +188,7 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
 
   if (done) {
     return (
-      <ScreenScroll>
+      <ScreenScroll bottom={110}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
           alignItems: 'center', textAlign: 'center', gap: 24 }}>
           <OrbCluster size={190} />
@@ -237,7 +210,7 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
 
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
-      <ScreenScroll>
+      <ScreenScroll bottom={110}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />

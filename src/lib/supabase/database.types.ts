@@ -17,6 +17,7 @@ export type Database = {
           target_level: 'A1' | 'A2' | 'B1' | 'B2'
           daily_new_cards: number
           timezone: string
+          progress: Json
           created_at: string
           updated_at: string
         }
@@ -27,6 +28,7 @@ export type Database = {
           target_level?: 'A1' | 'A2' | 'B1' | 'B2'
           daily_new_cards?: number
           timezone?: string
+          progress?: Json
           created_at?: string
           updated_at?: string
         }
@@ -37,6 +39,7 @@ export type Database = {
           target_level?: 'A1' | 'A2' | 'B1' | 'B2'
           daily_new_cards?: number
           timezone?: string
+          progress?: Json
           updated_at?: string
         }
         Relationships: []

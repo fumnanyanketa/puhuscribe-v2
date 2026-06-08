@@ -5,6 +5,7 @@ import { RegisterCard } from '../components/RegisterCard'
 import { Btn, IconBtn, Steps } from '../components/ui'
 import { PuhuMark, ScreenScroll, AppScreen } from '../components/Shell'
 import { useLang, Bi } from '../lib/lang/useLang'
+import { useProgress } from '../lib/data/progress'
 
 type Step = { key: string; render: (bi: Bi) => ReactNode }
 
@@ -83,14 +84,19 @@ const steps: Step[] = [
 
 export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
   const { bi } = useLang()
+  const { markOnboarded } = useProgress()
   const [i, setI] = useState(0)
   const last = i === steps.length - 1
+
+  // Leaving onboarding (Skip or Start) records it as seen, so returning users
+  // are routed straight to the sprint / daily review next time.
+  const enterSprint = () => { markOnboarded(); go('dayone') }
 
   return (
     <ScreenScroll>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
         <PuhuMark size={19} />
-        <button onClick={() => go('dayone')} className="ps-press" style={{
+        <button onClick={enterSprint} className="ps-press" style={{
           background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-2)',
           fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13.5,
         }}>
@@ -107,7 +113,7 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
           variant="primary" block
           iconRight={last ? undefined : 'arrow'}
           icon={last ? 'sparkle' : undefined}
-          onClick={() => last ? go('dayone') : setI(i + 1)}
+          onClick={() => last ? enterSprint() : setI(i + 1)}
         >
           {last ? bi('Aloita', 'Start Day One') : bi('Jatka', 'Continue')}
         </Btn>

@@ -191,3 +191,13 @@ Shipped: (1) Fixed the "weird boxes" under some IPA — they were tofu for the d
 Blocked: Resume is per-browser (localStorage), not cross-device — same as before; server-side sprint progress would need a DB column. Verify on phone after deploy.
 
 Next: (asked) returning-user routing — land users who've done the sprint on the next step (Daily review) instead of re-greeting them with onboarding/sprint.
+
+---
+
+## Session: 2026-06-08 (Returning-user routing + Day One nav tab + cross-device progress)
+
+Shipped: (1) Cross-device learning progress — new src/lib/data/progress.tsx (ProgressProvider/useProgress) stores { onboarded, sprint:{size,idx,completed} } in users.progress (jsonb; migration 20260608000001) so Day One resume follows the learner across devices, with a localStorage cache for instant paint + graceful fallback if the migration isn't run yet. Day One now reads/writes progress via the context (dropped its own localStorage key; legacy key migrated). (2) Routing — App.tsx waits for progress to resolve then lands the user: first-timers → Onboarding→Day One; returning with an unfinished sprint → resume it; once a set is completed → Daily review. Onboarding marks onboarded on Skip/Start. (3) Day One is now a 4th bottom-nav tab (sparkle · cards · island · chart); Day One screens got bottom padding to clear the nav. Build clean, 31 + 16 tests green.
+
+Blocked: Owner must run supabase/migrations/20260608000001_user_progress.sql in Supabase for cross-device sync; until then it transparently falls back to per-device localStorage. Existing users with no stored progress will see onboarding once. Verify in browser.
+
+Next: optional — gentle "switch to Finnish only?" nudge; puhekieli verification; Substack post; workshop deck in Claude Design.
