@@ -61,7 +61,7 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
-          <Label color="var(--written)">{`Day One · Aalto ${wave} / 8`}</Label>
+          <Label color="var(--written)">{`Day One · Wave ${wave} / 8`}</Label>
           <span className="ps-label ps-num" style={{ color: 'var(--ink)' }}>{mastered}/{total}</span>
         </div>
 
@@ -116,7 +116,7 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
             </div>
 
             <div style={{ flex: 1, minHeight: 14 }} />
-            <Btn variant="primary" block iconRight="arrow" onClick={() => setPhase('quiz')}>Testaa minua</Btn>
+            <Btn variant="primary" block iconRight="arrow" onClick={() => setPhase('quiz')}>Testaa minua · Test me</Btn>
           </div>
         ) : (
           <div key={'quiz' + idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 22 }}>
@@ -126,7 +126,7 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
                 <Orb size={76} from={orb[0]} to={orb[1]} />
               </div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 46, lineHeight: 1.05, letterSpacing: '-0.04em' }}>{w.fi}</div>
-              <div className="ps-caption" style={{ marginTop: 6 }}>Mitä tämä tarkoittaa?</div>
+              <div className="ps-caption" style={{ marginTop: 6 }}>Mitä tämä tarkoittaa? · What does this mean?</div>
             </div>
 
             <div style={{ flex: 1 }} />
@@ -157,7 +157,7 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
             <div style={{ marginTop: 14, minHeight: 54 }}>
               {picked && (
                 <Btn variant={picked === w.en ? 'accent' : 'primary'} block iconRight="arrow" onClick={next}>
-                  {picked === w.en ? 'Hienoa, jatka' : 'Jatka'}
+                  {picked === w.en ? 'Hienoa! · Great, continue' : 'Jatka · Continue'}
                 </Btn>
               )}
             </div>

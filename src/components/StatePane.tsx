@@ -21,7 +21,7 @@ export function StatePane({ title, detail, tone = 'normal', bottom }: {
         <OrbCluster size={150} />
         <div>
           <Label color={isError ? 'var(--flag)' : 'var(--written)'} style={{ display: 'block', marginBottom: 8 }}>
-            {isError ? 'Virhe' : 'PuhuScribe'}
+            {isError ? 'Virhe · Error' : 'PuhuScribe'}
           </Label>
           <h2 className="ps-title-1">{title}</h2>
           {detail && (

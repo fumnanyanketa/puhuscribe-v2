@@ -28,11 +28,11 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
     [user?.id],
   )
 
-  if (loading) return <StatePane title="Ladataan sessiota…" bottom={110} />
-  if (error) return <StatePane tone="error" title="Session lataus epäonnistui" detail={error} bottom={110} />
-  if (!user) return <StatePane title="Kirjaudu sisään" detail="Sign in to start your review session." bottom={110} />
+  if (loading) return <StatePane title="Ladataan… · Loading" bottom={110} />
+  if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={110} />
+  if (!user) return <StatePane title="Kirjaudu sisään · Sign in" detail="Sign in to start your review session." bottom={110} />
   if (!cards || cards.length === 0)
-    return <StatePane title="Ei kortteja juuri nyt" detail="No cards due right now — great work. Come back later." bottom={110} />
+    return <StatePane title="Ei kortteja juuri nyt · No cards right now" detail="No cards due right now — great work. Come back later." bottom={110} />
 
   // Keyed on the loaded set so a fresh queue resets the session cleanly.
   return <Session key={cards.map((c) => c.cardId).join(',')} cards={cards} userId={user.id} go={go} />
@@ -72,8 +72,8 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
         alignItems: 'center', textAlign: 'center', gap: 24 }}>
         <OrbCluster size={190} />
         <div>
-          <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>Sessio valmis</Label>
-          <h2 className="ps-title-1">Hyvää työtä.</h2>
+          <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>Sessio valmis · Session complete</Label>
+          <h2 className="ps-title-1">Hyvää työtä! · Good work.</h2>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10 }}>
             {cards.length} cards reviewed · {remembered} remembered
           </p>
@@ -90,8 +90,8 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Btn variant="light" onClick={() => go('island')}>Kielisaari</Btn>
-          <Btn variant="primary" icon="chart" onClick={() => go('progress')}>Edistyminen</Btn>
+          <Btn variant="light" onClick={() => go('island')}>Kielisaari · Island</Btn>
+          <Btn variant="primary" icon="chart" onClick={() => go('progress')}>Edistyminen · Progress</Btn>
         </div>
       </div>
     </ScreenScroll>
@@ -103,7 +103,7 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
           <Label color="var(--written)">Päivän sessio · spaced repetition</Label>
-          <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kertaus</h1>
+          <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kertaus · Review</h1>
         </div>
       </div>
 
@@ -144,7 +144,8 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
                 opacity: busy ? 0.55 : 1, transition: 'opacity .15s',
               }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14 }}>{fi}</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13 }}>{fi}</span>
+              <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.7 }}>{en}</span>
               <span className="ps-num" style={{ fontSize: 11, fontWeight: 600, opacity: 0.85 }}>{previews[rating]}</span>
             </button>
           ))}

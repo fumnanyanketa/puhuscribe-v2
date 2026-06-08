@@ -34,9 +34,9 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
     [],
   )
 
-  if (loading) return <StatePane title="Ladataan saarta…" bottom={110} />
-  if (error) return <StatePane tone="error" title="Saaren lataus epäonnistui" detail={error} bottom={110} />
-  if (!phrases || phrases.length === 0) return <StatePane title="Ei lauseita vielä" detail="No sentences available yet." bottom={110} />
+  if (loading) return <StatePane title="Ladataan… · Loading" bottom={110} />
+  if (error) return <StatePane tone="error" title="Couldn't load the island" detail={error} bottom={110} />
+  if (!phrases || phrases.length === 0) return <StatePane title="Ei lauseita vielä · No sentences yet" detail="No sentences available yet." bottom={110} />
 
   return <Shadowing phrases={phrases} go={go} />
 }
@@ -95,12 +95,12 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
               background: 'rgba(15,14,32,.36)', color: '#fff',
               border: '1px solid rgba(255,255,255,.28)', backdropFilter: 'blur(6px)',
             }}>
-              <I name="island" size={15} /> Lause {i + 1} / {phrases.length}
+              <I name="island" size={15} /> Lause · Sentence {i + 1} / {phrases.length}
             </span>
           </div>
           <div style={{ marginTop: 22 }}>
             <Label color="rgba(255,255,255,.75)">Varjostus · Shadowing</Label>
-            <h1 className="ps-title-1" style={{ color: 'var(--on-dark)', marginTop: 10 }}>Toista ääneen</h1>
+            <h1 className="ps-title-1" style={{ color: 'var(--on-dark)', marginTop: 10 }}>Toista ääneen · Say it aloud</h1>
           </div>
         </div>
 
@@ -112,7 +112,7 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
             paddingBottom: 14, marginBottom: 16, borderBottom: '1px solid var(--glass-edge)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span className="ps-caption">You are shadowing</span>
-              <span className="ps-label" style={{ color: 'var(--written)', background: 'var(--written-bg)', padding: '5px 10px', borderRadius: 7 }}>Kirjakieli</span>
+              <span className="ps-label" style={{ color: 'var(--written)', background: 'var(--written-bg)', padding: '5px 10px', borderRadius: 7 }}>Kirjakieli · written</span>
             </div>
             <span className="ps-caption" style={{ fontStyle: 'italic' }}>{p.gloss}</span>
           </div>
@@ -148,14 +148,14 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
                 background: 'var(--written-bg)', border: '1px solid var(--written)' }}>
                 <span style={{ color: 'var(--written)' }}><I name="check" size={26} /></span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--written)' }}>Nauhoitus valmis</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--written)' }}>Nauhoitus valmis · Recording done</div>
                   <div className="ps-caption" style={{ marginTop: 2 }}>Pronunciation scoring arrives with audio</div>
                 </div>
                 <SpeakerBtn reg="puhe" size={42} />
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-                <Btn variant="light" icon="mic" style={{ flex: 1 }} onClick={() => setSt('idle')}>Uudelleen</Btn>
-                <Btn variant="primary" iconRight="arrow" style={{ flex: 1.2 }} onClick={nextPhrase}>Seuraava</Btn>
+                <Btn variant="light" icon="mic" style={{ flex: 1 }} onClick={() => setSt('idle')}>Uudelleen · Again</Btn>
+                <Btn variant="primary" iconRight="arrow" style={{ flex: 1.2 }} onClick={nextPhrase}>Seuraava · Next</Btn>
               </div>
             </div>
           ) : (
@@ -174,7 +174,7 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
               <span className="ps-caption ps-num" style={{
                 color: st === 'recording' ? 'var(--spoken)' : 'var(--ink-2)', fontWeight: 600,
               }}>
-                {st === 'recording' ? `● Nauhoitetaan ${sec.toFixed(1)}s, tap to stop` : 'Tap to repeat the written form'}
+                {st === 'recording' ? `● Recording ${sec.toFixed(1)}s · tap to stop` : 'Tap to repeat the written form'}
               </span>
             </>
           )}

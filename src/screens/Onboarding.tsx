@@ -90,7 +90,7 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
           background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-2)',
           fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13.5,
         }}>
-          Ohita
+          Ohita · Skip
         </button>
       </div>
       <div style={{ marginBottom: 22 }}>
@@ -105,7 +105,7 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
           icon={last ? 'sparkle' : undefined}
           onClick={() => last ? go('dayone') : setI(i + 1)}
         >
-          {last ? 'Aloita Day One' : 'Jatka'}
+          {last ? 'Aloita · Start Day One' : 'Jatka · Continue'}
         </Btn>
       </div>
     </ScreenScroll>

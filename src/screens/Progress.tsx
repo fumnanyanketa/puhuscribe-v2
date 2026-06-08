@@ -14,9 +14,9 @@ export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
     [user?.id],
   )
 
-  if (loading) return <StatePane title="Ladataan edistymistä…" bottom={110} />
-  if (error) return <StatePane tone="error" title="Edistymisen lataus epäonnistui" detail={error} bottom={110} />
-  if (!stats) return <StatePane title="Ei dataa vielä" bottom={110} />
+  if (loading) return <StatePane title="Ladataan… · Loading" bottom={110} />
+  if (error) return <StatePane tone="error" title="Couldn't load progress" detail={error} bottom={110} />
+  if (!stats) return <StatePane title="Ei dataa vielä · No data yet" bottom={110} />
 
   const maxWeek = Math.max(1, ...stats.week.map((d) => d.count))
   const reviewed = stats.mastered + stats.learning
