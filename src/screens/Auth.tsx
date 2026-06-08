@@ -68,7 +68,7 @@ export function Auth() {
             {mode === 'signin' ? 'Kirjaudu sisään' : 'Luo tili'}
           </h1>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
-            {mode === 'signin' ? 'Sign in to continue.' : 'Create your account — your Finnish starts here.'}
+            {mode === 'signin' ? 'Sign in to continue.' : 'Create your account. Your Finnish starts here.'}
           </p>
         </div>
 

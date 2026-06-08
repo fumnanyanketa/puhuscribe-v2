@@ -95,11 +95,11 @@ function Start({ sizeOptions, saved, onPick, onContinue, go }: {
         <span style={{ width: 40 }} />
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: 14 }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={140} /></div>
-        <h1 className="ps-title-1" style={{ marginTop: 14 }}>{bi('Aloitusryntäys', 'Day One Sprint')}</h1>
-        <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300, marginInline: 'auto' }}>
-          Recognise the most frequent Finnish words — see, hear, tap. Pick how many to start with; you can always continue where you left off.
+      <div style={{ textAlign: 'center', marginTop: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={112} /></div>
+        <h1 className="ps-title-1" style={{ marginTop: 12 }}>{bi('Aloitusryntäys', 'Day One Sprint')}</h1>
+        <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8, maxWidth: 300, marginInline: 'auto' }}>
+          Recognise the most frequent Finnish words. See it, hear it, tap the meaning. Pick how many to start with, and you can continue where you left off.
         </p>
       </div>
 

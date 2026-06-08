@@ -84,7 +84,7 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-grad)' }}>
       {/* Hero band */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 230, overflow: 'hidden',
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 258, overflow: 'hidden',
         background: 'linear-gradient(160deg, #6E4BC0, #4E2A86)' }}>
         <OrbCluster size={230} style={{ position: 'absolute', right: -34, top: -20, opacity: 0.95 }} />
         <div style={{ position: 'absolute', left: -40, bottom: -50, width: 160, height: 160,
@@ -109,7 +109,7 @@ function Shadowing({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppSc
           </div>
         </div>
 
-        <div style={{ height: 26 }} />
+        <div style={{ height: 50 }} />
 
         {/* Shadowing card */}
         <div className="ps-card" style={{ padding: 20, borderRadius: 'var(--r-2xl)', boxShadow: 'var(--sh-3)' }}>

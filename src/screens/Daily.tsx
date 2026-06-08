@@ -35,7 +35,7 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
   if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={110} />
   if (!user) return <StatePane title={bi('Kirjaudu sisään', 'Sign in')} detail="Sign in to start your review session." bottom={110} />
   if (!cards || cards.length === 0)
-    return <StatePane title={bi('Ei kortteja juuri nyt', 'No cards right now')} detail="No cards due right now — great work. Come back later." bottom={110} />
+    return <StatePane title={bi('Ei kortteja juuri nyt', 'No cards right now')} detail="No cards due right now. Great work, come back later." bottom={110} />
 
   // Keyed on the loaded set so a fresh queue resets the session cleanly.
   return <Session key={cards.map((c) => c.cardId).join(',')} cards={cards} userId={user.id} go={go} />
