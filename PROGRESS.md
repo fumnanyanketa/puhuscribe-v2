@@ -161,3 +161,13 @@ Shipped: Implemented the Claude Design landing page (fetched the design bundle, 
 Blocked: Nothing. Verify in browser after deploy: puhuscribe-v2.vercel.app/landing. The Teal/Azure variant files were left in the design bundle (not shipped) — Violet is the locked-in direction.
 
 Next: workshop deck in Claude Design (prompt + QR ready); optional: move landing to the bare domain (app → /app) if you want the QR on the apex; Substack post; puhekieli verification.
+
+---
+
+## Session: 2026-06-08 (Landing hero: scale side panels to fit mobile)
+
+Shipped: The hero composition (phone + the two flanking "Kuuntele/This month" panels) now scales to fit any viewport instead of hiding the panels on narrow screens (they were hidden <1080px straight from the Claude Design export — wrong for a mobile-first audience). Wrapped the composition in a fixed 704×600 .hero-stage and scale it via a CSS var --hero-k computed fluidly from viewport width (set before React renders + on resize/orientationchange in index.html), with --hero-h reserving the scaled height so there's no gap. Phone keeps both panels beside it down to the smallest phone. Landing scripts syntax-checked, app build clean.
+
+Blocked: Nothing. Verify on a phone: puhuscribe-v2.vercel.app/landing — phone flanked by both panels, shrunk to fit.
+
+Next: the rest of the owner's landing fix list (TBD); workshop deck in Claude Design; Substack post.

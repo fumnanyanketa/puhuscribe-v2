@@ -143,10 +143,14 @@ function Hero({ t, dark }) {
       e('a', { href: APP_URL, target: '_blank', rel: 'noopener', style: { textDecoration: 'none' } }, e(CTA, { variant: 'accent', large: true }, 'Become a tester', I('arrow', { size: 19, sw: 2.1 }))),
       e('a', { href: '#two-finnishes', style: { textDecoration: 'none' } }, e(CTA, { variant: dark ? 'glass' : 'light', large: true }, 'See how it works'))),
     // ---- phone + two overlapping app-screen panels ----
-    e('div', { style: { position: 'relative', height: 600, margin: '44px auto 0', maxWidth: 1000 } },
-      e('div', { className: 'side-panel', style: { position: 'absolute', top: 92, left: 'calc(50% - 352px)', zIndex: 2, transform: 'rotate(-7deg)' } }, e(ListenPanel)),
-      e('div', { className: 'side-panel', style: { position: 'absolute', top: 130, right: 'calc(50% - 352px)', zIndex: 2, transform: 'rotate(7deg)' } }, e(MonthPanel)),
-      e('div', { style: { position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 3 } }, e(Phone, { w: 300 }, e(Screen)))),
+    // Wrapped in a fixed 704px "stage" that is scaled to fit the viewport
+    // (see --hero-k in index.html), so the phone keeps its two flanking panels
+    // on every screen, shrinking together on mobile instead of hiding.
+    e('div', { className: 'hero-stage-wrap' },
+      e('div', { className: 'hero-stage' },
+        e('div', { className: 'side-panel', style: { position: 'absolute', top: 92, left: 'calc(50% - 352px)', zIndex: 2, transform: 'rotate(-7deg)' } }, e(ListenPanel)),
+        e('div', { className: 'side-panel', style: { position: 'absolute', top: 130, right: 'calc(50% - 352px)', zIndex: 2, transform: 'rotate(7deg)' } }, e(MonthPanel)),
+        e('div', { style: { position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 3 } }, e(Phone, { w: 300 }, e(Screen))))),
   );
 }
 

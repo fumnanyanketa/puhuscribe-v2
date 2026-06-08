@@ -29,10 +29,13 @@
   .lift:hover { transform: translateY(-3px); box-shadow: var(--sh-2); }
   .hero input::placeholder, #waitlist input::placeholder { color: rgba(246,244,251,0.55); }
   a:hover { opacity: 0.85; }
-  /* Show the hero side panels on all laptop/desktop widths; only hide them in
-     compact/mobile mode (≤760px), where there's no room beside the phone.
-     (Was 1080px in the Claude Design export, which hid them on most windows.) */
-  @media (max-width: 760px) { .side-panel { display: none !important; } }
+  /* Hero composition (phone + the two flanking panels) is authored at a fixed
+     704px-wide "stage", then scaled to fit any viewport via --hero-k (set in JS
+     below). This keeps the side panels visible — and proportional — on mobile,
+     instead of hiding them. --hero-h reserves the scaled height so there's no gap. */
+  .hero-stage-wrap { position: relative; margin: 44px auto 0; width: 704px; max-width: 100%; height: var(--hero-h, 600px); }
+  .hero-stage { position: absolute; top: 0; left: 50%; width: 704px; height: 600px;
+    transform: translateX(-50%) scale(var(--hero-k, 1)); transform-origin: top center; }
   @media (max-width: 880px) { .features-grid { grid-template-columns: 1fr !important; } }
   @media (max-width: 760px) { .nav-links { display: none !important; } }
   @media (max-width: 440px) { .mini-grid { grid-template-columns: 1fr !important; } }
@@ -51,6 +54,25 @@
   window.TweakSection = function () { return null; };
   window.TweakSelect = function () { return null; };
   window.TweakRadio = function () { return null; };
+
+  /* Fluidly scale the hero composition (704x600 design) to fit the viewport,
+     so the phone keeps both flanking panels down to the smallest phone.
+     Set before React renders (and on resize) so there is no flash. */
+  (function () {
+    var DESIGN_W = 704, DESIGN_H = 600, MIN_K = 0.3;
+    function fitHero() {
+      var vw = document.documentElement.clientWidth || window.innerWidth;
+      var pad = Math.min(64, Math.max(20, vw * 0.05));       // matches the hero's clamp() padding
+      var avail = vw - pad * 2 - 8;                          // 8px breathing room
+      var k = Math.max(MIN_K, Math.min(1, avail / DESIGN_W));
+      var s = document.documentElement.style;
+      s.setProperty('--hero-k', k.toFixed(3));
+      s.setProperty('--hero-h', Math.round(DESIGN_H * k) + 'px');
+    }
+    fitHero();
+    window.addEventListener('resize', fitHero, { passive: true });
+    window.addEventListener('orientationchange', fitHero, { passive: true });
+  })();
 </script>
 
 <!-- Vendored React 18 (production UMD) — no CDN or in-browser Babel needed -->
