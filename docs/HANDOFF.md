@@ -194,8 +194,12 @@ Goal: get people in the room to install and try it. Suggested arc:
 5. **Try it now** — open `puhuscribe-v2.vercel.app` → Add to Home Screen → sign up.
    (No app store needed.)
 6. **Ask** — be a tester; feedback.
-Build options in the new session: HTML/Reveal.js slides, or the **Canva MCP**
-(available) for a real deck. Keep it ~8–10 slides, demo-led.
+Build in **Claude Design** (a continuation of the prototype the owner already
+built there) — **3–5 slides for a 5-minute talk**, demo-led, NOT Canva. Flow:
+the owner has a **landing page** that links to the Vercel app; people **sign in
+normally** (there is no guest mode — sign-in is unchanged). Day One Sprint now
+**resumes** where a learner left off (saved per user in the browser), so demos
+don't restart from word 1.
 
 ### 9b. Substack post — the build journey
 Use Section 3 as the spine. Strong beats: the "invented Finnish" crisis and

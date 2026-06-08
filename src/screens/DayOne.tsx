@@ -6,6 +6,7 @@ import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { fetchSprintWords, SprintWord } from '../lib/data/content'
+import { useAuth } from '../lib/auth/useAuth'
 
 // Orb gradient pairs cycled per card (the DB carries no presentation colour).
 const ORB_PALETTE: [string, string][] = [
@@ -17,20 +18,27 @@ const ORB_PALETTE: [string, string][] = [
 ]
 
 export function DayOne({ go }: { go: (s: AppScreen) => void }) {
+  const { user } = useAuth()
   const { data: words, loading, error } = useAsync<SprintWord[]>(fetchSprintWords, [])
 
   if (loading) return <StatePane title="Ladataan sanoja…" />
   if (error) return <StatePane tone="error" title="Sanojen lataus epäonnistui" detail={error} />
   if (!words || words.length === 0) return <StatePane title="Ei sanoja vielä" detail="No sprint words available yet." />
 
-  return <Sprint words={words} go={go} />
+  return <Sprint words={words} go={go} userId={user?.id ?? 'guest'} />
 }
 
-function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
-  const [idx, setIdx] = useState(0)
+function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen) => void; userId: string }) {
+  // Resume where the learner left off (saved per user, in this browser).
+  const KEY = `puhuscribe:dayone:${userId}`
+  const readStart = () => {
+    const n = parseInt(localStorage.getItem(KEY) ?? '0', 10)
+    return Number.isFinite(n) ? Math.max(0, Math.min(n, words.length - 1)) : 0
+  }
+  const [idx, setIdx] = useState(readStart)
   const [phase, setPhase] = useState<'card' | 'quiz'>('card')
   const [picked, setPicked] = useState<string | null>(null)
-  const [mastered, setMastered] = useState(0)
+  const [mastered, setMastered] = useState(readStart)
 
   const total = words.length
   const w = words[idx % total]
@@ -52,7 +60,11 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
     setMastered((m) => Math.min(total, m + 1))
     setPicked(null)
     setPhase('card')
-    setIdx((x) => x + 1)
+    setIdx((x) => {
+      const nx = x + 1
+      try { localStorage.setItem(KEY, String(nx)) } catch { /* storage unavailable */ }
+      return nx
+    })
   }
 
   return (
