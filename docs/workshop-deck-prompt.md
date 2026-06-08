@@ -71,10 +71,11 @@ is a live, demo-led talk, so slides are backdrops, not documents. **16:9.**
 
 **Slide 5 — Try it now (the ask)**
 - Headline: **"Try it now — be a tester."**
-- Big and centred: the URL **puhuscribe-v2.vercel.app**
+- Big and centred: the URL **puhuscribe-v2.vercel.app/landing**
 - A placeholder square for a **QR code** on one side `[QR]` (I will drop in a PNG).
-- Three tiny steps beside it: **1. Scan or open the link  2. Sign up  3. Add to Home
-  Screen** (iPhone: Share → Add to Home Screen · Android: Install app).
+- Three tiny steps beside it: **1. Scan the QR (opens the landing page)  2. Tap
+  "Become a tester"  3. Sign up · Add to Home Screen** (iPhone: Share → Add to Home
+  Screen · Android: Install app).
 - Closing line: **"Use it this week. Tell me what breaks."**
 
 Keep total text low. Make slide 3's two register cards the visual centrepiece of the
@@ -85,7 +86,9 @@ whole deck. Deliver all 5 slides in the snow-white, orb-accented style above.
 ## After Claude Design builds it
 
 - Drop **`marketing/workshop/install-qr.png`** onto slide 5 (the `[QR]` square).
-  It encodes `https://puhuscribe-v2.vercel.app` and is sized for a projector.
+  It encodes `https://puhuscribe-v2.vercel.app/landing` (the landing page front door)
+  and is sized for a projector. The landing page's "Become a tester" button opens the
+  live app, so the flow is: scan → landing → tap "Become a tester" → sign up.
 - Export to PDF for presenting, or present straight from Claude Design.
 
 ## Demo notes (for you, not on a slide)

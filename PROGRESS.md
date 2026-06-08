@@ -151,3 +151,13 @@ Shipped: Bilingual / Finnish-only toggle. New src/lib/lang/useLang.tsx (LangProv
 Blocked: Nothing. Verify in browser after deploy (container can't reach Supabase). English-only UI chrome (eyebrows like "Last 7 days", onboarding body copy) is intentionally untouched — collapsing the bilingual dual-labels was the scope.
 
 Next: the gentle "switch to Finnish only?" nudge after enough exposure (deferred per handoff); puhekieli human-verification; retire old wrong content.
+
+---
+
+## Session: 2026-06-08 (Landing page live + QR repointed)
+
+Shipped: Implemented the Claude Design landing page (fetched the design bundle, read README + chats — locked-in Violet light·aurora, hero phone on the Progress screen, headline "Understand the books. Speak the street.", single CTA "Become a tester" → live app, no email collection). Hosted it as static files at public/landing/ (deploys with the app, live at puhuscribe-v2.vercel.app/landing): copied the prototype's tokens.css + 3 pure-React.createElement scripts (ps-components/phone/landing-app, no JSX so no Babel), vendored React 18.3.1 production UMD locally (no CDN/Babel at runtime), stubbed out the design-tool Tweaks panel, fixed one dead hero-pill anchor (#waitlist→#join). Added a /landing rewrite to vercel.json. Repointed the workshop QR to .../landing (gen-qr.mjs) and updated the deck prompt flow (scan → landing → Become a tester → app). App build clean, 31 JS + 16 FSRS tests green.
+
+Blocked: Nothing. Verify in browser after deploy: puhuscribe-v2.vercel.app/landing. The Teal/Azure variant files were left in the design bundle (not shipped) — Violet is the locked-in direction.
+
+Next: workshop deck in Claude Design (prompt + QR ready); optional: move landing to the bare domain (app → /app) if you want the QR on the apex; Substack post; puhekieli verification.

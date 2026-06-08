@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PuhuScribe — Speak Finnish the way Finland speaks</title>
+<meta name="description" content="Learn Finnish as it is really spoken. Every phrase taught twice — the textbook kirjakieli and the spoken puhekieli — so you are never lost between what you studied and what you hear." />
+<meta name="theme-color" content="#ffffff" />
+<link rel="icon" type="image/svg+xml" href="/icon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<!-- Open Graph / social preview -->
+<meta property="og:title" content="PuhuScribe — Speak Finnish the way Finland speaks" />
+<meta property="og:description" content="Written and spoken Finnish, taught together from day one. Now in beta — add it to your home screen, no app store needed." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://puhuscribe-v2.vercel.app/landing" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link rel="stylesheet" href="/landing/tokens.css" />
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #fff; }
+  #root { overflow-x: hidden; }
+  .cta:hover { transform: translateY(-1px); filter: brightness(0.98); }
+  .cta:active { transform: translateY(1px); }
+  .lift { transition: transform .18s ease, box-shadow .18s ease; }
+  .lift:hover { transform: translateY(-3px); box-shadow: var(--sh-2); }
+  .hero input::placeholder, #waitlist input::placeholder { color: rgba(246,244,251,0.55); }
+  a:hover { opacity: 0.85; }
+  @media (max-width: 1080px) { .side-panel { display: none !important; } }
+  @media (max-width: 880px) { .features-grid { grid-template-columns: 1fr !important; } }
+  @media (max-width: 760px) { .nav-links { display: none !important; } }
+  @media (max-width: 440px) { .mini-grid { grid-template-columns: 1fr !important; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Locked-in design: Violet (light · aurora). The Tweaks panel below is the
+     design tool's in-browser editor; in production it is stubbed to render
+     nothing, with the locked-in content served as the defaults. -->
+<script>
+  window.PS_VARIANT = 'violet';
+  window.useTweaks = function (defaults) { return [defaults, function () {}]; };
+  window.TweaksPanel = function () { return null; };
+  window.TweakSection = function () { return null; };
+  window.TweakSelect = function () { return null; };
+  window.TweakRadio = function () { return null; };
+</script>
+
+<!-- Vendored React 18 (production UMD) — no CDN or in-browser Babel needed -->
+<script src="/landing/vendor/react.production.min.js"></script>
+<script src="/landing/vendor/react-dom.production.min.js"></script>
+
+<!-- Design components (pure React.createElement, no JSX → plain scripts) -->
+<script src="/landing/ps-components.js"></script>
+<script src="/landing/phone.js"></script>
+<script src="/landing/landing-app.js"></script>
+</body>
+</html>

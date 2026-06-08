@@ -3,7 +3,9 @@
 import QRCode from 'qrcode';
 import { writeFileSync } from 'fs';
 
-const URL = 'https://puhuscribe-v2.vercel.app';
+// Points at the landing page (the workshop front door) — its "Become a tester"
+// button opens the live app at https://puhuscribe-v2.vercel.app/.
+const URL = 'https://puhuscribe-v2.vercel.app/landing';
 const dir = 'marketing/workshop';
 
 // On-brand lake ink on white, high error-correction + generous quiet zone for projector/phone scanning.
