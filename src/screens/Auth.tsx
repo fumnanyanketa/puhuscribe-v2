@@ -65,7 +65,7 @@ export function Auth() {
             {mode === 'signin' ? 'Kirjaudu sisään' : 'Luo tili'}
           </h1>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
-            {mode === 'signin' ? 'Welcome back.' : 'Start your Finnish journey.'}
+            {mode === 'signin' ? 'Sign in to continue.' : 'Create your account — your Finnish starts here.'}
           </p>
         </div>
 
@@ -76,13 +76,13 @@ export function Auth() {
               className="ps-press"
               style={{
                 flex: 1, padding: '10px 0', borderRadius: 'var(--r-pill)', border: 'none',
-                cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+                cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13,
                 background: mode === m ? 'var(--paper)' : 'transparent',
                 color: mode === m ? 'var(--ink)' : 'var(--ink-3)',
                 boxShadow: mode === m ? 'var(--sh-1)' : 'none',
                 transition: 'background .15s, color .15s',
               }}>
-              {m === 'signin' ? 'Kirjaudu' : 'Luo tili'}
+              {m === 'signin' ? 'Kirjaudu · Log in' : 'Luo tili · Sign up'}
             </button>
           ))}
         </div>
@@ -90,11 +90,11 @@ export function Auth() {
         <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <label className="ps-caption" style={{ display: 'block', marginBottom: 7, color: 'var(--ink-2)' }}>
-              Sähköposti
+              Sähköposti · Email
             </label>
             <input
               type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              required autoComplete="email" placeholder="sinä@esimerkki.fi"
+              required autoComplete="email" placeholder="you@example.com"
               style={{
                 width: '100%', padding: '15px 18px', borderRadius: 'var(--r-md)',
                 border: '1.5px solid var(--glass-line)', background: 'var(--glass)',
@@ -108,12 +108,12 @@ export function Auth() {
 
           <div>
             <label className="ps-caption" style={{ display: 'block', marginBottom: 7, color: 'var(--ink-2)' }}>
-              Salasana
+              Salasana · Password
             </label>
             <input
               type="password" value={password} onChange={(e) => setPassword(e.target.value)}
               required autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-              placeholder="Vähintään 6 merkkiä"
+              placeholder="At least 6 characters"
               style={{
                 width: '100%', padding: '15px 18px', borderRadius: 'var(--r-md)',
                 border: '1.5px solid var(--glass-line)', background: 'var(--glass)',
@@ -133,7 +133,7 @@ export function Auth() {
           )}
 
           <Btn variant="primary" block onClick={() => submit()} disabled={loading} style={{ marginTop: 4 }}>
-            {loading ? 'Hetkinen…' : mode === 'signin' ? 'Kirjaudu sisään' : 'Luo tili'}
+            {loading ? 'One moment…' : mode === 'signin' ? 'Kirjaudu sisään · Log in' : 'Luo tili · Create account'}
           </Btn>
         </form>
       </div>

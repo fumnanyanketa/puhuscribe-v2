@@ -79,14 +79,13 @@ function Sprint({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void
             <div className="ps-glass" style={{ padding: 0, overflow: 'hidden', flexShrink: 0, borderRadius: 'var(--r-2xl)' }}>
               {/* Orb hero panel */}
               <div style={{
-                height: 188, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: 132, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: 'radial-gradient(120% 90% at 70% 20%, rgba(255,255,255,.5), transparent), var(--lav-tint)',
               }}>
                 <div style={{ position: 'absolute', top: 14, left: 16 }}>
                   <Label color="var(--written)">Sana · word</Label>
                 </div>
-                <OrbCluster size={150} />
-                <div style={{ position: 'absolute', bottom: 12, right: 16 }} className="ps-caption">[ 3D render ]</div>
+                <OrbCluster size={96} />
               </div>
 
               {/* Word info */}
