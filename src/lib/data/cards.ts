@@ -133,21 +133,28 @@ export async function recordWordEncounter(userId: string, wordId: number, correc
       .eq('user_id', userId).eq('word_id', wordId).eq('card_type', 'word_production').limit(1)
     if (existing && existing.length > 0) return
 
-    const { card: next } = fsrs.schedule(freshCard(), correct ? Rating.Good : Rating.Again, new Date())
-    await supabase.from('cards').insert({
-      user_id: userId,
-      word_id: wordId,
-      card_type: 'word_production',
-      state: next.state,
-      due: next.due.toISOString(),
-      stability: next.stability,
-      difficulty: next.difficulty,
-      elapsed_days: next.elapsed_days,
-      scheduled_days: next.scheduled_days,
-      reps: next.reps,
-      lapses: next.lapses,
-      last_review: next.last_review?.toISOString() ?? null,
-    })
+    if (correct) {
+      // Recognized it → seed a spaced first production review (FSRS 'Good'),
+      // so it comes back later, not immediately.
+      const { card: next } = fsrs.schedule(freshCard(), Rating.Good, new Date())
+      await supabase.from('cards').insert({
+        user_id: userId, word_id: wordId, card_type: 'word_production',
+        state: next.state, due: next.due.toISOString(),
+        stability: next.stability, difficulty: next.difficulty,
+        elapsed_days: next.elapsed_days, scheduled_days: next.scheduled_days,
+        reps: next.reps, lapses: next.lapses,
+        last_review: next.last_review?.toISOString() ?? null,
+      })
+    } else {
+      // Missed it → enter as a fresh 'new' card due NOW, so it shows up in the
+      // very next daily review for a production (English -> Finnish) attempt.
+      await supabase.from('cards').insert({
+        user_id: userId, word_id: wordId, card_type: 'word_production',
+        state: 'new', due: new Date().toISOString(),
+        stability: 0, difficulty: 0, elapsed_days: 0, scheduled_days: 0, reps: 0, lapses: 0,
+        last_review: null,
+      })
+    }
   } catch { /* best-effort: the word just won't seed a review card this time */ }
 }
 

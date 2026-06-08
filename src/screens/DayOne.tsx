@@ -39,13 +39,19 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
 function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
   const maxWords = words.length
   const { progress, saveSprint } = useProgress()
-  const [session, setSession] = useState<{ size: number; startIdx: number } | null>(null)
 
   // Resume offer comes from the cross-device progress (DB-backed, localStorage cache).
   const s = progress.sprint
   const resumable: Saved | null = (s && s.idx > 0 && s.idx < s.size)
     ? { size: Math.min(s.size, maxWords), idx: Math.min(s.idx, Math.min(s.size, maxWords)) }
     : null
+
+  // Auto-resume an in-progress set at mount, so the learner picks up exactly
+  // where they stopped instead of restarting from word 1. (App gates rendering
+  // on progress being resolved, so `resumable` is reliable here.)
+  const [session, setSession] = useState<{ size: number; startIdx: number } | null>(
+    () => resumable ? { size: resumable.size, startIdx: Math.min(resumable.idx, resumable.size - 1) } : null,
+  )
 
   // The full set is always offered; smaller picks only if there's room for them.
   const sizeOptions = useMemo(() => {

@@ -55,8 +55,22 @@ async function saveProgress(userId: string, p: UserProgress): Promise<void> {
   } catch { /* offline or no column yet — the localStorage cache holds it */ }
 }
 
-function hasData(p: UserProgress): boolean {
-  return Boolean(p.onboarded || p.sprint)
+// Keep the furthest-along sprint (or the completed one); never lose progress.
+function pickSprint(a?: SprintProgress, b?: SprintProgress): SprintProgress | undefined {
+  if (!a) return b
+  if (!b) return a
+  if (a.completed && !b.completed) return a
+  if (b.completed && !a.completed) return b
+  return a.idx >= b.idx ? a : b
+}
+
+// Merge local cache and DB so neither source clobbers the other's progress.
+function mergeProgress(a: UserProgress, b: UserProgress): UserProgress {
+  const merged: UserProgress = {}
+  if (a.onboarded || b.onboarded) merged.onboarded = true
+  const sprint = pickSprint(a.sprint, b.sprint)
+  if (sprint) merged.sprint = sprint
+  return merged
 }
 
 interface ProgressCtx {
@@ -91,13 +105,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
     void fetchProgress(userId).then((db) => {
       if (!active) return
-      if (db && hasData(db)) {
-        setProgress(db)
-        writeLocalProgress(userId, db)
-      } else if (hasData(local)) {
-        // DB empty but this device has progress → push it up (first sync).
-        void saveProgress(userId, local)
-      }
+      // Merge — never let a stale DB row wipe a furthest-along local position.
+      const merged = mergeProgress(local, db ?? {})
+      setProgress(merged)
+      writeLocalProgress(userId, merged)
+      // If the DB is behind the merged result, push it up so devices converge.
+      if (JSON.stringify(merged) !== JSON.stringify(db ?? {})) void saveProgress(userId, merged)
       setReady(true)
     })
 

@@ -211,3 +211,13 @@ Shipped: Aligned the core loop to the strategy doc ("everything the user encount
 Blocked: Nothing required. Existing 'sentence_listening' cards from earlier testing are simply ignored now (harmless). Verify on phone: do a sprint, then open Daily — you should see only the words you just met (misses first).
 
 Next (aligned to the strategy, in order): (1) instructional onboarding (what/why/next, the doc's mnemonic intro); (2) make Language Islands the real "speak with confidence" next step after the sprint; (3) shadowing clarity + record/playback so learners hear themselves (no scoring yet). Then sentence-based vocab context and grammar-at-the-right-moments later.
+
+---
+
+## Session: 2026-06-08 (Fix: sprint→review feed + auto-resume)
+
+Shipped: Two test-reported bugs. (1) Met words now actually reach Daily: recordWordEncounter was pre-rating each word (correct→FSRS 'Good' due in days, miss→'Again' due in ~1 min), so nothing was due right after a sprint. Now a MISS enters as a fresh 'new' card due NOW (shows in the next Daily for a production attempt); a correct answer still seeds a spaced 'Good'. (2) Resume no longer jumps back to word 1: ProgressProvider was letting a stale DB row overwrite a furthest-along local position — now it mergeProgress(local, db) keeping the furthest sprint/onboarded and pushes the merged result back up. Also made the Day One Sprint AUTO-RESUME (SprintFlow lazy-inits the session from saved progress) so the learner never has to tap Continue / restart. Build clean, 31 + 16 tests green.
+
+Blocked: Cross-device resume still needs the owner to run 20260608000001_user_progress.sql; same-device resume now works via localStorage+merge regardless. Note: words already carded from the earlier (buggy) test keep their old schedule — recordWordEncounter is idempotent, so re-doing the same words won't re-add them; test with fresh words or the previously-missed ones (now due).
+
+Next: daily vocabulary intake (10–15 new words/day, frequency-ordered, skipping met words) per docs/roadmap-notes.md; then instructional onboarding; then Language Islands.
