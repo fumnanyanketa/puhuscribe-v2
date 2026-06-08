@@ -29,7 +29,10 @@
   .lift:hover { transform: translateY(-3px); box-shadow: var(--sh-2); }
   .hero input::placeholder, #waitlist input::placeholder { color: rgba(246,244,251,0.55); }
   a:hover { opacity: 0.85; }
-  @media (max-width: 1080px) { .side-panel { display: none !important; } }
+  /* Show the hero side panels on all laptop/desktop widths; only hide them in
+     compact/mobile mode (≤760px), where there's no room beside the phone.
+     (Was 1080px in the Claude Design export, which hid them on most windows.) */
+  @media (max-width: 760px) { .side-panel { display: none !important; } }
   @media (max-width: 880px) { .features-grid { grid-template-columns: 1fr !important; } }
   @media (max-width: 760px) { .nav-links { display: none !important; } }
   @media (max-width: 440px) { .mini-grid { grid-template-columns: 1fr !important; } }
