@@ -2,12 +2,11 @@ import { supabase } from '../supabase/client'
 import { FSRS } from '../fsrs/scheduler'
 import { Rating, State } from '../fsrs/types'
 import type { Card as FSRSCard } from '../fsrs/types'
-import { toRegisterTokens } from './content'
-import type { RegisterSentence, CefrLevel } from './content'
+import { cleanIpa } from './content'
 
-export interface SessionCard {
+// FSRS scheduling state shared by every card kind (sentence or vocab).
+export interface CardSchedule {
   cardId: string
-  sentence: RegisterSentence
   isNew: boolean
   // Raw FSRS state — needed to compute rating previews
   stability: number
@@ -21,9 +20,17 @@ export interface SessionCard {
   last_review: string | null
 }
 
+export interface VocabWord { id: number; fi: string; en: string; ipa: string }
+
+// A Day One word that has entered the scheduler. Reviewed as active recall:
+// English meaning shown -> produce the Finnish word (card_type 'word_production').
+export interface VocabCard extends CardSchedule {
+  word: VocabWord
+}
+
 const fsrs = new FSRS()
 
-function toFSRSCard(card: SessionCard): FSRSCard {
+function toFSRSCard(card: CardSchedule): FSRSCard {
   return {
     due: new Date(card.due),
     stability: card.stability,
@@ -50,7 +57,7 @@ function fmtInterval(scheduledDays: number, dueDate: Date, now: Date): string {
 }
 
 /** Preview next-due label for each rating — shown on the rating buttons. */
-export function previewIntervals(card: SessionCard): Record<Rating, string> {
+export function previewIntervals(card: CardSchedule): Record<Rating, string> {
   const now = new Date()
   const fc = toFSRSCard(card)
   const labels: Partial<Record<Rating, string>> = {}
@@ -61,125 +68,8 @@ export function previewIntervals(card: SessionCard): Record<Rating, string> {
   return labels as Record<Rating, string>
 }
 
-/** Seed all available sentences as new cards for a fresh user. */
-export async function seedInitialCards(userId: string): Promise<void> {
-  const { data: sentences, error } = await supabase
-    .from('sentences')
-    .select('id')
-    .order('id', { ascending: true })
-  if (error) throw new Error(error.message)
-  if (!sentences || sentences.length === 0) return
-
-  const now = new Date().toISOString()
-  for (let i = 0; i < sentences.length; i += 100) {
-    const batch = sentences.slice(i, i + 100).map((s) => ({
-      user_id: userId,
-      sentence_id: s.id,
-      card_type: 'sentence_listening' as const,
-      state: 'new' as const,
-      due: now,
-      stability: 0,
-      difficulty: 0,
-      elapsed_days: 0,
-      scheduled_days: 0,
-      reps: 0,
-      lapses: 0,
-    }))
-    const { error: insErr } = await supabase
-      .from('cards')
-      .upsert(batch, { onConflict: 'user_id,sentence_id,card_type', ignoreDuplicates: true })
-    if (insErr) throw new Error(insErr.message)
-  }
-}
-
-/**
- * Build a daily session: due reviews first, then new cards to fill the limit.
- * Seeds the card table on first call for a new user.
- */
-export async function fetchDailySession(userId: string, limit = 8): Promise<SessionCard[]> {
-  const now = new Date().toISOString()
-
-  // Seed if this user has no sentence cards yet
-  const { count, error: cntErr } = await supabase
-    .from('cards')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .not('sentence_id', 'is', null)
-  if (cntErr) throw new Error(cntErr.message)
-  if ((count ?? 0) === 0) await seedInitialCards(userId)
-
-  // Due reviews (review / relearning / learning past-due)
-  const { data: dueRows, error: dueErr } = await supabase
-    .from('cards')
-    .select('id, sentence_id, stability, difficulty, state, reps, lapses, due, scheduled_days, elapsed_days, last_review')
-    .eq('user_id', userId)
-    .not('sentence_id', 'is', null)
-    .in('state', ['review', 'relearning', 'learning'])
-    .lte('due', now)
-    .order('due', { ascending: true })
-    .limit(limit)
-  if (dueErr) throw new Error(dueErr.message)
-
-  // New cards to fill remaining slots
-  const remaining = limit - (dueRows?.length ?? 0)
-  let newRows: typeof dueRows = []
-  if (remaining > 0) {
-    const { data: nr, error: nrErr } = await supabase
-      .from('cards')
-      .select('id, sentence_id, stability, difficulty, state, reps, lapses, due, scheduled_days, elapsed_days, last_review')
-      .eq('user_id', userId)
-      .eq('state', 'new')
-      .not('sentence_id', 'is', null)
-      .order('id', { ascending: true })
-      .limit(remaining)
-    if (nrErr) throw new Error(nrErr.message)
-    newRows = nr ?? []
-  }
-
-  const allRows = [...(dueRows ?? []), ...newRows]
-  if (allRows.length === 0) return []
-
-  // Fetch sentence content
-  const sentenceIds = allRows.map((r) => r.sentence_id as number)
-  const { data: sentences, error: sErr } = await supabase
-    .from('sentences')
-    .select('id, kirjakieli, puhekieli, translation_en, level, topic_id')
-    .in('id', sentenceIds)
-  if (sErr) throw new Error(sErr.message)
-
-  const byId = new Map((sentences ?? []).map((s) => [s.id, s]))
-
-  return allRows
-    .filter((r) => byId.has(r.sentence_id as number))
-    .map((r) => {
-      const s = byId.get(r.sentence_id as number)!
-      const { kirja, puhe } = toRegisterTokens(s.kirjakieli, s.puhekieli ?? s.kirjakieli)
-      return {
-        cardId: r.id,
-        sentence: {
-          id: s.id,
-          gloss: s.translation_en,
-          level: s.level as CefrLevel,
-          topicId: s.topic_id,
-          kirja,
-          puhe,
-        },
-        isNew: r.state === 'new',
-        stability: r.stability,
-        difficulty: r.difficulty,
-        state: r.state,
-        reps: r.reps,
-        lapses: r.lapses,
-        due: r.due,
-        scheduled_days: r.scheduled_days,
-        elapsed_days: r.elapsed_days,
-        last_review: r.last_review,
-      }
-    })
-}
-
 /** Persist a rating: update the card's FSRS state and append a review log. */
-export async function rateCard(userId: string, card: SessionCard, rating: Rating): Promise<void> {
+export async function rateCard(userId: string, card: CardSchedule, rating: Rating): Promise<void> {
   const now = new Date()
   const { card: next, log } = fsrs.schedule(toFSRSCard(card), rating, now)
 
@@ -214,4 +104,110 @@ export async function rateCard(userId: string, card: SessionCard, rating: Rating
       review_time: log.review_time.toISOString(),
     })
   if (logErr) throw new Error(logErr.message)
+}
+
+/* ---------------------------------------------------------------------------
+ * Vocabulary (the Day One Sprint feeds this). A word the learner meets in the
+ * sprint enters the scheduler as a 'word_production' card; daily review then
+ * resurfaces it as active recall (English meaning -> produce the Finnish word).
+ * Per the strategy: only what's been encountered enters the scheduler.
+ * ------------------------------------------------------------------------- */
+
+function freshCard(): FSRSCard {
+  return {
+    due: new Date(), stability: 0, difficulty: 0, elapsed_days: 0,
+    scheduled_days: 0, reps: 0, lapses: 0, state: State.New, last_review: null,
+  }
+}
+
+/**
+ * Record that the learner just met a word in the Day One Sprint. Idempotent
+ * (one production card per word): a correct recognition seeds a 'Good' first
+ * schedule, a miss seeds 'Again' so it comes back sooner. Best-effort: never
+ * throws, so it can be fire-and-forget from the sprint runner.
+ */
+export async function recordWordEncounter(userId: string, wordId: number, correct: boolean): Promise<void> {
+  try {
+    const { data: existing } = await supabase
+      .from('cards').select('id')
+      .eq('user_id', userId).eq('word_id', wordId).eq('card_type', 'word_production').limit(1)
+    if (existing && existing.length > 0) return
+
+    const { card: next } = fsrs.schedule(freshCard(), correct ? Rating.Good : Rating.Again, new Date())
+    await supabase.from('cards').insert({
+      user_id: userId,
+      word_id: wordId,
+      card_type: 'word_production',
+      state: next.state,
+      due: next.due.toISOString(),
+      stability: next.stability,
+      difficulty: next.difficulty,
+      elapsed_days: next.elapsed_days,
+      scheduled_days: next.scheduled_days,
+      reps: next.reps,
+      lapses: next.lapses,
+      last_review: next.last_review?.toISOString() ?? null,
+    })
+  } catch { /* best-effort: the word just won't seed a review card this time */ }
+}
+
+const VOCAB_COLS = 'id, word_id, stability, difficulty, state, reps, lapses, due, scheduled_days, elapsed_days, last_review'
+
+/** A daily vocabulary session: due reviews first, then not-yet-reviewed met words. */
+export async function fetchVocabSession(userId: string, limit = 10): Promise<VocabCard[]> {
+  const now = new Date().toISOString()
+
+  const { data: dueRows, error: dueErr } = await supabase
+    .from('cards').select(VOCAB_COLS)
+    .eq('user_id', userId).eq('card_type', 'word_production').not('word_id', 'is', null)
+    .in('state', ['review', 'relearning', 'learning']).lte('due', now)
+    .order('due', { ascending: true }).limit(limit)
+  if (dueErr) throw new Error(dueErr.message)
+
+  const remaining = limit - (dueRows?.length ?? 0)
+  let newRows: typeof dueRows = []
+  if (remaining > 0) {
+    const { data: nr, error: nrErr } = await supabase
+      .from('cards').select(VOCAB_COLS)
+      .eq('user_id', userId).eq('card_type', 'word_production').not('word_id', 'is', null)
+      .eq('state', 'new').order('due', { ascending: true }).limit(remaining)
+    if (nrErr) throw new Error(nrErr.message)
+    newRows = nr ?? []
+  }
+
+  // De-dup by word (guards against any rare double-seed) and load word content.
+  const rows = [...(dueRows ?? []), ...newRows]
+  const seen = new Set<number>()
+  const uniq = rows.filter((r) => {
+    const id = r.word_id as number
+    if (seen.has(id)) return false
+    seen.add(id)
+    return true
+  })
+  if (uniq.length === 0) return []
+
+  const { data: words, error: wErr } = await supabase
+    .from('words').select('id, base_form, translation_en, ipa').in('id', [...seen])
+  if (wErr) throw new Error(wErr.message)
+  const byId = new Map((words ?? []).map((w) => [w.id, w]))
+
+  return uniq
+    .filter((r) => byId.has(r.word_id as number))
+    .map((r) => {
+      const w = byId.get(r.word_id as number)!
+      return {
+        cardId: r.id,
+        isNew: r.state === 'new',
+        word: { id: w.id, fi: w.base_form, en: w.translation_en, ipa: cleanIpa(w.ipa ?? '') },
+        stability: r.stability,
+        difficulty: r.difficulty,
+        state: r.state,
+        reps: r.reps,
+        lapses: r.lapses,
+        due: r.due,
+        scheduled_days: r.scheduled_days,
+        elapsed_days: r.elapsed_days,
+        last_review: r.last_review,
+      }
+    })
 }

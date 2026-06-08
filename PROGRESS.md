@@ -201,3 +201,13 @@ Shipped: (1) Cross-device learning progress — new src/lib/data/progress.tsx (P
 Blocked: Owner must run supabase/migrations/20260608000001_user_progress.sql in Supabase for cross-device sync; until then it transparently falls back to per-device localStorage. Existing users with no stored progress will see onboarding once. Verify in browser.
 
 Next: optional — gentle "switch to Finnish only?" nudge; puhekieli verification; Substack post; workshop deck in Claude Design.
+
+---
+
+## Session: 2026-06-08 (Pedagogy fix: spaced repetition only reviews what was learned)
+
+Shipped: Aligned the core loop to the strategy doc ("everything the user encounters once enters the scheduler"). The Day One Sprint now FEEDS the scheduler: each word the learner meets is recorded as a 'word_production' card (recordWordEncounter in cards.ts; a miss seeds FSRS 'Again' so it returns sooner, correct seeds 'Good'; idempotent, fire-and-forget from the sprint runner). Rewrote Daily into active recall of ONLY the met words (fetchVocabSession): English meaning is the prompt → reveal the Finnish word + real IPA + audio → rate Again/Hard/Good/Easy (FSRS). Removed the old seedInitialCards/fetchDailySession that dumped the entire sentence corpus on new users (the "dummy content" the owner flagged). Empty Daily now routes to the Day One Sprint instead of showing un-learned sentences. No DB migration needed — card_type 'word_production' + cards.word_id already exist in the schema. Also removed em dashes from copy and fixed the Island title cutoff. Build clean, 31 + 16 tests green.
+
+Blocked: Nothing required. Existing 'sentence_listening' cards from earlier testing are simply ignored now (harmless). Verify on phone: do a sprint, then open Daily — you should see only the words you just met (misses first).
+
+Next (aligned to the strategy, in order): (1) instructional onboarding (what/why/next, the doc's mnemonic intro); (2) make Language Islands the real "speak with confidence" next step after the sprint; (3) shadowing clarity + record/playback so learners hear themselves (no scoring yet). Then sentence-based vocab context and grammar-at-the-right-moments later.

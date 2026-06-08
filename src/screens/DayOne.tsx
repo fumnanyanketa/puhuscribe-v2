@@ -6,7 +6,9 @@ import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { fetchSprintWords, SprintWord } from '../lib/data/content'
+import { recordWordEncounter } from '../lib/data/cards'
 import { useProgress } from '../lib/data/progress'
+import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 
 // Orb gradient pairs cycled per card (the DB carries no presentation colour).
@@ -150,6 +152,7 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
   go: (s: AppScreen) => void
 }) {
   const { bi } = useLang()
+  const { user } = useAuth()
   const total = deck.length
   const [idx, setIdx] = useState(Math.max(0, Math.min(startIdx, total - 1)))
   const [phase, setPhase] = useState<'card' | 'quiz'>('card')
@@ -173,6 +176,9 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
   }, [idx, deck, w.en])
 
   const next = () => {
+    // The learner just met this word: enter it into the spaced-repetition
+    // scheduler (a miss seeds 'Again' so it returns sooner). Fire-and-forget.
+    if (user) void recordWordEncounter(user.id, w.id, picked === w.en)
     const nx = idx + 1
     setMastered((m) => Math.min(total, m + 1))
     if (nx >= total) {
