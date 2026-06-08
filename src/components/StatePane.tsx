@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { OrbCluster, Label } from './primitives'
 import { ScreenScroll } from './Shell'
 import { useLang } from '../lib/lang/useLang'
@@ -7,8 +8,8 @@ import { useLang } from '../lib/lang/useLang'
  * tokens so it sits naturally inside any screen while data resolves.
  */
 export function StatePane({ title, detail, tone = 'normal', bottom }: {
-  title: string
-  detail?: string
+  title: ReactNode
+  detail?: ReactNode
   tone?: 'normal' | 'error'
   bottom?: number
 }) {

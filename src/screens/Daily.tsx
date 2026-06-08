@@ -153,7 +153,7 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
                 opacity: busy ? 0.55 : 1, transition: 'opacity .15s',
               }}>
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13 }}>{fi}</span>
-              {bilingual && <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.7 }}>{en}</span>}
+              {bilingual && <span style={{ fontSize: 9, fontWeight: 400, fontStyle: 'italic', opacity: 0.65 }}>({en})</span>}
               <span className="ps-num" style={{ fontSize: 11, fontWeight: 600, opacity: 0.85 }}>{previews[rating]}</span>
             </button>
           ))}

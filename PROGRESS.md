@@ -171,3 +171,13 @@ Shipped: The hero composition (phone + the two flanking "Kuuntele/This month" pa
 Blocked: Nothing. Verify on a phone: puhuscribe-v2.vercel.app/landing — phone flanked by both panels, shrunk to fit.
 
 Next: the rest of the owner's landing fix list (TBD); workshop deck in Claude Design; Substack post.
+
+---
+
+## Session: 2026-06-08 (Bilingual restyle + landing mobile polish)
+
+Shipped: (1) Reworked the bilingual label look app-wide: bi(fi,en) now renders the Finnish dominant with the English on the line below in faded italic parentheses — e.g. "Tervetuloa / (Welcome)" — instead of "Tervetuloa · Welcome". Changed bi's return type string→ReactNode (em-relative sizing so it scales per context), widened StatePane title/detail and RegisterCard badge to ReactNode, and matched the Daily rating buttons' English to the same italic-parens style. (2) Landing mobile pass: hero pill now wraps instead of overflowing, and the auto-fit grids use minmax(min(Npx,100%),1fr) so nothing overflows on narrow phones. App build clean, 31 JS + 16 FSRS tests green.
+
+Blocked: Nothing. Verify in browser: app bilingual labels (Progress → toggle) + landing on a small phone.
+
+Next: rest of the owner's landing/app fix list; workshop deck in Claude Design; Substack post.

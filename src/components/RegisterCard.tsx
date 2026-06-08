@@ -6,7 +6,7 @@ export interface RegisterCardProps {
   kirja: Token[]
   puhe: Token[]
   gloss?: string
-  badge?: string
+  badge?: React.ReactNode
   compact?: boolean
   glass?: boolean
   onPlay?: (reg: 'kirja' | 'puhe') => void
