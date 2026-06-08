@@ -68,6 +68,13 @@ export function previewIntervals(card: CardSchedule): Record<Rating, string> {
   return labels as Record<Rating, string>
 }
 
+/** Reset a learner's vocabulary: delete all their cards. review_logs rows
+ *  cascade away (FK ON DELETE CASCADE). Needs the 20260608000002 grant. */
+export async function resetUserLearning(userId: string): Promise<void> {
+  const { error } = await supabase.from('cards').delete().eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
 /** Persist a rating: update the card's FSRS state and append a review log. */
 export async function rateCard(userId: string, card: CardSchedule, rating: Rating): Promise<void> {
   const now = new Date()

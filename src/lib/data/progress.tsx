@@ -78,10 +78,11 @@ interface ProgressCtx {
   ready: boolean // true once we know enough to route (DB resolved, or local fallback)
   markOnboarded: () => void
   saveSprint: (sprint: SprintProgress) => void
+  resetProgress: () => void
 }
 
 const Ctx = createContext<ProgressCtx>({
-  progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {},
+  progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {}, resetProgress: () => {},
 })
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
@@ -130,7 +131,13 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const saveSprint = useCallback((sprint: SprintProgress) => update({ sprint }), [update])
 
-  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint }}>{children}</Ctx.Provider>
+  // Clear onboarding + sprint position (used by the "reset progress" action).
+  const resetProgress = useCallback(() => {
+    setProgress({})
+    if (userId) void saveProgress(userId, {})
+  }, [userId])
+
+  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, resetProgress }}>{children}</Ctx.Provider>
 }
 
 export const useProgress = () => useContext(Ctx)

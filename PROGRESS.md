@@ -221,3 +221,13 @@ Shipped: Two test-reported bugs. (1) Met words now actually reach Daily: recordW
 Blocked: Cross-device resume still needs the owner to run 20260608000001_user_progress.sql; same-device resume now works via localStorage+merge regardless. Note: words already carded from the earlier (buggy) test keep their old schedule — recordWordEncounter is idempotent, so re-doing the same words won't re-add them; test with fresh words or the previously-missed ones (now due).
 
 Next: daily vocabulary intake (10–15 new words/day, frequency-ordered, skipping met words) per docs/roadmap-notes.md; then instructional onboarding; then Language Islands.
+
+---
+
+## Session: 2026-06-08 (Reset progress + Supabase migration help)
+
+Shipped: "Reset progress" action on the Progress screen (under the language toggle): a confirm step then resetUserLearning(user.id) deletes the learner's cards (review_logs cascade via FK) + resetProgress() clears onboarding/sprint (DB + localStorage), and routes back to the Day One set picker for a clean slate. New ProgressProvider.resetProgress(). Needs migration 20260608000002_grant_card_delete.sql (GRANT DELETE ON cards TO authenticated; RLS cards_own_rows already restricts to own rows). Build clean, 31 + 16 tests green.
+
+Blocked: Owner must run TWO migrations in Supabase SQL editor: 20260608000001_user_progress.sql (cross-device resume) and 20260608000002_grant_card_delete.sql (reset). Until the grant runs, "Yes, reset" will error "permission denied for table cards".
+
+Next: daily vocabulary intake (10–15/day); instructional onboarding; Language Islands (first 50 real-life sentences) — see docs/roadmap-notes.md.

@@ -1,16 +1,36 @@
+import { useState } from 'react'
 import { OrbCluster, Label } from '../components/primitives'
-import { Bar, Ring, Toggle } from '../components/ui'
+import { Bar, Ring, Toggle, Btn } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
+import { useProgress } from '../lib/data/progress'
+import { resetUserLearning } from '../lib/data/cards'
 import { fetchProgressStats, ProgressStats } from '../lib/data/stats'
 
-export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
+export function Progress({ go }: { go: (s: AppScreen) => void }) {
   const { user, signOut } = useAuth()
   const { bi, bilingual, setBilingual } = useLang()
+  const { resetProgress } = useProgress()
+  const [confirming, setConfirming] = useState(false)
+  const [resetBusy, setResetBusy] = useState(false)
+  const [resetErr, setResetErr] = useState('')
+
+  const doReset = async () => {
+    if (!user || resetBusy) return
+    setResetBusy(true); setResetErr('')
+    try {
+      await resetUserLearning(user.id) // delete the user's cards
+      resetProgress()                  // clear onboarding + sprint position
+      go('dayone')                     // fresh start at the Day One set picker
+    } catch (e) {
+      setResetErr(e instanceof Error ? e.message : String(e))
+      setResetBusy(false)
+    }
+  }
   const { data: stats, loading, error } = useAsync<ProgressStats>(
     () => (user ? fetchProgressStats(user.id) : Promise.reject(new Error('not signed in'))),
     [user?.id],
@@ -138,8 +158,40 @@ export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
         <Toggle on={bilingual} onChange={setBilingual} label="Show English" />
       </div>
 
+      {/* Reset progress — start the journey over (also the tester's clean slate). */}
+      <div style={{ marginTop: 20 }}>
+        {!confirming ? (
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={() => setConfirming(true)} className="ps-press" style={{
+              background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
+              fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13, textDecoration: 'underline',
+            }}>
+              {bi('Aloita alusta', 'Reset progress')}
+            </button>
+          </div>
+        ) : (
+          <div className="ps-glass" style={{ padding: 16 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14.5 }}>{bi('Aloita alusta?', 'Reset progress?')}</div>
+            <p className="ps-caption" style={{ marginTop: 6 }}>
+              This deletes the words you have learned and your sprint position, and starts the journey over. It cannot be undone.
+            </p>
+            {resetErr && (
+              <div className="ps-body" style={{ marginTop: 10, padding: '10px 14px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>
+                {resetErr}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+              <Btn variant="light" sm style={{ flex: 1 }} onClick={() => { setConfirming(false); setResetErr('') }}>{bi('Peruuta', 'Cancel')}</Btn>
+              <Btn variant="primary" sm style={{ flex: 1, background: '#C25B3F' }} disabled={resetBusy} onClick={() => void doReset()}>
+                {resetBusy ? 'One moment…' : bi('Kyllä, nollaa', 'Yes, reset')}
+              </Btn>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Account / sign out */}
-      <div style={{ marginTop: 22, marginBottom: 8, textAlign: 'center' }}>
+      <div style={{ marginTop: 18, marginBottom: 8, textAlign: 'center' }}>
         {user?.email && <div className="ps-caption" style={{ marginBottom: 8 }}>{user.email}</div>}
         <button onClick={() => void signOut()} className="ps-press" style={{
           background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
