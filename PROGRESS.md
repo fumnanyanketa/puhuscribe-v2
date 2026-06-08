@@ -121,3 +121,13 @@ Shipped: Made the live web app installable to a phone home screen (free, no App 
 Blocked: Nothing new. iOS testers install via Safari → Share → Add to Home Screen; Android via Chrome → Install app. Native store builds still need the owner inputs (Apple/Google accounts, bundle ID, billing decision) per docs/mobile-app-stores.md.
 
 Next: unchanged — content (ANTHROPIC_API_KEY or corpora), §6 TTS (Azure key), run the pending Supabase migrations, then app-store packaging when accounts exist. Optional offline follow-up: a service worker for offline/installability hardening.
+
+---
+
+## Session: 2026-06-08 (Real IPA from kaikki + content cleanup)
+
+Shipped: Ran content generation live (400 Voikko-validated sentences → supabase/seeds/04_generated_sentences.sql) then cleaned it (deduped by kirjakieli + dropped 8 real-word-but-ungrammatical rows → 359 rows). Sourced REAL Finnish IPA from kaikki.org/English Wiktionary (CC BY-SA): new scripts/ingest/build-ipa-from-kaikki.mjs streams the 3.9 GB Finnish dump, matches the 541 vocabulary base_forms via parse-kaikki.mjs, and emits supabase/migrations/20260607000003_word_ipa_from_kaikki.sql — 514/541 words got genuine IPA (hyvä /ˈhyʋæ/, työ /ˈtyø̯/, yö /ˈyø̯/), no IPA ever invented.
+
+Blocked: Owner must run in Supabase (this container can't reach it): 20260607000002_add_word_ipa.sql then 20260607000003_word_ipa_from_kaikki.sql, plus load the cleaned 04_generated_sentences.sql. 27 base_forms have no kaikki IPA — 9 not in kaikki (multiword/compounds: ole hyvä, TE-toimisto, pankkitunnukset…) and 18 inflected/comparative forms (hyvää, koiran, isompi, pienempi…) — left untouched, never guessed.
+
+Next: Owner loads the SQL + migrations and verifies real IPA renders in the Day One Sprint (app already wired to show words.ipa via da34d03). Optional: derive IPA for the uncovered inflected forms from their base lemmas; puhekieli human-verification pass; §6 TTS.
