@@ -1,21 +1,24 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 import { OrbCluster } from '../components/primitives'
 import { Label } from '../components/primitives'
 import { RegisterCard } from '../components/RegisterCard'
 import { Btn, IconBtn, Steps } from '../components/ui'
 import { PuhuMark, ScreenScroll, AppScreen } from '../components/Shell'
+import { useLang, Bi } from '../lib/lang/useLang'
 
-const steps = [
+type Step = { key: string; render: (bi: Bi) => ReactNode }
+
+const steps: Step[] = [
   {
     key: 'welcome',
-    render: () => (
+    render: (bi) => (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 30 }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <OrbCluster size={220} />
           </div>
           <div>
-            <Label color="var(--written)">Tervetuloa · Welcome</Label>
+            <Label color="var(--written)">{bi('Tervetuloa', 'Welcome')}</Label>
             <h1 className="ps-display" style={{ margin: '14px 0 0', fontSize: 42 }}>
               Puhu niin kuin <span style={{ color: 'var(--written)' }}>täällä</span> puhutaan
             </h1>
@@ -29,10 +32,10 @@ const steps = [
   },
   {
     key: 'register',
-    render: () => (
+    render: (bi) => (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ marginTop: 4 }}>
-          <Label color="var(--written)">Miksi kaksi · Why two</Label>
+          <Label color="var(--written)">{bi('Miksi kaksi', 'Why two')}</Label>
           <h2 className="ps-title-1" style={{ margin: '12px 0 0' }}>
             Books teach one Finnish. The street speaks another.
           </h2>
@@ -79,6 +82,7 @@ const steps = [
 ]
 
 export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
+  const { bi } = useLang()
   const [i, setI] = useState(0)
   const last = i === steps.length - 1
 
@@ -90,13 +94,13 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
           background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-2)',
           fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13.5,
         }}>
-          Ohita · Skip
+          {bi('Ohita', 'Skip')}
         </button>
       </div>
       <div style={{ marginBottom: 22 }}>
         <Steps total={steps.length} current={i} />
       </div>
-      {steps[i].render()}
+      {steps[i].render(bi)}
       <div style={{ marginTop: 18, display: 'flex', gap: 12, alignItems: 'center' }}>
         {i > 0 && <IconBtn icon="arrowL" tone="glass" size={54} onClick={() => setI(i - 1)} />}
         <Btn
@@ -105,7 +109,7 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
           icon={last ? 'sparkle' : undefined}
           onClick={() => last ? go('dayone') : setI(i + 1)}
         >
-          {last ? 'Aloita · Start Day One' : 'Jatka · Continue'}
+          {last ? bi('Aloita', 'Start Day One') : bi('Jatka', 'Continue')}
         </Btn>
       </div>
     </ScreenScroll>

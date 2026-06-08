@@ -1,22 +1,24 @@
 import { OrbCluster, Label } from '../components/primitives'
-import { Bar, Ring } from '../components/ui'
+import { Bar, Ring, Toggle } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
+import { useLang } from '../lib/lang/useLang'
 import { fetchProgressStats, ProgressStats } from '../lib/data/stats'
 
 export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
   const { user, signOut } = useAuth()
+  const { bi, bilingual, setBilingual } = useLang()
   const { data: stats, loading, error } = useAsync<ProgressStats>(
     () => (user ? fetchProgressStats(user.id) : Promise.reject(new Error('not signed in'))),
     [user?.id],
   )
 
-  if (loading) return <StatePane title="Ladataan… · Loading" bottom={110} />
+  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
   if (error) return <StatePane tone="error" title="Couldn't load progress" detail={error} bottom={110} />
-  if (!stats) return <StatePane title="Ei dataa vielä · No data yet" bottom={110} />
+  if (!stats) return <StatePane title={bi('Ei dataa vielä', 'No data yet')} bottom={110} />
 
   const maxWeek = Math.max(1, ...stats.week.map((d) => d.count))
   const reviewed = stats.mastered + stats.learning
@@ -123,6 +125,19 @@ export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
         </div>
       )}
 
+      {/* Settings — language. Labels here stay bilingual in both modes so a
+          beginner who switched to Finnish-only can always find their way back. */}
+      <div className="ps-glass" style={{ marginTop: 16, padding: '15px 18px', display: 'flex',
+        alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15 }}>Näytä englanti · Show English</div>
+          <div className="ps-caption" style={{ marginTop: 3 }}>
+            {bilingual ? 'Kaksikielinen · bilingual labels' : 'Vain suomi · Finnish only'}
+          </div>
+        </div>
+        <Toggle on={bilingual} onChange={setBilingual} label="Show English" />
+      </div>
+
       {/* Account / sign out */}
       <div style={{ marginTop: 22, marginBottom: 8, textAlign: 'center' }}>
         {user?.email && <div className="ps-caption" style={{ marginBottom: 8 }}>{user.email}</div>}
@@ -130,7 +145,7 @@ export function Progress({ go: _go }: { go: (s: AppScreen) => void }) {
           background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
           fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13,
         }}>
-          Kirjaudu ulos · Sign out
+          {bi('Kirjaudu ulos', 'Sign out')}
         </button>
       </div>
     </ScreenScroll>

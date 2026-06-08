@@ -7,6 +7,7 @@ import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { fetchSprintWords, SprintWord } from '../lib/data/content'
 import { useAuth } from '../lib/auth/useAuth'
+import { useLang } from '../lib/lang/useLang'
 
 // Orb gradient pairs cycled per card (the DB carries no presentation colour).
 const ORB_PALETTE: [string, string][] = [
@@ -29,6 +30,7 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
 }
 
 function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen) => void; userId: string }) {
+  const { bi } = useLang()
   // Resume where the learner left off (saved per user, in this browser).
   const KEY = `puhuscribe:dayone:${userId}`
   const readStart = () => {
@@ -95,7 +97,7 @@ function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen)
                 background: 'radial-gradient(120% 90% at 70% 20%, rgba(255,255,255,.5), transparent), var(--lav-tint)',
               }}>
                 <div style={{ position: 'absolute', top: 14, left: 16 }}>
-                  <Label color="var(--written)">Sana · word</Label>
+                  <Label color="var(--written)">{bi('Sana', 'word')}</Label>
                 </div>
                 <OrbCluster size={96} />
               </div>
@@ -128,17 +130,17 @@ function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen)
             </div>
 
             <div style={{ flex: 1, minHeight: 14 }} />
-            <Btn variant="primary" block iconRight="arrow" onClick={() => setPhase('quiz')}>Testaa minua · Test me</Btn>
+            <Btn variant="primary" block iconRight="arrow" onClick={() => setPhase('quiz')}>{bi('Testaa minua', 'Test me')}</Btn>
           </div>
         ) : (
           <div key={'quiz' + idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 22 }}>
             <div style={{ textAlign: 'center', marginTop: 10 }}>
-              <Label color="var(--ink-3)">Tunnista · Recognise</Label>
+              <Label color="var(--ink-3)">{bi('Tunnista', 'Recognise')}</Label>
               <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 8px' }}>
                 <Orb size={76} from={orb[0]} to={orb[1]} />
               </div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 46, lineHeight: 1.05, letterSpacing: '-0.04em' }}>{w.fi}</div>
-              <div className="ps-caption" style={{ marginTop: 6 }}>Mitä tämä tarkoittaa? · What does this mean?</div>
+              <div className="ps-caption" style={{ marginTop: 6 }}>{bi('Mitä tämä tarkoittaa?', 'What does this mean?')}</div>
             </div>
 
             <div style={{ flex: 1 }} />
@@ -169,7 +171,7 @@ function Sprint({ words, go, userId }: { words: SprintWord[]; go: (s: AppScreen)
             <div style={{ marginTop: 14, minHeight: 54 }}>
               {picked && (
                 <Btn variant={picked === w.en ? 'accent' : 'primary'} block iconRight="arrow" onClick={next}>
-                  {picked === w.en ? 'Hienoa! · Great, continue' : 'Jatka · Continue'}
+                  {picked === w.en ? bi('Hienoa!', 'Great, continue') : bi('Jatka', 'Continue')}
                 </Btn>
               )}
             </div>

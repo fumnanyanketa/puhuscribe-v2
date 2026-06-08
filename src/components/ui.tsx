@@ -120,6 +120,25 @@ export function Ring({ value, max, size = 124, stroke = 11, color = 'var(--writt
   )
 }
 
+/* ---------- Switch toggle ---------- */
+export function Toggle({ on, onChange, label }: {
+  on: boolean
+  onChange: (v: boolean) => void
+  label?: string
+}) {
+  return (
+    <button type="button" role="switch" aria-checked={on} aria-label={label}
+      onClick={() => onChange(!on)} className="ps-press" style={{
+        width: 50, height: 30, borderRadius: 999, border: 'none', cursor: 'pointer', flexShrink: 0,
+        padding: 3, background: on ? 'var(--ink)' : 'var(--glass-deep)',
+        display: 'flex', alignItems: 'center', justifyContent: on ? 'flex-end' : 'flex-start',
+        transition: 'background .18s ease',
+      }}>
+      <span style={{ width: 24, height: 24, borderRadius: '50%', background: '#fff', boxShadow: 'var(--sh-1)' }} />
+    </button>
+  )
+}
+
 /* ---------- Step segments ---------- */
 export function Steps({ total, current, color = 'var(--ink)' }: {
   total: number

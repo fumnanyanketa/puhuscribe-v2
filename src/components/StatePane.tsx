@@ -1,5 +1,6 @@
 import { OrbCluster, Label } from './primitives'
 import { ScreenScroll } from './Shell'
+import { useLang } from '../lib/lang/useLang'
 
 /**
  * Full-screen loading / empty / error placeholder, styled with the brand
@@ -11,6 +12,7 @@ export function StatePane({ title, detail, tone = 'normal', bottom }: {
   tone?: 'normal' | 'error'
   bottom?: number
 }) {
+  const { bi } = useLang()
   const isError = tone === 'error'
   return (
     <ScreenScroll bottom={bottom}>
@@ -21,7 +23,7 @@ export function StatePane({ title, detail, tone = 'normal', bottom }: {
         <OrbCluster size={150} />
         <div>
           <Label color={isError ? 'var(--flag)' : 'var(--written)'} style={{ display: 'block', marginBottom: 8 }}>
-            {isError ? 'Virhe · Error' : 'PuhuScribe'}
+            {isError ? bi('Virhe', 'Error') : 'PuhuScribe'}
           </Label>
           <h2 className="ps-title-1">{title}</h2>
           {detail && (

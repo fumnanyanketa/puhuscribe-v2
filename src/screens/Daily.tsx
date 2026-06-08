@@ -7,6 +7,7 @@ import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
+import { useLang } from '../lib/lang/useLang'
 import { fetchDailySession, rateCard, previewIntervals, SessionCard } from '../lib/data/cards'
 import { Rating } from '../lib/fsrs/types'
 import { speak } from '../lib/tts'
@@ -24,22 +25,24 @@ const RATINGS: { rating: Rating; fi: string; en: string; color: string; bg: stri
 
 export function Daily({ go }: { go: (s: AppScreen) => void }) {
   const { user } = useAuth()
+  const { bi } = useLang()
   const { data: cards, loading, error } = useAsync<SessionCard[]>(
     () => (user ? fetchDailySession(user.id, SESSION_SIZE) : Promise.resolve([])),
     [user?.id],
   )
 
-  if (loading) return <StatePane title="Ladataan… · Loading" bottom={110} />
+  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
   if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={110} />
-  if (!user) return <StatePane title="Kirjaudu sisään · Sign in" detail="Sign in to start your review session." bottom={110} />
+  if (!user) return <StatePane title={bi('Kirjaudu sisään', 'Sign in')} detail="Sign in to start your review session." bottom={110} />
   if (!cards || cards.length === 0)
-    return <StatePane title="Ei kortteja juuri nyt · No cards right now" detail="No cards due right now — great work. Come back later." bottom={110} />
+    return <StatePane title={bi('Ei kortteja juuri nyt', 'No cards right now')} detail="No cards due right now — great work. Come back later." bottom={110} />
 
   // Keyed on the loaded set so a fresh queue resets the session cleanly.
   return <Session key={cards.map((c) => c.cardId).join(',')} cards={cards} userId={user.id} go={go} />
 }
 
 function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; go: (s: AppScreen) => void }) {
+  const { bi, bilingual } = useLang()
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState<'kirja' | 'puhe' | null>(null)
   const [remembered, setRemembered] = useState(0)
@@ -77,8 +80,8 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
         alignItems: 'center', textAlign: 'center', gap: 24 }}>
         <OrbCluster size={190} />
         <div>
-          <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>Sessio valmis · Session complete</Label>
-          <h2 className="ps-title-1">Hyvää työtä! · Good work.</h2>
+          <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>{bi('Sessio valmis', 'Session complete')}</Label>
+          <h2 className="ps-title-1">{bi('Hyvää työtä!', 'Good work.')}</h2>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10 }}>
             {cards.length} cards reviewed · {remembered} remembered
           </p>
@@ -95,8 +98,8 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Btn variant="light" onClick={() => go('island')}>Kielisaari · Island</Btn>
-          <Btn variant="primary" icon="chart" onClick={() => go('progress')}>Edistyminen · Progress</Btn>
+          <Btn variant="light" onClick={() => go('island')}>{bi('Kielisaari', 'Island')}</Btn>
+          <Btn variant="primary" icon="chart" onClick={() => go('progress')}>{bi('Edistyminen', 'Progress')}</Btn>
         </div>
       </div>
     </ScreenScroll>
@@ -107,8 +110,8 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Label color="var(--written)">Päivän sessio · spaced repetition</Label>
-          <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kertaus · Review</h1>
+          <Label color="var(--written)">{bi('Päivän sessio', 'spaced repetition')}</Label>
+          <h1 className="ps-title-1" style={{ marginTop: 8 }}>{bi('Kertaus', 'Review')}</h1>
         </div>
       </div>
 
@@ -121,7 +124,7 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <RegisterCard key={card.cardId} glass onPlay={play} playing={playing}
           gloss={card.sentence.gloss} kirja={card.sentence.kirja} puhe={card.sentence.puhe}
-          badge={card.isNew ? 'Uusi · new' : 'Kertaus · review'} />
+          badge={card.isNew ? bi('Uusi', 'new') : bi('Kertaus', 'review')} />
 
         <div className="ps-caption" style={{ textAlign: 'center', marginTop: 14, display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
           <I name="speaker" size={15} /> Tap a register to hear it
@@ -137,7 +140,7 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
 
         {/* Recall rating — FSRS schedules the next review */}
         <div className="ps-label" style={{ color: 'var(--ink-3)', textAlign: 'center', marginBottom: 10 }}>
-          Kuinka hyvin muistit? · How well did you recall it?
+          {bi('Kuinka hyvin muistit?', 'How well did you recall it?')}
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           {RATINGS.map(({ rating, fi, en, color, bg }) => (
@@ -150,7 +153,7 @@ function Session({ cards, userId, go }: { cards: SessionCard[]; userId: string; 
                 opacity: busy ? 0.55 : 1, transition: 'opacity .15s',
               }}>
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13 }}>{fi}</span>
-              <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.7 }}>{en}</span>
+              {bilingual && <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.7 }}>{en}</span>}
               <span className="ps-num" style={{ fontSize: 11, fontWeight: 600, opacity: 0.85 }}>{previews[rating]}</span>
             </button>
           ))}

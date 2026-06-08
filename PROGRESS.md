@@ -141,3 +141,13 @@ Shipped: Wrote docs/workshop-deck-prompt.md — a paste-ready Claude Design prom
 Blocked: Nothing. Owner builds the deck in Claude Design from the prompt, then drops install-qr.png on slide 5. Bilingual toggle is the next task (agreed).
 
 Next: Build the bilingual toggle — settings switch "Bilingual / Finnish only", default bilingual, persisted, with a bi(fi,en) label helper.
+
+---
+
+## Session: 2026-06-08 (Bilingual toggle)
+
+Shipped: Bilingual / Finnish-only toggle. New src/lib/lang/useLang.tsx (LangProvider + useLang() exposing bilingual/setBilingual/toggle + the bi(fi,en) helper) wraps the app in main.tsx, persisted to localStorage (ps_bilingual, default bilingual). Replaced every hardcoded "Suomi · English" training-wheel label across all screens (Onboarding, Auth, DayOne, Daily, Island, Progress, StatePane) with bi(); in Finnish-only mode they collapse to Finnish (and the Daily rating buttons drop their English sub-label). Added a Toggle switch in ui.tsx and a settings card on Progress — its own label stays bilingual in both modes so a beginner can always switch back. Build clean, 31 JS + 16 FSRS tests green.
+
+Blocked: Nothing. Verify in browser after deploy (container can't reach Supabase). English-only UI chrome (eyebrows like "Last 7 days", onboarding body copy) is intentionally untouched — collapsing the bilingual dual-labels was the scope.
+
+Next: the gentle "switch to Finnish only?" nudge after enough exposure (deferred per handoff); puhekieli human-verification; retire old wrong content.

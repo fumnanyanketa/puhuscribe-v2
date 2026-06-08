@@ -3,10 +3,12 @@ import { OrbCluster } from '../components/primitives'
 import { Btn } from '../components/ui'
 import { PuhuMark } from '../components/Shell'
 import { supabase } from '../lib/supabase/client'
+import { useLang } from '../lib/lang/useLang'
 
 type Mode = 'signin' | 'signup'
 
 export function Auth() {
+  const { bi } = useLang()
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -83,7 +85,7 @@ export function Auth() {
                 boxShadow: mode === m ? 'var(--sh-1)' : 'none',
                 transition: 'background .15s, color .15s',
               }}>
-              {m === 'signin' ? 'Kirjaudu · Log in' : 'Luo tili · Sign up'}
+              {m === 'signin' ? bi('Kirjaudu', 'Log in') : bi('Luo tili', 'Sign up')}
             </button>
           ))}
         </div>
@@ -91,7 +93,7 @@ export function Auth() {
         <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <label className="ps-caption" style={{ display: 'block', marginBottom: 7, color: 'var(--ink-2)' }}>
-              Sähköposti · Email
+              {bi('Sähköposti', 'Email')}
             </label>
             <input
               type="email" value={email} onChange={(e) => setEmail(e.target.value)}
@@ -109,7 +111,7 @@ export function Auth() {
 
           <div>
             <label className="ps-caption" style={{ display: 'block', marginBottom: 7, color: 'var(--ink-2)' }}>
-              Salasana · Password
+              {bi('Salasana', 'Password')}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -147,7 +149,7 @@ export function Auth() {
           )}
 
           <Btn variant="primary" block onClick={() => submit()} disabled={loading} style={{ marginTop: 4 }}>
-            {loading ? 'One moment…' : mode === 'signin' ? 'Kirjaudu sisään · Log in' : 'Luo tili · Create account'}
+            {loading ? 'One moment…' : mode === 'signin' ? bi('Kirjaudu sisään', 'Log in') : bi('Luo tili', 'Create account')}
           </Btn>
         </form>
       </div>
