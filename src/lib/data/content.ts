@@ -129,6 +129,20 @@ export async function fetchSentences(opts: FetchSentencesOpts = {}): Promise<Reg
   })
 }
 
+/**
+ * The curated "first useful sentences" set for speaking practice — the everyday
+ * survival phrases a newcomer needs (topic slug 'arki'). Falls back to general
+ * sentences until that seed is loaded, so the screen always has content.
+ */
+export async function fetchIslandSentences(limit = 12): Promise<RegisterSentence[]> {
+  const { data: topic } = await supabase.from('topics').select('id').eq('slug', 'arki').maybeSingle()
+  if (topic?.id != null) {
+    const curated = await fetchSentences({ topicId: topic.id, limit })
+    if (curated.length > 0) return curated
+  }
+  return fetchSentences({ limit })
+}
+
 /* ---------------------------------------------------------------------------
  * Register tokenisation + azure-flag diff
  * ------------------------------------------------------------------------- */
