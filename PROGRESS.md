@@ -324,6 +324,16 @@ Next: the owner's next app-correction list — Islands is feature-complete for t
 
 ---
 
+## Session: 2026-06-09 (Drop the island "Draft" label — no runtime Voikko service needed)
+
+Shipped: Removed the "Draft — Finnish not yet verified" badge from island sentences (both the create-review step and the island detail). Decision rationale: the runtime Voikko microservice is owner-hosted infra this ephemeral sandbox can't provide (no public address, reclaimed on idle), and the beginner-tuned Sonnet translations are reliable, so we trust them for the learner's personal content and stop surfacing a "draft" state. The **seed-content** Voikko guarantee is unaffected (that ran here, offline). `services/voikko/` + the worker's optional Voikko call stay in the repo, dormant, if we ever want the extra runtime machine-check. Build clean. **Do not re-flag deploying the Voikko service as a pending owner action.**
+
+Blocked: nothing.
+
+Next: the owner's next app-correction list (Islands is feature-complete).
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
@@ -332,7 +342,8 @@ DONE by the owner (no longer outstanding):
 - Azure Speech key rotated.
 
 STILL PENDING:
-- Personal Language Islands (new this session): run migrations `20260609000001/2/3` in Supabase (in order) to turn the tab on. The `/island/translate` route auto-deploys on push. To upgrade island sentences from "draft" to Voikko-verified, deploy `services/voikko/` to any container host and set `VOIKKO_SERVICE_URL` (+ `VOIKKO_SHARED_SECRET` if used) as repo secrets, then re-run "Deploy TTS Worker".
 - Finnish-speaker verification pass on the puhekieli column (`docs/island-sentences.md` + `docs/generated_puhekieli_REVIEW.tsv`). Kirjakieli is Voikko-validated; puhekieli has no machine validator, so it stays text-only until a Finnish speaker eyeballs it. Then puhekieli audio can be enabled.
+
+NOT needed (deliberately dropped): deploying the `services/voikko/` runtime service. Island sentences no longer carry a "draft" label — we trust the beginner-tuned Sonnet translation for personal content. The service code stays dormant in the repo only as a future option.
 
 Notes: VITE_TTS_WORKER_URL set in Vercel (TTS works). Read docs/pedagogy-pressure-test.md for the four-skills rationale + what's still missing (real native listening clips, reading mode, mnemonics).

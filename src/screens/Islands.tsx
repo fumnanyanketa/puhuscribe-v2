@@ -352,11 +352,6 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
                   </div>
                 </div>
               )}
-              {!d.verified && (
-                <div className="ps-caption" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ink-3)' }}>
-                  <I name="lock" size={13} /> {bi('Luonnos — suomi vielä vahvistamatta', 'Draft — Finnish not yet verified')}
-                </div>
-              )}
               <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                 <Btn variant="light" style={{ flex: 1 }} disabled={redoIdx !== null || saving} onClick={() => void redo(i)}>
                   {redoIdx === i ? bi('Hetki…', 'Redoing…') : bi('Yritä uudelleen', 'Redo')}
@@ -582,12 +577,6 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
                     </div>
                   </div>
                 )}
-                {!s.verified && (
-                  <div className="ps-caption" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ink-3)' }}>
-                    <I name="lock" size={13} /> {bi('Luonnos — suomi vielä vahvistamatta', 'Draft — Finnish not yet verified')}
-                  </div>
-                )}
-
                 {delSentId === s.id ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
                     <span className="ps-caption" style={{ flex: 1 }}>{bi('Poistetaanko tämä lause?', 'Remove this sentence?')}</span>
