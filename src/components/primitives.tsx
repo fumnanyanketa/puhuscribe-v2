@@ -1,4 +1,6 @@
 import React, { useId } from 'react'
+import { useLang } from '../lib/lang/useLang'
+import { YKI, YkiSkill } from '../lib/yki'
 
 /* ---------- Label ---------- */
 export function Label({ children, color = 'var(--ink-3)', style }: {
@@ -70,6 +72,19 @@ export function RegDot({ reg }: { reg: 'kirja' | 'puhe' }) {
     <span className="ps-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color }}>
       <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, flexShrink: 0 }} />
       {isK ? 'Kirjakieli' : 'Puhekieli'}
+    </span>
+  )
+}
+
+/* ---------- YKI skill chip (which of the four skills an activity trains) ---------- */
+export function SkillChip({ skill, style }: { skill: YkiSkill; style?: React.CSSProperties }) {
+  const { bilingual } = useLang()
+  const s = YKI[skill]
+  return (
+    <span className="ps-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 6,
+      color: s.color, background: s.bg, padding: '4px 9px', borderRadius: 999, fontSize: 9.5, ...style }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color, flexShrink: 0 }} />
+      {bilingual ? s.en : s.fi}
     </span>
   )
 }
