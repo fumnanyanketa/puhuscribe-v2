@@ -354,6 +354,21 @@ Next: the owner's next app-correction list.
 
 ---
 
+## Session: 2026-06-09 (Naming: Daily Review + "My Sentence Bank"; consistent headings; list polish)
+
+A run of owner-driven naming + UI corrections.
+
+- **Name the outcome, not the technique.** The review page is now **"Daily Review / Päivän kertaus"** (was Review/Kertaus) with an active-recall method subtitle ("Type each one from memory — that's what makes it stick"). The **"Language Islands"** tab — which was the *method's* name — is renamed to the outcome: **"My Sentence Bank / Oma lausepankki"** (owner chose Bank over Vault, consistent with the app's "bank" framing). Every user-facing "island/saari/Kielisaari" became **"set/setti"** (create CTA "Add a new set", "Save set", delete confirms, detail eyebrow, empty states, plus the Daily empty-state + sentence-track CTA "Add sentences / Lisää lauseita"). Set shadow practice now uses Speak's default "Say it aloud" title; the set-recall header reads "Omat lauseet / Your sentences". Internal code identifiers (fetchIslandRecall, topicSlug, the `island` ReviewItem kind, the `island` nav icon) were intentionally left unchanged.
+- **Consistent page headings.** Every tab landing page now matches the Progress pattern — a small purple **English eyebrow** over the big black **Finnish title**, toggle-independent: Vocabulary/Sanasto · Daily Review/Päivän kertaus · My Sentence Bank/Oma lausepankki · Practice/Harjoittele · Progress/Edistyminen.
+- **Sentence Bank list polish.** The "Add a new set" capsule is teal (brand colour, owner's call); a "Start here / Aloita tästä" tag on the starter pack; a per-row **trash + inline delete confirm** for the learner's own sets (NOT the 50-sentence starter pack); the count line tidied to one clean caption ("50 lausetta (sentences)") in the list + detail.
+- **Earlier in this run** (already shipped): the typed active-recall engine (`src/components/RecallRunner.tsx` + `src/lib/grade.ts` — type the Finnish → auto-graded → system schedules, no self-rating; 8 grade tests); starter pack opens straight into Listen & repeat; starter back-nav returns to the list; speaking-practice native audio auto-plays + the record/playback bug fixed (stable always-mounted `<audio>`); the Islands tab restyled to the app's purple accent (teal kept only for the puhekieli register).
+
+Build clean, 39 JS tests. All frontend — Vercel-only deploys.
+
+Blocked: nothing. Next: the owner's next correction list.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.

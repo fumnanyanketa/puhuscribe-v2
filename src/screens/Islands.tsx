@@ -95,8 +95,8 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
   return (
     <ScreenScroll bottom={110}>
       <div>
-        <Label color="var(--written)">Language Islands</Label>
-        <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kielisaaret</h1>
+        <Label color="var(--written)">My Sentence Bank</Label>
+        <h1 className="ps-title-1" style={{ marginTop: 8 }}>Oma lausepankki</h1>
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
           Build sentences from your own life. You write what you want to say; we turn it into real Finnish you can speak.
         </p>
@@ -112,7 +112,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
           <I name="plus" size={22} />
         </span>
         <span style={{ textAlign: 'left' }}>
-          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>{bi('Lisää uusi saari', 'Add a new island')}</span>
+          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>{bi('Lisää uusi setti', 'Add a new set')}</span>
           <span className="ps-caption" style={{ color: 'rgba(255,255,255,.7)' }}>{bi('Vastaa kysymyksiin omin sanoin', 'Answer questions in your own words')}</span>
         </span>
       </button>
@@ -140,13 +140,13 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
       )}
 
       {loading && <div style={{ marginTop: 24 }}><StatePane title={bi('Ladataan…', 'Loading')} /></div>}
-      {error && <div style={{ marginTop: 16 }}><StatePane tone="error" title="Couldn't load your islands" detail={error} /></div>}
+      {error && <div style={{ marginTop: 16 }}><StatePane tone="error" title="Couldn't load your sets" detail={error} /></div>}
 
       {islands && islands.length === 0 && !loading && (
         <div style={{ textAlign: 'center', marginTop: 40, color: 'var(--ink-2)' }}>
           <OrbCluster size={96} />
           <p className="ps-body" style={{ marginTop: 14, maxWidth: 280, marginInline: 'auto' }}>
-            No islands yet. Start one above — the first set is the basics: who you are, your work, your day.
+            No sets yet. Add one above — start with the basics: who you are, your work, your day.
           </p>
         </div>
       )}
@@ -157,7 +157,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
             <div key={isl.id} className="ps-card" style={{ padding: 14, opacity: deleting && delId === isl.id ? 0.6 : 1 }}>
               {delId === isl.id ? (
                 <div>
-                  <div className="ps-body" style={{ fontWeight: 600 }}>{bi('Poistetaanko tämä saari?', 'Delete this island?')}</div>
+                  <div className="ps-body" style={{ fontWeight: 600 }}>{bi('Poistetaanko tämä setti?', 'Delete this set?')}</div>
                   <div className="ps-caption" style={{ marginTop: 4 }}>This removes its sentences and their review history.</div>
                   <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
                     <Btn variant="light" style={{ flex: 1 }} disabled={deleting} onClick={() => setDelId(null)}>{bi('Peruuta', 'Cancel')}</Btn>
@@ -184,7 +184,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
                     <I name="arrow" size={20} style={{ color: 'var(--ink-3)', flexShrink: 0 }} />
                   </button>
                   {isl.topicSlug !== 'starter' && (
-                    <IconBtn icon="trash" tone="glass" size={38} onClick={() => setDelId(isl.id)} label="Delete island" />
+                    <IconBtn icon="trash" tone="glass" size={38} onClick={() => setDelId(isl.id)} label="Delete set" />
                   )}
                 </div>
               )}
@@ -296,7 +296,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       <ScreenScroll bottom={110}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <IconBtn icon="arrowL" tone="glass" size={40} onClick={onCancel} />
-          <Label color="var(--written)">{bi('Uusi saari', 'New island')}</Label>
+          <Label color="var(--written)">{bi('Uusi setti', 'New set')}</Label>
           <span style={{ width: 40 }} />
         </div>
         <div style={{ marginTop: 14 }}>
@@ -402,7 +402,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
 
         <div style={{ flex: 1, minHeight: 16 }} />
         <Btn variant="primary" block iconRight="arrow" disabled={drafts.length === 0 || saving || redoIdx !== null} onClick={() => void save()}>
-          {saving ? bi('Tallennetaan…', 'Saving…') : <>{bi('Tallenna saari', 'Save island')} ({drafts.length})</>}
+          {saving ? bi('Tallennetaan…', 'Saving…') : <>{bi('Tallenna setti', 'Save set')} ({drafts.length})</>}
         </Btn>
       </ScreenScroll>
     )
@@ -533,7 +533,7 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
   }
 
   if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
-  if (error) return <StatePane tone="error" title="Couldn't load this island" detail={error} bottom={110} />
+  if (error) return <StatePane tone="error" title="Couldn't load this set" detail={error} bottom={110} />
 
   const list = lines ?? []
 
@@ -541,7 +541,7 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
     <ScreenScroll bottom={120}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <IconBtn icon="arrowL" tone="glass" size={40} onClick={onBack} />
-        <Label color="var(--written)">Kielisaari</Label>
+        <Label color="var(--written)">Setti</Label>
         <IconBtn icon="close" tone="glass" size={40} onClick={() => setConfirmDel(true)} />
       </div>
 
@@ -558,7 +558,7 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
 
       {confirmDel && (
         <div className="ps-card" style={{ marginTop: 16, padding: 16, border: '1px solid var(--flag)' }}>
-          <div className="ps-body" style={{ fontWeight: 600 }}>{bi('Poistetaanko tämä saari?', 'Delete this island?')}</div>
+          <div className="ps-body" style={{ fontWeight: 600 }}>{bi('Poistetaanko tämä setti?', 'Delete this set?')}</div>
           <div className="ps-caption" style={{ marginTop: 4 }}>This removes its sentences and their review history.</div>
           <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
             <Btn variant="light" style={{ flex: 1 }} onClick={() => setConfirmDel(false)}>{bi('Peruuta', 'Cancel')}</Btn>
@@ -639,7 +639,7 @@ function ShadowView({ userId, islandId, onBack }: { userId: string; islandId: st
   const { data: lines, loading, error } = useAsync<IslandSentence[]>(() => fetchIslandLines(userId, islandId), [userId, islandId])
   if (loading) return <StatePane title="Ladataan…" bottom={110} />
   if (error) return <StatePane tone="error" title="Couldn't load" detail={error} bottom={110} />
-  return <Speak phrases={lines ?? []} title="Kielisaari" onBack={onBack} />
+  return <Speak phrases={lines ?? []} onBack={onBack} />
 }
 
 /* -------------------------------------------------------------------------- */
@@ -654,8 +654,8 @@ function RecallView({ userId, islandId, onBack }: { userId: string; islandId: st
 
   if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
   if (error) return <StatePane tone="error" title="Couldn't load recall" detail={error} bottom={110} />
-  if (!data || data.length === 0) return <StatePane title={bi('Ei lauseita', 'No sentences')} detail="Add a sentence to this island first." bottom={110} />
+  if (!data || data.length === 0) return <StatePane title={bi('Ei lauseita', 'No sentences')} detail="Add a sentence to this set first." bottom={110} />
 
   return <RecallRunner key={data.map((it) => it.card.cardId).join(',')} items={data} userId={userId}
-    titleFi="Kielisaari" titleEn="Island recall" onExit={onBack} />
+    titleFi="Omat lauseet" titleEn="Your sentences" onExit={onBack} />
 }

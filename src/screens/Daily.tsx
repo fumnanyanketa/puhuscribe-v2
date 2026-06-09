@@ -45,10 +45,10 @@ function Hub({ userId, go, onVocab, onSentences }: {
 
   return (
     <ScreenScroll bottom={110}>
-      <Label color="var(--written)">Review</Label>
-      <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kertaus</h1>
+      <Label color="var(--written)">Daily Review</Label>
+      <h1 className="ps-title-1" style={{ marginTop: 8 }}>Päivän kertaus</h1>
       <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
-        Two banks to grow a little every day — your words and your own sentences.
+        Type each one from memory — that's what makes it stick. Two banks grow a little every day: your words and your own sentences.
       </p>
 
       <div style={{ display: 'flex', justifyContent: 'center', margin: '12px 0 4px' }}>
@@ -66,7 +66,7 @@ function Hub({ userId, go, onVocab, onSentences }: {
           icon="island" accent="var(--spoken)" accentBg="var(--spoken-bg)"
           fi="Omat lauseet" en="Your sentences" unitFi="lausetta" unitEn="sentences"
           bank={o.sentBank} goal={SENT_GOAL} due={o.sentDue}
-          startFi="Rakenna saari" startEn="Build an island" onStart={() => go('islands')} onReview={onSentences}
+          startFi="Lisää lauseita" startEn="Add sentences" onStart={() => go('islands')} onReview={onSentences}
         />
       </div>
     </ScreenScroll>
@@ -151,8 +151,8 @@ function SentenceTrack({ userId, go, onExit }: { userId: string; go: (s: AppScre
   if (!data || data.length === 0) {
     return <EmptyTrack
       label={bi('Omat lauseet', 'Your sentences')} title={bi('Ei kerrattavaa', 'Nothing due')}
-      body="Build a Language Island — your own sentences come back here to review, day by day."
-      ctaFi="Rakenna saari" ctaEn="Build an island" onCta={() => go('islands')} onExit={onExit} />
+      body="Add your own sentences in My Sentence Bank — they come back here to review, day by day."
+      ctaFi="Lisää lauseita" ctaEn="Add sentences" onCta={() => go('islands')} onExit={onExit} />
   }
   return <RecallRunner key={data.map((it) => it.card.cardId).join(',')} items={data} userId={userId}
     titleFi="Omat lauseet" titleEn="Your sentences" onExit={onExit} onProgress={() => go('progress')} />

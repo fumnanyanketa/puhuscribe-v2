@@ -41,7 +41,7 @@ export function Speak({ onBack, phrases, title }: { onBack: () => void; phrases?
   // When sentences are passed in (a personal island), shadow those; otherwise
   // fall back to fetching the curated "first useful sentences" set.
   if (phrases) {
-    if (phrases.length === 0) return <StatePane title="No sentences yet" detail="Add a sentence to this island first." bottom={110} />
+    if (phrases.length === 0) return <StatePane title="No sentences yet" detail="Add a sentence to this set first." bottom={110} />
     return <SpeakPractice phrases={phrases} onBack={onBack} title={title} />
   }
   return <SpeakFetch onBack={onBack} />
