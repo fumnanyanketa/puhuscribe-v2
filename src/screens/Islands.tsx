@@ -94,7 +94,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
 
       <button onClick={onNew} className="ps-press" style={{
         marginTop: 18, width: '100%', padding: '16px 18px', borderRadius: 'var(--r-lg)', cursor: 'pointer',
-        border: 'none', background: 'var(--ink)', color: 'var(--on-dark)',
+        border: 'none', background: 'var(--spoken)', color: 'var(--on-dark)',
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
         <span style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,255,255,.16)',
