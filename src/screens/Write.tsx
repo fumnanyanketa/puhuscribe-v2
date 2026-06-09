@@ -37,7 +37,7 @@ export function Write({ go }: { go: (s: AppScreen) => void }) {
 }
 
 function WriteSession({ sentences, level, go }: { sentences: RegisterSentence[]; level: string; go: (s: AppScreen) => void }) {
-  const { bi } = useLang()
+  const { bi, biText } = useLang()
   const [i, setI] = useState(0)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
@@ -109,7 +109,7 @@ function WriteSession({ sentences, level, go }: { sentences: RegisterSentence[];
         value={input}
         onChange={(e) => setInput(e.target.value)}
         disabled={!!result}
-        placeholder={bi('Kirjoita tähän…', 'Write here…') as string}
+        placeholder={biText('Kirjoita tähän…', 'Write here…')}
         rows={2}
         style={{
           marginTop: 14, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)',

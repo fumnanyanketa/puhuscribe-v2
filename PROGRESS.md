@@ -284,8 +284,19 @@ Next: deploy the Voikko service to flip drafts → verified; mix due `island_rec
 
 ---
 
+## Session: 2026-06-09 (Island fixes: [object Object] bug + fold personal sentences into Daily)
+
+Shipped: (1) Fixed the "[object Object]" bug the owner caught in the island create flow. Root cause: `bi(fi,en)` returns a ReactNode, so using it as a string rendered "[object Object]" — it hit the build-progress line, the answer textarea placeholder, the "Build island" button, and (same defect) Write.tsx's placeholder. Added a `biText(fi,en)` plain-string helper to useLang and used it in those string contexts (left the ReactNode `bi()` for actual rendered labels). (2) Folded personal island sentences into Daily review so they resurface in the everyday loop: new `src/lib/data/review.ts` (`fetchDailyReview` → due `island_recall` cards across all islands + due/new vocab, capped to 12) + `fetchDueIslandRecall` in islands.ts (STARTED cards only — a brand-new sentence is first met inside its island, not dumped into Daily; due now, soonest first). Daily.tsx rewritten to render either a word card or a personal-sentence card (English prompt → reveal kirjakieli tokens + puhekieli + audio → FSRS rate) from one unified queue. Build clean, 31 JS tests pass.
+
+Blocked: nothing new. Verify in browser: create an island, do its Recall once (so the cards leave 'new'), then a due personal sentence shows up in Daily review next to words. Sentences stay DRAFT until the Voikko service is deployed (unchanged).
+
+Next (finishing islands): let the learner edit/redo a translation before saving; reframe the 50 `arki` sentences as a "Starter pack" inside the Islands tab; AI follow-up questions. Then the owner's next app-correction list.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
+- Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
 - Supabase SQL run: `users.progress` jsonb column (cross-device resume), `GRANT DELETE ON cards` (reset), and the `supabase/seeds/05_island_sentences.sql` seed (the 50 real "arki" sentences → Listen/Write/Speak are live, not the fallback). Earlier migrations (content_fixes, IPA, grants, user_progress, grant_card_delete) also run.
 - AI writing feedback: `ANTHROPIC_API_KEY` added as a GitHub repo secret + the "Deploy TTS Worker" Action re-run, so Write now uses live Claude Haiku `/correct` (no longer the self-check fallback).
 - Azure Speech key rotated.

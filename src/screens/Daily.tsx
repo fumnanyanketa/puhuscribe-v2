@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react'
-import { OrbCluster, Label } from '../components/primitives'
+import { OrbCluster, Label, RegDot, Sentence } from '../components/primitives'
 import { Btn, Steps, SpeakerBtn } from '../components/ui'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
-import { fetchVocabSession, rateCard, previewIntervals, VocabCard } from '../lib/data/cards'
+import { rateCard, previewIntervals } from '../lib/data/cards'
+import { fetchDailyReview, ReviewItem } from '../lib/data/review'
 import { Rating } from '../lib/fsrs/types'
 import { speak } from '../lib/tts'
 
@@ -24,8 +25,8 @@ const RATINGS: { rating: Rating; fi: string; en: string; color: string; bg: stri
 export function Daily({ go }: { go: (s: AppScreen) => void }) {
   const { user } = useAuth()
   const { bi } = useLang()
-  const { data: cards, loading, error } = useAsync<VocabCard[]>(
-    () => (user ? fetchVocabSession(user.id, SESSION_SIZE) : Promise.resolve([])),
+  const { data: items, loading, error } = useAsync<ReviewItem[]>(
+    () => (user ? fetchDailyReview(user.id, SESSION_SIZE) : Promise.resolve([])),
     [user?.id],
   )
 
@@ -33,10 +34,10 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
   if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={110} />
   if (!user) return <StatePane title={bi('Kirjaudu sisään', 'Sign in')} detail="Sign in to start your review session." bottom={110} />
 
-  // Empty review = you haven't met any words yet (or none are due). Send the
+  // Empty review = you haven't met any words yet (or nothing is due). Send the
   // learner to the Day One Sprint, which is what fills the scheduler — never
   // dummy content the learner has never seen.
-  if (!cards || cards.length === 0) {
+  if (!items || items.length === 0) {
     return (
       <ScreenScroll bottom={110}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -46,7 +47,7 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
             <Label color="var(--written)" style={{ display: 'block', marginBottom: 8 }}>{bi('Kertaus', 'Review')}</Label>
             <h2 className="ps-title-1">{bi('Ei kerrattavaa vielä', 'Nothing to review yet')}</h2>
             <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>
-              Your daily review fills with the words you meet in the Day One Sprint. Do a sprint to add some, then they come back here right before you would forget them.
+              Your daily review fills with the words you meet in the Day One Sprint and the sentences you build in Language Islands. They come back here right before you would forget them.
             </p>
           </div>
           <Btn variant="primary" icon="sparkle" onClick={() => go('dayone')}>{bi('Aloitusryntäys', 'Day One Sprint')}</Btn>
@@ -56,10 +57,10 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
   }
 
   // Keyed on the loaded set so a fresh queue resets the session cleanly.
-  return <Session key={cards.map((c) => c.cardId).join(',')} cards={cards} userId={user.id} go={go} />
+  return <Session key={items.map((it) => it.card.cardId).join(',')} items={items} userId={user.id} go={go} />
 }
 
-function Session({ cards, userId, go }: { cards: VocabCard[]; userId: string; go: (s: AppScreen) => void }) {
+function Session({ items, userId, go }: { items: ReviewItem[]; userId: string; go: (s: AppScreen) => void }) {
   const { bi, bilingual } = useLang()
   const [i, setI] = useState(0)
   const [revealed, setRevealed] = useState(false)
@@ -69,13 +70,18 @@ function Session({ cards, userId, go }: { cards: VocabCard[]; userId: string; go
   const [err, setErr] = useState('')
   const [done, setDone] = useState(false)
 
-  const card = cards[i]
+  const item = items[i]
+  const card = item.card
   const previews = useMemo(() => previewIntervals(card), [card])
+
+  // The English prompt, and the kirjakieli text to speak, differ by kind.
+  const promptEn = item.kind === 'word' ? item.card.word.en : item.card.line.en
+  const audioText = item.kind === 'word' ? item.card.word.fi : item.card.line.kirjaText
 
   const play = () => {
     setPlaying(true)
-    speak(card.word.fi) // the written (kirjakieli) form
-    setTimeout(() => setPlaying(false), 1100)
+    speak(audioText) // the written (kirjakieli) form
+    setTimeout(() => setPlaying(false), item.kind === 'word' ? 1100 : 1600)
   }
 
   const reveal = () => {
@@ -89,7 +95,7 @@ function Session({ cards, userId, go }: { cards: VocabCard[]; userId: string; go
     try {
       await rateCard(userId, card, rating)
       if (rating >= Rating.Good) setRemembered((m) => m + 1)
-      if (i < cards.length - 1) { setI(i + 1); setRevealed(false) }
+      if (i < items.length - 1) { setI(i + 1); setRevealed(false) }
       else setDone(true)
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e))
@@ -107,7 +113,7 @@ function Session({ cards, userId, go }: { cards: VocabCard[]; userId: string; go
           <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>{bi('Sessio valmis', 'Session complete')}</Label>
           <h2 className="ps-title-1">{bi('Hyvää työtä!', 'Good work.')}</h2>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10 }}>
-            {remembered} of {cards.length} remembered
+            {remembered} of {items.length} remembered
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -130,37 +136,60 @@ function Session({ cards, userId, go }: { cards: VocabCard[]; userId: string; go
 
       {/* Session progress */}
       <div style={{ marginTop: 18, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Steps total={cards.length} current={i} />
-        <span className="ps-label" style={{ color: 'var(--ink-2)', flexShrink: 0 }}>{i + 1}/{cards.length}</span>
+        <Steps total={items.length} current={i} />
+        <span className="ps-label" style={{ color: 'var(--ink-2)', flexShrink: 0 }}>{i + 1}/{items.length}</span>
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Active recall card: English meaning is the prompt; recall the Finnish. */}
+        {/* Active recall card: English is the prompt; recall + say the Finnish. */}
         <div className="ps-glass" style={{ padding: 24, borderRadius: 'var(--r-2xl)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <Label color="var(--written)">{bi('Mitä on suomeksi?', 'Say it in Finnish')}</Label>
+            <Label color={item.kind === 'island' ? 'var(--spoken)' : 'var(--written)'}>{bi('Mitä on suomeksi?', 'Say it in Finnish')}</Label>
             <span className="ps-chip ps-chip--glass" style={{ fontSize: 11, padding: '5px 11px' }}>
-              {card.isNew ? bi('Uusi', 'new') : bi('Kertaus', 'review')}
+              {item.kind === 'island' ? bi('Oma lause', 'your sentence') : card.isNew ? bi('Uusi', 'new') : bi('Kertaus', 'review')}
             </span>
           </div>
 
-          <div style={{ marginTop: 14, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 30,
-            letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-            {card.word.en}
+          <div style={{ marginTop: 14, fontFamily: 'var(--font-display)', fontWeight: 700,
+            fontSize: item.kind === 'word' ? 30 : 23, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+            {promptEn}
           </div>
 
           {revealed ? (
-            <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--glass-edge)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 38, letterSpacing: '-0.03em', lineHeight: 1 }}>{card.word.fi}</div>
-                {card.word.ipa && (
-                  <div className="ps-num" style={{ marginTop: 6, fontSize: 16, color: 'var(--written)', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>
-                    {card.word.ipa}
+            <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--glass-edge)' }}>
+              {item.kind === 'word' ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 38, letterSpacing: '-0.03em', lineHeight: 1 }}>{item.card.word.fi}</div>
+                    {item.card.word.ipa && (
+                      <div className="ps-num" style={{ marginTop: 6, fontSize: 16, color: 'var(--written)', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>
+                        {item.card.word.ipa}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={48} />
+                  <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={48} />
+                </div>
+              ) : (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <RegDot reg="kirja" />
+                      <div style={{ marginTop: 7 }}>
+                        <Sentence tokens={item.card.line.kirja} font="var(--font-display)" weight={600} size={22} color="var(--ink)" />
+                      </div>
+                    </div>
+                    <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={44} />
+                  </div>
+                  {item.card.line.puheText && (
+                    <div style={{ marginTop: 12, padding: '10px 12px', background: 'var(--spoken-bg)', border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
+                      <RegDot reg="puhe" />
+                      <div style={{ marginTop: 7 }}>
+                        <Sentence tokens={item.card.line.puhe} font="var(--font-body)" weight={600} size={16} color="var(--ink)" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <div className="ps-caption" style={{ marginTop: 14 }}>{bi('Sano se ääneen, sitten näytä vastaus', 'Say it aloud, then reveal the answer')}</div>

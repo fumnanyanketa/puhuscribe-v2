@@ -165,3 +165,40 @@ export async function fetchIslandRecall(userId: string, islandId: string): Promi
       scheduled_days: c.scheduled_days, elapsed_days: c.elapsed_days, last_review: c.last_review,
     }))
 }
+
+/**
+ * Due personal island sentences across ALL islands — the ones that have come
+ * back around for spaced review. These mix into the main Daily review so the
+ * learner's own sentences resurface in the everyday loop. Only STARTED cards
+ * (a brand-new sentence is first met inside its island, not dumped into Daily),
+ * due now or earlier, soonest-due first.
+ */
+export async function fetchDueIslandRecall(userId: string, limit: number): Promise<IslandRecallCard[]> {
+  const now = new Date().toISOString()
+  const { data: cards, error } = await supabase
+    .from('cards').select(RECALL_COLS)
+    .eq('user_id', userId).eq('card_type', 'island_recall').not('island_sentence_id', 'is', null)
+    .in('state', ['review', 'learning', 'relearning']).lte('due', now)
+    .order('due', { ascending: true }).limit(limit)
+  if (error) throw new Error(error.message)
+  const rows = cards ?? []
+  if (rows.length === 0) return []
+
+  const { data: lines, error: lErr } = await supabase
+    .from('user_island_sentences')
+    .select('id, island_id, en, kirjakieli, puhekieli, verified')
+    .in('id', rows.map((c) => c.island_sentence_id as string))
+  if (lErr) throw new Error(lErr.message)
+  const byId = new Map((lines ?? []).map((l) => [l.id, toLine(l)]))
+
+  return rows
+    .filter((c) => c.island_sentence_id && byId.has(c.island_sentence_id))
+    .map((c) => ({
+      cardId: c.id,
+      isNew: c.state === 'new',
+      line: byId.get(c.island_sentence_id as string)!,
+      stability: c.stability, difficulty: c.difficulty, state: c.state,
+      reps: c.reps, lapses: c.lapses, due: c.due,
+      scheduled_days: c.scheduled_days, elapsed_days: c.elapsed_days, last_review: c.last_review,
+    }))
+}

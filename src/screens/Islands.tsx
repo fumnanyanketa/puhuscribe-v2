@@ -127,7 +127,7 @@ function IslandList({ userId, onNew, onOpen }: { userId: string; onNew: () => vo
 /* Create flow — pick a topic, answer its questions, build the island          */
 /* -------------------------------------------------------------------------- */
 function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: () => void; onDone: (id: string) => void }) {
-  const { bi } = useLang()
+  const { bi, biText } = useLang()
   const [topic, setTopic] = useState<IslandTopic | null>(null)
   const [answers, setAnswers] = useState<string[]>([])
   const [building, setBuilding] = useState(false)
@@ -149,7 +149,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       islandId = await createIsland(userId, topic.en, topic.slug)
       let saved = 0
       for (let i = 0; i < written.length; i++) {
-        setProgress(`${bi('Käännetään', 'Translating')} ${i + 1}/${written.length}…`)
+        setProgress(`${biText('Käännetään', 'Translating')} ${i + 1}/${written.length}…`)
         const t = await translateSentence(written[i])
         if (t.configured && t.kirjakieli) {
           await addIslandSentence(userId, islandId, {
@@ -252,7 +252,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
             <textarea
               value={answers[i]}
               onChange={(e) => setAnswer(i, e.target.value)}
-              placeholder={bi('Kirjoita vastauksesi…', 'Your answer…') as string}
+              placeholder={biText('Kirjoita vastauksesi…', 'Your answer…')}
               rows={2}
               style={{
                 marginTop: 10, width: '100%', padding: '11px 13px', borderRadius: 'var(--r-md)',
@@ -268,7 +268,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
 
       <div style={{ flex: 1, minHeight: 16 }} />
       <Btn variant="primary" block iconRight="arrow" disabled={filledCount === 0} onClick={() => void build()}>
-        {filledCount === 0 ? bi('Kirjoita vastaus', 'Write an answer') : `${bi('Rakenna saari', 'Build island')} (${filledCount})`}
+        {filledCount === 0 ? bi('Kirjoita vastaus', 'Write an answer') : <>{bi('Rakenna saari', 'Build island')} ({filledCount})</>}
       </Btn>
     </ScreenScroll>
   )

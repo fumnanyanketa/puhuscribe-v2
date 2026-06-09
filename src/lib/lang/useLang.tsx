@@ -16,6 +16,11 @@ const STORAGE_KEY = 'ps_bilingual'
  */
 export type Bi = (fi: string, en: string) => ReactNode
 
+// Plain-string variant for places that need a string, not a node (input
+// placeholders, aria labels, anything interpolated into a template literal).
+// Using `bi()` there renders "[object Object]".
+export type BiText = (fi: string, en: string) => string
+
 function readInitial(): boolean {
   try {
     const v = localStorage.getItem(STORAGE_KEY)
@@ -30,6 +35,7 @@ interface LangCtx {
   setBilingual: (v: boolean) => void
   toggle: () => void
   bi: Bi
+  biText: BiText
 }
 
 const LangContext = createContext<LangCtx>({
@@ -37,6 +43,7 @@ const LangContext = createContext<LangCtx>({
   setBilingual: () => {},
   toggle: () => {},
   bi: (fi) => fi,
+  biText: (fi) => fi,
 })
 
 export function LangProvider({ children }: { children: ReactNode }) {
@@ -70,8 +77,11 @@ export function LangProvider({ children }: { children: ReactNode }) {
     [bilingual],
   )
 
+  // Plain-string label for string-only contexts (placeholders, template literals).
+  const biText = useCallback<BiText>((fi, en) => (bilingual ? `${fi} (${en})` : fi), [bilingual])
+
   return (
-    <LangContext.Provider value={{ bilingual, setBilingual, toggle, bi }}>
+    <LangContext.Provider value={{ bilingual, setBilingual, toggle, bi, biText }}>
       {children}
     </LangContext.Provider>
   )
