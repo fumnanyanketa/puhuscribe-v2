@@ -344,6 +344,16 @@ Next: the owner's next app-correction list.
 
 ---
 
+## Session: 2026-06-09 (Islands fixes: starter back-nav + speaking audio + styling consistency)
+
+Shipped: (1) Starter pack — practicing the "Everyday basics" island now returns to the islands LIST, not the 50-item detail (the shadow view tracks whether it was opened from the list or the detail and routes back accordingly). (2) Speaking practice (Speak.tsx) — the native audio now AUTO-PLAYS on each phrase + on first mount; fixed playback dying after a couple of cards (the `<audio>` is now always mounted for a stable ref, `playMine` no longer self-blocks on a stuck `playingMine`, and the playing flags reset on next/again). (3) Styling consistency — the Islands tab led with teal (`--spoken`) accents while the app's accent is purple (`--written`); moved all screen chrome (eyebrows, icon chips, focus borders, the More-questions + starter cards, edit links) to `--written`, leaving teal ONLY on the puhekieli register boxes, matching every other page. Build clean, 39 JS tests.
+
+Blocked: nothing. Verify: tap "Everyday basics" → practice → back returns to the islands list; speaking practice auto-plays and record/playback works across many cards; the Islands tab now reads purple like the rest of the app.
+
+Next: the owner's next app-correction list.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
