@@ -17,7 +17,8 @@ export interface Island {
   title: string
   topicSlug: string
   createdAt: string
-  count: number // how many sentences it holds
+  count: number   // how many sentences it holds
+  learned: number // how many of its recall cards have graduated to 'review'
 }
 
 // A single island sentence, tokenised for the register UI. `gloss` (= the
@@ -52,7 +53,7 @@ function toLine(row: {
   }
 }
 
-/** The learner's islands, newest first, each with its sentence count. */
+/** The learner's islands, newest first, each with its sentence + learned counts. */
 export async function fetchIslands(userId: string): Promise<Island[]> {
   const { data: islands, error } = await supabase
     .from('user_islands')
@@ -63,14 +64,31 @@ export async function fetchIslands(userId: string): Promise<Island[]> {
 
   const { data: lines } = await supabase
     .from('user_island_sentences')
-    .select('island_id')
+    .select('id, island_id')
     .eq('user_id', userId)
   const counts = new Map<string, number>()
-  for (const l of lines ?? []) counts.set(l.island_id, (counts.get(l.island_id) ?? 0) + 1)
+  const islandOfSentence = new Map<string, string>()
+  for (const l of lines ?? []) {
+    counts.set(l.island_id, (counts.get(l.island_id) ?? 0) + 1)
+    islandOfSentence.set(l.id, l.island_id)
+  }
+
+  // Learned = this island's recall cards that have graduated to 'review'.
+  const { data: cards } = await supabase
+    .from('cards')
+    .select('island_sentence_id, state')
+    .eq('user_id', userId).eq('card_type', 'island_recall').eq('state', 'review')
+    .not('island_sentence_id', 'is', null)
+  const learned = new Map<string, number>()
+  for (const c of cards ?? []) {
+    const isl = islandOfSentence.get(c.island_sentence_id as string)
+    if (isl) learned.set(isl, (learned.get(isl) ?? 0) + 1)
+  }
 
   return (islands ?? []).map((i) => ({
     id: i.id, title: i.title, topicSlug: i.topic_slug, createdAt: i.created_at,
     count: counts.get(i.id) ?? 0,
+    learned: learned.get(i.id) ?? 0,
   }))
 }
 

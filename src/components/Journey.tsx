@@ -3,73 +3,90 @@ import { SkillChip } from './primitives'
 import { useLang } from '../lib/lang/useLang'
 import { YkiSkill } from '../lib/yki'
 
-/**
- * The learner's journey / north star: a visible path from first words to YKI,
- * so people always know where they are heading. Each stage shows the YKI skills
- * it builds and a CEFR band; later stages are shown but locked until the word
- * bank reaches their threshold (orientation, not a wall).
- */
-type StageDef = { key: string; icon: string; fi: string; en: string; desc: string; at: number; cefr: string; skills: YkiSkill[] }
+/* ---------------------------------------------------------------------------
+ * The learner's path as a vertical timeline (the design's "Your path" card):
+ * five milestones from first words to YKI B2. Current stage highlighted on a
+ * violet block, done stages checked, locked stages show their unlock. Driven
+ * by the real vocabulary bank size.
+ * ------------------------------------------------------------------------- */
 
-const STAGES: StageDef[] = [
-  { key: 'words',   icon: 'sparkle', fi: 'Ensimmäiset sanat',    en: 'First words',               desc: 'Recognise your first Finnish words by sight and sound.',                at: 0,    cefr: 'A1', skills: ['read', 'listen'] },
-  { key: 'bank',    icon: 'cards',   fi: 'Kasvata sanavarastoa', en: 'Grow your word bank',       desc: 'Meet new words daily and start producing them; spaced repetition locks them in.', at: 1, cefr: 'A1', skills: ['read', 'write'] },
-  { key: 'speak',   icon: 'island',  fi: 'Puhu rohkeasti',       en: 'Speak with confidence',     desc: 'Say and hear real-life sentences for the situations you will face.',     at: 50,   cefr: 'A2', skills: ['speak', 'listen'] },
-  { key: 'fluency', icon: 'chart',   fi: 'Arjen sujuvuus',       en: 'Everyday fluency',          desc: 'Hold everyday conversations across all four skills. YKI B1 (citizenship).', at: 300,  cefr: 'B1', skills: ['speak', 'listen', 'read', 'write'] },
-  { key: 'pro',     icon: 'flame',   fi: 'Työelämän suomi',      en: 'Professional Finnish',      desc: 'Work and study in Finnish. YKI B2.',                                    at: 1500, cefr: 'B2', skills: ['speak', 'listen', 'read', 'write'] },
+type Mile = { fi: string; en: string; lvl: string; at: number; desc: string; skills: YkiSkill[] }
+
+const MILES: Mile[] = [
+  { fi: 'Ensimmäiset sanat', en: 'First words', lvl: 'A1', at: 0,
+    desc: 'Recognise your first Finnish words by sight and sound.', skills: ['read', 'listen'] },
+  { fi: 'Kasvata sanavarastoa', en: 'Grow your word bank', lvl: 'A1', at: 1,
+    desc: 'Meet new words daily and start producing them; spaced repetition locks them in.', skills: ['read', 'write'] },
+  { fi: 'Puhu rohkeasti', en: 'Speak with confidence', lvl: 'A2', at: 50,
+    desc: 'Say and hear real-life sentences for the situations you will face.', skills: ['speak', 'listen'] },
+  { fi: 'Arjen sujuvuus', en: 'Everyday fluency', lvl: 'B1', at: 300,
+    desc: 'Hold everyday conversations across all four skills. YKI B1 (citizenship).', skills: ['speak', 'listen', 'read', 'write'] },
+  { fi: 'Työelämän suomi', en: 'Professional Finnish', lvl: 'B2', at: 1500,
+    desc: 'Work and study in Finnish. YKI B2.', skills: ['speak', 'listen', 'read', 'write'] },
 ]
 
 export function Journey({ bankSize }: { bankSize: number }) {
-  const { bi } = useLang()
+  const { bilingual } = useLang()
   // The current stage is the highest one whose threshold the bank has reached.
   let current = 0
-  for (let i = 0; i < STAGES.length; i++) if (bankSize >= STAGES[i].at) current = i
+  for (let i = 0; i < MILES.length; i++) if (bankSize >= MILES[i].at) current = i
 
   return (
-    <div>
-      {STAGES.map((s, i) => {
-        const status = i < current ? 'done' : i === current ? 'current' : 'locked'
-        const last = i === STAGES.length - 1
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {MILES.map((m, i) => {
+        const last = i === MILES.length - 1
+        const now = i === current
+        const done = i < current
+        const locked = i > current
         return (
-          <div key={s.key} style={{ display: 'flex', gap: 14 }}>
+          <div key={m.en} style={{ display: 'flex', gap: 14 }}>
             {/* Rail */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+            <div style={{ width: 36, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: status === 'current' ? 'var(--written)' : status === 'locked' ? 'var(--glass-deep)' : 'var(--written-bg)',
-                color: status === 'current' ? '#fff' : status === 'locked' ? 'var(--ink-3)' : 'var(--written)',
-                border: status === 'current' ? 'none' : '1px solid var(--glass-line)',
-                boxShadow: status === 'current' ? '0 0 0 4px var(--written-bg)' : 'none',
-              }}>
-                {status === 'done' ? <I name="check" size={18} /> : status === 'locked' ? <I name="lock" size={15} /> : <I name={s.icon} size={18} />}
-              </div>
-              {!last && <div style={{ flex: 1, width: 2, minHeight: 30, background: 'var(--glass-edge)', margin: '4px 0' }} />}
+                background: now ? 'var(--written)' : done ? 'var(--spoken-bg)' : 'var(--glass-deep)',
+                color: now ? '#fff' : done ? 'var(--spoken)' : 'var(--ink-3)' }}>
+                {now ? <I name="sparkle" size={18} /> : done ? <I name="check" size={16} sw={2.2} /> : <I name="lock" size={15} sw={2} />}
+              </span>
+              {!last && <span style={{ flex: 1, width: 2, background: 'var(--glass-edge)', margin: '4px 0', minHeight: 18 }} />}
             </div>
 
-            {/* Content */}
-            <div style={{
-              flex: 1, minWidth: 0, marginBottom: last ? 0 : 16, opacity: status === 'locked' ? 0.62 : 1,
-              ...(status === 'current'
-                ? { background: 'var(--written-bg)', borderRadius: 'var(--r-md)', padding: '10px 12px', marginTop: -4 }
-                : {}),
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', minWidth: 0 }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15.5, lineHeight: 1.15 }}>{bi(s.fi, s.en)}</span>
-                  {status === 'current' && (
-                    <span className="ps-label" style={{ color: 'var(--written)', background: '#fff', padding: '3px 9px', borderRadius: 999, fontSize: 9.5 }}>{bi('Nyt', 'now')}</span>
+            {/* Body */}
+            <div style={{ flex: 1, minWidth: 0,
+              background: now ? 'var(--written-bg)' : 'transparent',
+              borderRadius: now ? 14 : 0,
+              padding: now ? '12px 14px' : '0 0 22px',
+              marginBottom: now ? 4 : 0, marginTop: now ? -6 : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.8,
+                      color: now || done ? 'var(--ink)' : 'var(--ink-3)' }}>{m.fi}</span>
+                    {now && (
+                      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 9.5, letterSpacing: '0.08em',
+                        color: 'var(--written)', background: '#fff', borderRadius: 999, padding: '4px 9px' }}>
+                        NYT{bilingual && <span style={{ fontWeight: 500, fontFamily: 'var(--font-body)', opacity: 0.7, marginLeft: 4 }}>now</span>}
+                      </span>
+                    )}
+                  </div>
+                  {bilingual && (
+                    <div style={{ fontFamily: 'var(--font-body)', fontSize: 12.5, color: 'var(--ink-3)', marginTop: 2 }}>{m.en}</div>
                   )}
                 </div>
-                <span className="ps-label ps-num" style={{ color: 'var(--ink-3)', flexShrink: 0, fontSize: 11 }}>{s.cefr}</span>
+                <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--ink-3)', flexShrink: 0 }}>{m.lvl}</span>
               </div>
-              <div className="ps-caption" style={{ marginTop: 4 }}>{s.desc}</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 9 }}>
-                {s.skills.map((sk) => <SkillChip key={sk} skill={sk} />)}
+              <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13.5, lineHeight: 1.4,
+                color: now ? 'var(--ink-2)' : 'var(--ink-3)', margin: '8px 0 0', textWrap: 'pretty' }}>{m.desc}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 10 }}>
+                {m.skills.map((sk) => <SkillChip key={sk} skill={sk} />)}
               </div>
-              {status === 'locked' && (
-                <div className="ps-caption" style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ink-3)' }}>
-                  <I name="lock" size={12} /> {bi(`Avautuu ${s.at} sanalla`, `Unlocks at ${s.at} words`)}
+              {locked && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 10, color: 'var(--ink-3)' }}>
+                  <I name="lock" size={13} sw={2} />
+                  <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13, color: 'var(--ink-2)' }}>
+                    Avautuu {m.at} sanalla
+                    {bilingual && <span style={{ fontWeight: 500, color: 'var(--ink-3)', marginLeft: 5 }}>Unlocks at {m.at} words</span>}
+                  </span>
                 </div>
               )}
             </div>

@@ -37,7 +37,7 @@ export const ISLAND_TOPICS: IslandTopic[] = [
       { q: 'What is your name and where are you from?', eg: 'My name is Maria and I am from Nigeria.' },
       { q: 'Where do you live now, and who do you live with?', eg: 'I live in Espoo with my family.' },
       { q: 'Why did you come to Finland?', eg: 'I came to Finland for work.' },
-      { q: 'What do you do — work or study?', eg: 'I am a nurse.' },
+      { q: 'What do you do, work or study?', eg: 'I am a nurse.' },
       { q: 'What languages do you speak?', eg: 'I speak English and a little Finnish.' },
       { q: 'What do you hope to do here this year?', eg: 'I want to learn Finnish and find a job.' },
     ],
@@ -62,7 +62,7 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     fi: 'Harrastukset',
     en: 'Hobbies & free time',
     icon: 'flame',
-    blurb: 'What you love doing — and why.',
+    blurb: 'What you love doing, and why.',
     questions: [
       { q: 'What is your favourite hobby?', eg: 'My favourite hobby is football.' },
       { q: 'Why do you like it so much?', eg: 'I like it because it is fun.' },
@@ -76,7 +76,7 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     fi: 'Perhe ja ystävät',
     en: 'Family & friends',
     icon: 'home',
-    blurb: 'The people in your life — and what you say to them.',
+    blurb: 'The people in your life and what you say to them.',
     questions: [
       { q: 'Who is in your family?', eg: 'I have a wife and two children.' },
       { q: 'What do they do?', eg: 'My wife is a teacher.' },

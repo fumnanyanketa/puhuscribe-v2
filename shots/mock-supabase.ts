@@ -36,6 +36,20 @@ const WORDS = [
   { id: 14, base_form: 'koti',   translation_en: 'home',          ipa: '/ˈkoti/' },
   { id: 15, base_form: 'raha',   translation_en: 'money',         ipa: '/ˈrɑhɑ/' },
   { id: 16, base_form: 'kello',  translation_en: 'clock, o’clock', ipa: '/ˈkelːo/' },
+  { id: 17, base_form: 'kahvi',    translation_en: 'coffee',        ipa: '/\u02c8k\u0251h\u028bi/' },
+  { id: 18, base_form: 'juna',     translation_en: 'train',         ipa: '/\u02c8jun\u0251/' },
+  { id: 19, base_form: 'kiire',    translation_en: 'hurry, rush',   ipa: '/\u02c8ki\u02d0re/' },
+  { id: 20, base_form: 'melkein',  translation_en: 'almost',        ipa: '/\u02c8melkein/' },
+  { id: 21, base_form: 'sopia',    translation_en: 'to fit, agree', ipa: '/\u02c8sopi\u0251/' },
+  { id: 22, base_form: 'tietysti', translation_en: 'of course',     ipa: '/\u02c8tietysti/' },
+  { id: 23, base_form: 'leip\u00e4',    translation_en: 'bread',   ipa: '/\u02c8leip\u00e6/' },
+  { id: 24, base_form: 'maito',    translation_en: 'milk',          ipa: '/\u02c8m\u0251ito/' },
+  { id: 25, base_form: 'kauppa',   translation_en: 'shop, store',   ipa: '/\u02c8k\u0251up\u02d0\u0251/' },
+  { id: 26, base_form: 'katu',     translation_en: 'street',        ipa: '/\u02c8k\u0251tu/' },
+  { id: 27, base_form: 'yst\u00e4v\u00e4',   translation_en: 'friend',  ipa: '/\u02c8yst\u00e6\u028b\u00e6/' },
+  { id: 28, base_form: 'perhe',    translation_en: 'family',        ipa: '/\u02c8perhe/' },
+  { id: 29, base_form: 'lapsi',    translation_en: 'child',         ipa: '/\u02c8l\u0251psi/' },
+  { id: 30, base_form: 'aika',     translation_en: 'time',          ipa: '/\u02c8\u0251ik\u0251/' },
 ].map((w, i) => ({ ...w, frequency_rank: i + 1 }))
 
 /* ----------------------------- topics --------------------------------- */
@@ -71,7 +85,7 @@ let due7 = 0
 let recent8 = 0
 for (let n = 0; n < 60; n++) {
   const state = n < 22 ? 'review' : n < 30 ? 'learning' : 'new'
-  const wordId = (n % WORDS.length) + 1
+  const wordId = (n % 16) + 1 // only the first 16 words are "met" → 17-30 stay unmet for the Learn tab
   let due: string
   let lastReview: string | null = null
   if (state === 'new') {
@@ -145,7 +159,14 @@ for (let d = 0; d < 5; d++) {
   }
 }
 
-const USERS = [{ id: USER.id, email: USER.email, progress: { onboarded: true, sprint: { size: 16, idx: 16, completed: true } } }]
+// ?sprint=open renders the mid-sprint Home (resume card); default is completed.
+const sprintOpen = typeof location !== 'undefined' && new URLSearchParams(location.search).get('sprint') === 'open'
+const USERS = [{
+  id: USER.id, email: USER.email,
+  progress: sprintOpen
+    ? { onboarded: true, sprint: { size: 150, idx: 90, completed: false } }
+    : { onboarded: true, sprint: { size: 150, idx: 150, completed: true } },
+}]
 
 const TABLES: Record<string, any[]> = {
   words: WORDS,

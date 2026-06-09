@@ -1,33 +1,29 @@
-import { useState, useMemo } from 'react'
-import { Orb, OrbCluster, Label } from '../components/primitives'
-import { Btn, IconBtn } from '../components/ui'
+import { useState, useMemo, useEffect } from 'react'
+import { BrandMark } from '../components/primitives'
+import { Bar, Ring, SpeakerBtn } from '../components/ui'
 import { I } from '../components/icons'
+import { ExBar, CenterLabel, Counter, CTA, Eyebrow, Gloss, IconTile, OptionRow, StackLabel } from '../components/kit'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
-import { fetchSprintWords, fetchNextWords, SprintWord } from '../lib/data/content'
+import { fetchSprintWords, SprintWord } from '../lib/data/content'
 import { recordWordEncounter } from '../lib/data/cards'
 import { useProgress } from '../lib/data/progress'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
+import { speak } from '../lib/tts'
 
-// Orb gradient pairs cycled per card (the DB carries no presentation colour).
-const ORB_PALETTE: [string, string][] = [
-  ['var(--orb-magenta)', 'var(--orb-pink)'],
-  ['var(--orb-violet)',  'var(--orb-magenta)'],
-  ['var(--orb-deep)',    'var(--orb-violet)'],
-  ['var(--orb-pink)',    '#7FC6D8'],
-  ['var(--orb-magenta)', 'var(--orb-violet)'],
-]
+/* ---------------------------------------------------------------------------
+ * Day One = the 150-word vocabulary sprint, nothing else (owner decision:
+ * no size pickers; the recurring 15-a-day intake lives on the Learn tab).
+ * New users land here straight after onboarding; an in-flight sprint
+ * auto-resumes; Home carries the resume card for returning users.
+ * ------------------------------------------------------------------------- */
 
-// Set sizes the learner can pick. Capped to however many words actually exist.
-const SIZES = [50, 100, 150]
-
-// Saved progress, per user, in this browser: which set, and how far in.
-type Saved = { size: number; idx: number }
+const SPRINT_CAP = 150
 
 export function DayOne({ go }: { go: (s: AppScreen) => void }) {
-  const { data: words, loading, error } = useAsync<SprintWord[]>(fetchSprintWords, [])
+  const { data: words, loading, error } = useAsync<SprintWord[]>(() => fetchSprintWords(SPRINT_CAP), [])
 
   if (loading) return <StatePane title="Ladataan sanoja…" />
   if (error) return <StatePane tone="error" title="Sanojen lataus epäonnistui" detail={error} />
@@ -36,166 +32,173 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
   return <SprintFlow words={words} go={go} />
 }
 
-type RunSession = { deck: SprintWord[]; startIdx: number; mode: 'initial' | 'daily'; size: number }
-
 function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
-  const maxWords = words.length
   const { progress, saveSprint } = useProgress()
-  const { user } = useAuth()
+  const size = Math.min(progress.sprint?.size ?? SPRINT_CAP, words.length)
 
-  // Resume offer (in-progress initial set) from cross-device progress.
+  // Once the sprint exists (started anywhere, even at word 0) we go straight
+  // to the runner; the intro is a one-time takeover for brand-new users.
   const s = progress.sprint
-  const resumable: Saved | null = (s && !s.completed && s.idx > 0 && s.idx < s.size)
-    ? { size: Math.min(s.size, maxWords), idx: Math.min(s.idx, Math.min(s.size, maxWords)) }
-    : null
+  const inFlight = Boolean(s && !s.completed)
+  const startIdx = inFlight ? Math.min(s!.idx, size - 1) : 0
+  const [running, setRunning] = useState(inFlight)
 
-  // Auto-resume an in-progress set at mount, so the learner picks up exactly
-  // where they stopped. (App gates rendering on progress being resolved.)
-  const [session, setSession] = useState<RunSession | null>(
-    () => resumable
-      ? { deck: words.slice(0, resumable.size), startIdx: Math.min(resumable.idx, resumable.size - 1), mode: 'initial', size: resumable.size }
-      : null,
-  )
-  const [loading, setLoading] = useState(false)
-  const [err, setErr] = useState('')
+  // Cross-device progress can resolve after mount; enter the runner when an
+  // in-flight sprint appears. Never auto-exit (the finished pane stays up).
+  useEffect(() => {
+    if (inFlight && !running) setRunning(true)
+  }, [inFlight, running])
 
-  // The full set is always offered; smaller picks only if there's room for them.
-  const sizeOptions = useMemo(() => {
-    const opts = SIZES.filter((n) => n < maxWords)
-    opts.push(maxWords)
-    return Array.from(new Set(opts)).sort((a, b) => a - b)
-  }, [maxWords])
-
-  const startInitial = (size: number) => {
-    saveSprint({ size, idx: 0, completed: false })
-    setSession({ deck: words.slice(0, size), startIdx: 0, mode: 'initial', size })
-  }
-  // Daily intake: fetch the next N words the learner hasn't met, then run them.
-  const startDaily = async (n: number) => {
-    if (!user || loading) return
-    setLoading(true); setErr('')
-    try {
-      const deck = await fetchNextWords(user.id, n)
-      if (deck.length === 0) { setErr('No new words available right now — you have met them all.'); setLoading(false); return }
-      setSession({ deck, startIdx: 0, mode: 'daily', size: deck.length })
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e)); setLoading(false)
-    }
-  }
-
-  if (session) {
+  if (running) {
     return (
       <SprintRunner
-        key={session.mode + ':' + session.size + ':' + session.startIdx}
-        deck={session.deck}
-        startIdx={session.startIdx}
-        onAdvance={session.mode === 'initial'
-          ? (idx) => saveSprint({ size: session.size, idx, completed: idx >= session.size })
-          : () => { /* daily batch: no resume state — met words are skipped next time */ }}
-        onRestart={() => setSession(null)}
-        go={go}
+        deck={words.slice(0, size)}
+        startIdx={startIdx}
+        labelFor={(wave) => ({ fi: `DAY ONE · WAVE ${wave} / 8` })}
+        onAdvance={(idx) => saveSprint({ size, idx, completed: idx >= size })}
+        onExit={() => go('home')}
+        done={{
+          labelFi: 'SPRINTTI VALMIS', labelEn: 'Sprint complete',
+          body: `You recognised ${size} words. Next: make them yours with daily review, and start building sentences from your own life.`,
+          primaryFi: 'Rakenna lausepankkia', primaryEn: 'Build your sentence bank', onPrimary: () => go('islands'),
+          secondaryFi: 'Kotiin', secondaryEn: 'Home', onSecondary: () => go('home'),
+        }}
       />
     )
   }
 
-  // No active session: the vocabulary hub — new words daily, or a bigger sprint.
-  // (An in-progress set auto-resumes above, so no manual "continue" is needed.)
-  return <Start sizeOptions={sizeOptions} onPick={startInitial}
-    onDaily={startDaily} dailyLoading={loading} dailyErr={err} go={go} />
+  return (
+    <SprintIntro
+      total={size}
+      onStart={() => { saveSprint({ size, idx: 0, completed: false }); setRunning(true) }}
+      onClose={() => go('home')}
+    />
+  )
 }
 
-/* -------------------------------------------------------------------------- */
-/* Start — the vocabulary hub: new words daily, or a bigger first sprint       */
-/* -------------------------------------------------------------------------- */
-function Start({ sizeOptions, onPick, onDaily, dailyLoading, dailyErr, go }: {
-  sizeOptions: number[]
-  onPick: (size: number) => void
-  onDaily: (n: number) => void
-  dailyLoading: boolean
-  dailyErr: string
-  go: (s: AppScreen) => void
-}) {
-  const { bi } = useLang()
-  const DAILY = [10, 15, 30]
-  return (
-    <ScreenScroll bottom={110}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
-        <Label color="var(--written)">Vocabulary</Label>
-        <span style={{ width: 40 }} />
-      </div>
+/* =====================================================================
+   SPRINT INTRO — Day One first-run takeover
+   ===================================================================== */
+const SPRINT_STEPS = [
+  { icon: 'eye',    fi: 'Näe sana',            en: 'See the word' },
+  { icon: 'volume', fi: 'Kuule se',            en: 'Hear it said' },
+  { icon: 'check',  fi: 'Tunnista merkitys',   en: 'Recognise the meaning' },
+]
 
-      <div style={{ textAlign: 'center', marginTop: 10 }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={104} /></div>
-        <h1 className="ps-title-1" style={{ marginTop: 12 }}>Sanasto</h1>
-        <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8, maxWidth: 300, marginInline: 'auto' }}>
-          Learn new words and grow your bank. A little every day is how Finnish sticks.
+export function SprintIntro({ total, onStart, onClose, embedded = false }: {
+  total: number
+  onStart: () => void
+  onClose?: () => void
+  embedded?: boolean // rendered inside the Learn tab (tab bar visible, no close)
+}) {
+  const { bilingual } = useLang()
+  return (
+    <ScreenScroll pad={24} bottom={embedded ? 96 : 26}>
+      {!embedded && <ExBar nav="close" onNav={onClose} center={<CenterLabel fi="PÄIVÄ YKSI" en="Day one" />} />}
+      <div style={{ marginTop: embedded ? 6 : 22 }}>
+        <Eyebrow fi="SANASTOSPRINTTI" en="Vocabulary sprint" color="var(--written)" style={{ marginBottom: 12 }} />
+        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 27.4, lineHeight: 0.98,
+          letterSpacing: '-0.035em', color: 'var(--ink)', margin: 0 }}>Ensimmäiset {total} sanaa</h1>
+        <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.9, lineHeight: 1.5,
+          color: 'var(--ink-2)', margin: '14px 0 0', textWrap: 'pretty' }}>
+          The first 30 minutes take you through the {total} most common Finnish words, enough to start
+          recognising the language around you.
         </p>
       </div>
 
-      {dailyErr && (
-        <div className="ps-body" style={{ marginTop: 16, padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{dailyErr}</div>
+      {/* Goal card with ring */}
+      <div className="ps-card" style={{ marginTop: 20, padding: 22, borderRadius: 'var(--r-xl)',
+        display: 'flex', alignItems: 'center', gap: 20 }}>
+        <Ring value={0} max={total} size={96} stroke={11} color="var(--written)" track="var(--glass-deep)">
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20.3,
+              letterSpacing: '-0.03em', color: 'var(--ink)', lineHeight: 1 }}>0</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11.5, color: 'var(--ink-3)', marginTop: 2 }}>/ {total}</div>
+          </div>
+        </Ring>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
+            Tunnista {total} sanaa
+          </div>
+          <Gloss>Recognise {total} words</Gloss>
+          <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13.5, lineHeight: 1.4,
+            color: 'var(--ink-2)', margin: '8px 0 0' }}>
+            Etenet aalloittain. Edistymisesi tallentuu.{' '}
+            {bilingual && <span style={{ color: 'var(--ink-3)' }}>In waves. Your progress saves.</span>}
+          </p>
+        </div>
+      </div>
+
+      {/* How it works */}
+      <Eyebrow fi="NÄIN SE TOIMII" en="How it works" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 14 }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {SPRINT_STEPS.map((st, i) => (
+          <div key={st.icon} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <IconTile icon={st.icon} size={44} r={13} color="var(--written)" bg="var(--written-bg)" />
+            <div style={{ flex: 1 }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.3, color: 'var(--ink)' }}>{st.fi}</span>
+              {bilingual && (
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-3)', display: 'block', marginTop: 1 }}>{st.en}</span>
+              )}
+            </div>
+            <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14.9, color: 'var(--ink-3)' }}>{i + 1}</span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, minHeight: 22 }} />
+      <CTA fi="Aloita sprintti" en="Start the sprint" icon="sparkle" variant="ink" onClick={onStart} />
+      {onClose && !embedded && (
+        <button className="ps-press" onClick={onClose} style={{ marginTop: 12, width: '100%',
+          background: 'transparent', border: 'none', cursor: 'pointer', padding: '6px 0' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14.5, color: 'var(--ink-2)' }}>
+            Tutustun sovellukseen ensin{' '}
+            {bilingual && <span style={{ fontWeight: 500, color: 'var(--ink-3)' }}>Explore the app first, and pick this up anytime</span>}
+          </span>
+        </button>
       )}
-
-      {/* New words — the everyday action (the next words you have not met yet) */}
-      <div style={{ marginTop: 20 }}>
-        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Uudet sanat tänään', 'New words today')}</Label>
-        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-          {DAILY.map((n) => (
-            <button key={n} disabled={dailyLoading} onClick={() => onDaily(n)} className="ps-press ps-card" style={{
-              flex: 1, padding: '16px 8px', textAlign: 'center', cursor: dailyLoading ? 'default' : 'pointer',
-              opacity: dailyLoading ? 0.6 : 1, border: '1.5px solid var(--written-line)',
-            }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: 'var(--written)', letterSpacing: '-0.03em' }}>{n}</div>
-              <div className="ps-caption" style={{ fontSize: 11, marginTop: 2 }}>{bi('uutta', 'new')}</div>
-            </button>
-          ))}
-        </div>
-        <div className="ps-caption" style={{ marginTop: 10, marginLeft: 2 }}>
-          {dailyLoading ? bi('Haetaan…', 'Loading…') : bi('Sanat, joita et muista, näkyvät Kertaus-välilehdellä.', 'Words you miss show up in your Review tab.')}
-        </div>
-      </div>
-
-      {/* A bigger first push — the Day One Sprint sets */}
-      <div style={{ marginTop: 24 }}>
-        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Tai iso ryntäys', 'Or a bigger sprint')}</Label>
-        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-          {sizeOptions.map((n) => (
-            <button key={n} onClick={() => onPick(n)} className="ps-press ps-card" style={{
-              flex: 1, padding: '14px 8px', textAlign: 'center', cursor: 'pointer',
-            }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 21, letterSpacing: '-0.03em' }}>{n}</div>
-              <div className="ps-caption" style={{ fontSize: 11, marginTop: 2 }}>{bi('sanaa', 'words')}</div>
-            </button>
-          ))}
-        </div>
-      </div>
     </ScreenScroll>
   )
 }
 
-/* -------------------------------------------------------------------------- */
-/* The running sprint — card → quick recognition quiz, per word               */
-/* -------------------------------------------------------------------------- */
-function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
+/* =====================================================================
+   SPRINT RUNNER — word card → recognise quiz, per word. Shared by the
+   Day One sprint and the daily 15-word intake (Learn tab).
+   ===================================================================== */
+export interface RunnerDone {
+  labelFi: string; labelEn: string
+  body: string
+  primaryFi: string; primaryEn: string; onPrimary: () => void
+  secondaryFi?: string; secondaryEn?: string; onSecondary?: () => void
+}
+
+export function SprintRunner({ deck, startIdx, labelFor, onAdvance, onExit, done }: {
   deck: SprintWord[]
   startIdx: number
+  labelFor: (wave: number) => { fi: string; en?: string }
   onAdvance: (idx: number) => void
-  onRestart: () => void
-  go: (s: AppScreen) => void
+  onExit: () => void
+  done: RunnerDone
 }) {
-  const { bi } = useLang()
+  const { bilingual } = useLang()
   const { user } = useAuth()
   const total = deck.length
   const [idx, setIdx] = useState(Math.max(0, Math.min(startIdx, total - 1)))
   const [phase, setPhase] = useState<'card' | 'quiz'>('card')
   const [picked, setPicked] = useState<string | null>(null)
   const [mastered, setMastered] = useState(Math.max(0, Math.min(startIdx, total)))
-  const [done, setDone] = useState(false)
+  const [finished, setFinished] = useState(false)
+  const [playing, setPlaying] = useState(false)
 
   const w = deck[idx]
-  const orb = ORB_PALETTE[idx % ORB_PALETTE.length]
   const wave = Math.min(8, Math.floor((mastered / total) * 8) + 1)
+  const label = labelFor(wave)
+
+  const play = () => {
+    setPlaying(true)
+    speak(w.fi)
+    setTimeout(() => setPlaying(false), 1000)
+  }
 
   const options = useMemo(() => {
     const pool = deck.filter((x) => x.en !== w.en)
@@ -209,14 +212,12 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
   }, [idx, deck, w.en])
 
   const next = () => {
-    // The learner just met this word: enter it into the spaced-repetition
-    // scheduler (a miss seeds 'Again' so it returns sooner). Fire-and-forget.
     if (user) void recordWordEncounter(user.id, w.id, picked === w.en)
     const nx = idx + 1
     setMastered((m) => Math.min(total, m + 1))
     if (nx >= total) {
-      onAdvance(total) // mark the set complete
-      setDone(true)
+      onAdvance(total)
+      setFinished(true)
       return
     }
     onAdvance(nx)
@@ -225,22 +226,22 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
     setIdx(nx)
   }
 
-  if (done) {
+  if (finished) {
     return (
-      <ScreenScroll bottom={110}>
+      <ScreenScroll bottom={26}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
           alignItems: 'center', textAlign: 'center', gap: 24 }}>
-          <OrbCluster size={190} />
+          <BrandMark size={140} />
           <div>
-            <Label color="var(--written)" style={{ display: 'block', marginBottom: 10 }}>{bi('Ryntäys valmis', 'Sprint complete')}</Label>
-            <h2 className="ps-title-1">{bi('Hyvää työtä!', 'Great work!')}</h2>
-            <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>
-              You recognised {total} words. Next: turn them into lasting memory with daily review.
-            </p>
+            <StackLabel fi={done.labelFi} en={done.labelEn} color="var(--written)" style={{ marginBottom: 10 }} />
+            <h2 className="ps-title-1">Hyvää työtä!</h2>
+            <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>{done.body}</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
-            <Btn variant="primary" block icon="cards" onClick={() => go('daily')}>{bi('Aloita kertaus', 'Start daily review')}</Btn>
-            <Btn variant="light" block onClick={onRestart}>{bi('Valitse toinen setti', 'Choose another set')}</Btn>
+            <CTA fi={done.primaryFi} en={done.primaryEn} icon="lines" variant="ink" onClick={done.onPrimary} />
+            {done.onSecondary && (
+              <CTA fi={done.secondaryFi ?? ''} en={done.secondaryEn} variant="light" onClick={done.onSecondary} />
+            )}
           </div>
         </div>
       </ScreenScroll>
@@ -248,114 +249,92 @@ function SprintRunner({ deck, startIdx, onAdvance, onRestart, go }: {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0 }}>
-      <ScreenScroll bottom={110}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
-          <Label color="var(--written)">{`Day One · Wave ${wave} / 8`}</Label>
-          <span className="ps-label ps-num" style={{ color: 'var(--ink)' }}>{mastered}/{total}</span>
-        </div>
+    <ScreenScroll bottom={26}>
+      <ExBar nav="close" onNav={onExit}
+        center={<CenterLabel fi={label.fi} en={label.en} />}
+        right={<Counter a={mastered} b={total} />}>
+        <Bar value={(mastered / total) * 100} color="var(--ink)" track="var(--glass-deep)" h={7} />
+      </ExBar>
 
-        {/* Gradient progress bar */}
-        <div style={{ marginTop: 12, height: 7, borderRadius: 999, background: 'var(--glass-deep)', overflow: 'hidden' }}>
-          <div style={{
-            width: `${(mastered / total) * 100}%`, height: '100%', borderRadius: 999,
-            background: 'linear-gradient(90deg, var(--written), var(--spoken))',
-            transition: 'width .5s',
-          }} />
-        </div>
-
-        {phase === 'card' ? (
-          <div key={'card' + idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 22 }}>
-            <div className="ps-glass" style={{ padding: 0, overflow: 'hidden', flexShrink: 0, borderRadius: 'var(--r-2xl)' }}>
-              {/* Orb hero panel */}
-              <div style={{
-                height: 132, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'radial-gradient(120% 90% at 70% 20%, rgba(255,255,255,.5), transparent), var(--lav-tint)',
-              }}>
-                <div style={{ position: 'absolute', top: 14, left: 16 }}>
-                  <Label color="var(--written)">{bi('Sana', 'word')}</Label>
-                </div>
-                <OrbCluster size={96} />
+      {phase === 'card' ? (
+        <div key={'card' + idx} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div className="ps-card" style={{ marginTop: 20, padding: 0, borderRadius: 'var(--r-xl)', overflow: 'hidden' }}>
+            {/* Violet header band: SANA label + tap-to-hear */}
+            <div style={{ background: 'var(--written-bg)', padding: '18px 22px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
+              <StackLabel fi="SANA" en="word" color="var(--written)" />
+              <SpeakerBtn reg="kirja" size={50} playing={playing} onClick={play} />
+            </div>
+            <div style={{ padding: '22px 24px 26px' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 37.4,
+                letterSpacing: '-0.04em', lineHeight: 1, color: 'var(--ink)' }}>{w.fi}</div>
+              {w.ipa && (
+                <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 17.2,
+                  color: 'var(--written)', marginTop: 12 }}>{w.ipa}</div>
+              )}
+              <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 16.3, color: 'var(--ink-2)', marginTop: 8 }}>
+                "{w.en}"
               </div>
-
-              {/* Word info */}
-              <div style={{ padding: 22 }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 44, lineHeight: 1, letterSpacing: '-0.04em' }}>{w.fi}</div>
-                </div>
-                {w.ipa && (
-                  <div className="ps-num" style={{ marginTop: 8, fontSize: 18, color: 'var(--written)', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>
-                    {w.ipa}
-                  </div>
-                )}
-                <div className="ps-body-l" style={{ marginTop: 8, color: 'var(--ink-2)' }}>"{w.en}"</div>
-
-                {/* Register mini row */}
-                <div style={{
-                  marginTop: 16, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
-                  paddingTop: 16, borderTop: '1px solid var(--glass-edge)',
-                }}>
-                  <span className="ps-label" style={{ color: 'var(--written)' }}>Kirja</span>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15 }}>{w.fi}</span>
-                  <span style={{ color: 'var(--ink-3)' }}><I name="arrow" size={15} /></span>
-                  <span className="ps-label" style={{ color: 'var(--spoken)' }}>Puhe</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15 }}>{w.fi}</span>
-                  <span className="ps-caption">· sama</span>
-                </div>
+              <hr className="ps-rule" style={{ margin: '20px 0' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <span className="ps-label" style={{ color: 'var(--written)' }}>KIRJA</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16.3, color: 'var(--ink)' }}>{w.fi}</span>
+                <span style={{ color: 'var(--ink-3)' }}><I name="arrow" size={18} sw={2} /></span>
+                <span className="ps-label" style={{ color: 'var(--spoken)' }}>PUHE</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16.3, color: 'var(--ink)' }}>{w.fi}</span>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink-3)' }}>· sama</span>
               </div>
             </div>
-
-            <div style={{ flex: 1, minHeight: 14 }} />
-            <Btn variant="primary" block iconRight="arrow" onClick={() => setPhase('quiz')}>{bi('Testaa minua', 'Test me')}</Btn>
           </div>
-        ) : (
-          <div key={'quiz' + idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 22 }}>
-            <div style={{ textAlign: 'center', marginTop: 10 }}>
-              <Label color="var(--ink-3)">{bi('Tunnista', 'Recognise')}</Label>
-              <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 8px' }}>
-                <Orb size={76} from={orb[0]} to={orb[1]} />
-              </div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 46, lineHeight: 1.05, letterSpacing: '-0.04em' }}>{w.fi}</div>
-              <div className="ps-caption" style={{ marginTop: 6 }}>{bi('Mitä tämä tarkoittaa?', 'What does this mean?')}</div>
+          <div style={{ flex: 1, minHeight: 16 }} />
+          <CTA fi="Testaa minua" en="Test me" iconRight="arrow" variant="ink" onClick={() => setPhase('quiz')} />
+        </div>
+      ) : (
+        <div key={'quiz' + idx} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ textAlign: 'center', marginTop: 14 }}>
+            <StackLabel fi="TUNNISTA" en="Recognise" />
+            <div style={{ display: 'flex', justifyContent: 'center', margin: '14px 0 4px' }}>
+              <SpeakerBtn reg="kirja" size={52} playing={playing} onClick={play} />
             </div>
-
-            <div style={{ flex: 1 }} />
-
-            <div style={{ display: 'grid', gap: 10 }}>
-              {options.map((opt) => {
-                const correct = opt === w.en, chosen = picked === opt
-                let bg = 'var(--glass-2)', bd = 'var(--glass-line)', col = 'var(--ink)'
-                if (picked) {
-                  if (correct) { bg = 'rgba(107,70,193,.12)'; bd = 'var(--written)'; col = 'var(--written)' }
-                  else if (chosen) { bg = 'var(--flag-bg)'; bd = 'var(--flag)'; col = 'var(--flag)' }
-                }
-                return (
-                  <button key={opt} disabled={!!picked} onClick={() => setPicked(opt)} className="ps-press" style={{
-                    textAlign: 'left', padding: '16px 20px', borderRadius: 'var(--r-md)',
-                    cursor: picked ? 'default' : 'pointer', border: `1.5px solid ${bd}`,
-                    background: bg, color: col, fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16,
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  }}>
-                    {opt}
-                    {picked && correct && <I name="check" size={20} />}
-                    {picked && chosen && !correct && <I name="close" size={20} />}
-                  </button>
-                )
-              })}
-            </div>
-
-            <div style={{ marginTop: 14, minHeight: 54 }}>
-              {picked && (
-                <Btn variant={picked === w.en ? 'accent' : 'primary'} block iconRight="arrow" onClick={next}>
-                  {picked === w.en ? bi('Hienoa!', 'Great, continue') : bi('Jatka', 'Continue')}
-                </Btn>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 33.1,
+              letterSpacing: '-0.04em', color: 'var(--ink)' }}>{w.fi}</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15.5, color: 'var(--ink-2)', marginTop: 8 }}>
+              Mitä tämä tarkoittaa?
+              {bilingual && (
+                <span style={{ display: 'block', fontWeight: 500, fontSize: 13.5, color: 'var(--ink-3)', marginTop: 1 }}>
+                  What does this mean?
+                </span>
               )}
             </div>
           </div>
-        )}
-      </ScreenScroll>
-    </div>
+
+          <div style={{ flex: 1, minHeight: 12 }} />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+            {options.map((opt) => {
+              const correct = opt === w.en, chosen = picked === opt
+              const state = picked ? (correct ? 'correct' : chosen ? 'wrong' : null) : null
+              return (
+                <OptionRow key={opt} disabled={!!picked} state={state} onClick={() => setPicked(opt)}>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                    {opt}
+                    {picked && correct && <span style={{ color: 'var(--spoken)' }}><I name="check" size={22} sw={2.4} /></span>}
+                    {picked && chosen && !correct && <span style={{ color: '#C2603F' }}><I name="close" size={22} sw={2.4} /></span>}
+                  </span>
+                </OptionRow>
+              )
+            })}
+          </div>
+
+          <div style={{ marginTop: 14, minHeight: 56 }}>
+            {picked && (
+              <CTA variant={picked === w.en ? 'spoken' : 'ink'} iconRight="arrow" onClick={next}
+                fi={picked === w.en ? 'Hienoa!' : 'Jatka'}
+                en={picked === w.en ? 'Great, continue' : 'Continue'} />
+            )}
+          </div>
+        </div>
+      )}
+    </ScreenScroll>
   )
 }

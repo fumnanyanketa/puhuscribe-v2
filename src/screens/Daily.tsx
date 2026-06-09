@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from 'react'
-import { OrbCluster, Label } from '../components/primitives'
-import { Btn, IconBtn } from '../components/ui'
-import { I } from '../components/icons'
-import { ScreenScroll, AppScreen } from '../components/Shell'
+import { BrandMark } from '../components/primitives'
+import { Bar } from '../components/ui'
+import { CTA, ExBar, CenterLabel, HubHeader, IconTile } from '../components/kit'
+import { ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { RecallRunner } from '../components/RecallRunner'
 import { useAsync } from '../lib/data/useAsync'
@@ -15,6 +15,7 @@ import { fetchReviewOverview, ReviewOverview, ReviewItem } from '../lib/data/rev
 const SESSION_SIZE = 12
 const VOCAB_GOAL = 1000
 const SENT_GOAL = 1000
+const BODY_BOTTOM = 96
 
 type View = 'hub' | 'vocab' | 'sentences'
 
@@ -23,11 +24,16 @@ export function Daily({ go }: { go: (s: AppScreen) => void }) {
   const { bi } = useLang()
   const [view, setView] = useState<View>('hub')
 
-  if (!user) return <StatePane title={bi('Kirjaudu sisään', 'Sign in')} detail="Sign in to start your review." bottom={110} />
+  if (!user) return <StatePane title={bi('Kirjaudu sisään', 'Sign in')} detail="Sign in to start your review." bottom={BODY_BOTTOM + 14} />
 
   if (view === 'vocab') return <VocabTrack userId={user.id} go={go} onExit={() => setView('hub')} />
   if (view === 'sentences') return <SentenceTrack userId={user.id} go={go} onExit={() => setView('hub')} />
-  return <Hub userId={user.id} go={go} onVocab={() => setView('vocab')} onSentences={() => setView('sentences')} />
+  return (
+    <>
+      <Hub userId={user.id} go={go} onVocab={() => setView('vocab')} onSentences={() => setView('sentences')} />
+      <BottomNav active="home" onNav={go} />
+    </>
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -39,85 +45,83 @@ function Hub({ userId, go, onVocab, onSentences }: {
   const { bi } = useLang()
   const { data, loading, error } = useAsync<ReviewOverview>(() => fetchReviewOverview(userId), [userId])
 
-  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
-  if (error) return <StatePane tone="error" title="Couldn't load your review" detail={error} bottom={110} />
+  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={BODY_BOTTOM + 14} />
+  if (error) return <StatePane tone="error" title="Couldn't load your review" detail={error} bottom={BODY_BOTTOM + 14} />
   const o = data!
 
   return (
-    <ScreenScroll bottom={110}>
-      <Label color="var(--written)">Daily Review</Label>
-      <h1 className="ps-title-1" style={{ marginTop: 8 }}>Päivän kertaus</h1>
-      <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
-        Type each one from memory, because that's what makes it stick.
-      </p>
+    <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 62 }}>
+      <HubHeader eyebrowFi="DAILY REVIEW" title="Päivän kertaus"
+        sub="Type each one from memory. That's what makes it stick." />
 
-      <div style={{ display: 'flex', justifyContent: 'center', margin: '12px 0 4px' }}>
-        <OrbCluster size={104} />
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0 4px' }}>
+        <BrandMark size={110} />
       </div>
 
-      <div style={{ display: 'grid', gap: 14, marginTop: 10 }}>
-        <TrackCard
-          icon="cards" accent="var(--written)" accentBg="var(--written-bg)"
-          fi="Sanasto" en="Vocabulary" unitFi="sanaa" unitEn="words"
-          bank={o.vocabBank} goal={VOCAB_GOAL} due={o.vocabDue}
-          startFi="Aloita sanat" startEn="Learn words" onStart={() => go('dayone')} onReview={onVocab}
-        />
-        <TrackCard
-          icon="island" accent="var(--spoken)" accentBg="var(--spoken-bg)"
-          fi="Omat lauseet" en="Your sentences" unitFi="lausetta" unitEn="sentences"
-          bank={o.sentBank} goal={SENT_GOAL} due={o.sentDue}
-          startFi="Lisää lauseita" startEn="Add sentences" onStart={() => go('islands')} onReview={onSentences}
-        />
-      </div>
+      <ReviewCard
+        icon="review" tone="var(--written)" toneBg="var(--written-bg)"
+        title="Sanasto" en="Vocabulary"
+        bank={o.vocabBank} goal={VOCAB_GOAL} unitFi="sanaa" unitEn="words" due={o.vocabDue}
+        empty={o.vocabBank === 0}
+        emptyFi="Opi sanoja" emptyEn="Learn words" onEmpty={() => go('learn')}
+        onReview={onVocab}
+      />
+      <div style={{ height: 16 }} />
+      <ReviewCard
+        icon="sprout" tone="var(--spoken)" toneBg="var(--spoken-bg)"
+        title="Omat lauseet" en="Your sentences"
+        bank={o.sentBank} goal={SENT_GOAL} unitFi="lausetta" unitEn="sentences" due={o.sentDue}
+        empty={o.sentBank === 0}
+        emptyFi="Lisää lauseita" emptyEn="Add sentences" onEmpty={() => go('islands')}
+        onReview={onSentences}
+      />
     </ScreenScroll>
   )
 }
 
-function TrackCard({ icon, accent, accentBg, fi, en, unitFi, unitEn, bank, goal, due, startFi, startEn, onStart, onReview }: {
-  icon: string; accent: string; accentBg: string
-  fi: string; en: string; unitFi: string; unitEn: string
-  bank: number; goal: number; due: number
-  startFi: string; startEn: string; onStart: () => void; onReview: () => void
+function ReviewCard({ icon, tone, toneBg, title, en, bank, goal, unitFi, unitEn, due, empty, emptyFi, emptyEn, onEmpty, onReview }: {
+  icon: string; tone: string; toneBg: string
+  title: string; en: string
+  bank: number; goal: number; unitFi: string; unitEn: string; due: number
+  empty: boolean; emptyFi: string; emptyEn: string; onEmpty: () => void
+  onReview: () => void
 }) {
-  const { bi, bilingual } = useLang()
-  const pct = Math.min(100, Math.round((bank / goal) * 100))
-  const empty = bank === 0
+  const { bilingual } = useLang()
+  const pct = Math.min(100, (bank / goal) * 100)
 
   return (
-    <div className="ps-card" style={{ padding: 18 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 13 }}>
-        <span style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: accentBg, color: accent,
-          display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <I name={icon} size={24} />
-        </span>
+    <div className="ps-card" style={{ padding: 18, borderRadius: 'var(--r-xl)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+        <IconTile icon={icon} color={tone} bg={toneBg} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17 }}>{bi(fi, en)}</div>
-          <div className="ps-caption ps-num" style={{ marginTop: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17.2, color: 'var(--ink)' }}>{title}</span>
+            {bilingual && <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-3)' }}>{en}</span>}
+          </div>
+          <div className="ps-num" style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.5, color: 'var(--ink-2)', marginTop: 4 }}>
             {bank} / {goal} {unitFi}
-            {bilingual && <span style={{ fontStyle: 'italic', opacity: 0.55 }}> ({unitEn})</span>}
+            {bilingual && <span style={{ fontSize: 12.5, color: 'var(--ink-3)', display: 'block' }}>{unitEn}</span>}
           </div>
         </div>
         {!empty && due > 0 && (
-          <span className="ps-chip" style={{ background: accentBg, color: accent, fontSize: 11, padding: '5px 10px', flexShrink: 0 }}>
-            {due} {bi('vuorossa', 'due')}
+          <span style={{ flexShrink: 0, background: toneBg, borderRadius: 14, padding: '9px 12px', textAlign: 'center' }}>
+            <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.8, color: tone, display: 'block' }}>{due}</span>
+            <span className="ps-label" style={{ color: tone, fontSize: 9.5 }}>vuorossa</span>
+            {bilingual && <span style={{ display: 'block', fontFamily: 'var(--font-body)', fontStyle: 'italic', fontSize: 10.5, color: 'var(--ink-3)' }}>due</span>}
           </span>
         )}
       </div>
 
-      {/* Bank progress toward the goal */}
-      <div style={{ marginTop: 14, height: 7, borderRadius: 999, background: 'var(--glass-deep)', overflow: 'hidden' }}>
-        <div style={{ width: `${pct}%`, height: '100%', borderRadius: 999, background: accent, transition: 'width .5s' }} />
+      <div style={{ marginTop: 16, marginBottom: 16 }}>
+        <Bar value={pct} color={tone} track="var(--glass-deep)" h={8} />
       </div>
 
-      <div style={{ marginTop: 14 }}>
-        {empty ? (
-          <Btn variant="light" block iconRight="arrow" onClick={onStart}>{bi(startFi, startEn)}</Btn>
-        ) : (
-          <Btn variant="primary" block iconRight="arrow" onClick={onReview}>
-            {due > 0 ? <>{bi('Kertaa', 'Review')} ({due})</> : bi('Kertaa', 'Review')}
-          </Btn>
-        )}
-      </div>
+      {empty ? (
+        <CTA fi={emptyFi} en={emptyEn} iconRight="arrow" variant="light" style={{ minHeight: 58 }} onClick={onEmpty} />
+      ) : (
+        <CTA fi="Kertaa" en={due > 0 ? `Review · ${due} due` : 'Review'} iconRight="arrow" variant="ink"
+          style={{ minHeight: 58 }} onClick={onReview} />
+      )}
     </div>
   )
 }
@@ -131,13 +135,13 @@ function VocabTrack({ userId, go, onExit }: { userId: string; go: (s: AppScreen)
     async () => (await fetchVocabSession(userId, SESSION_SIZE)).map((card): ReviewItem => ({ kind: 'word', card })),
     [userId],
   )
-  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
-  if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={110} />
+  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={BODY_BOTTOM + 14} />
+  if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={BODY_BOTTOM + 14} />
   if (!data || data.length === 0) {
     return <EmptyTrack
-      label={bi('Sanasto', 'Vocabulary')} title={bi('Ei kerrattavaa', 'Nothing due')}
-      body="Your words come back here right before you'd forget them. Learn some in Day One to fill the bank."
-      ctaFi="Opi sanoja" ctaEn="Learn words" onCta={() => go('dayone')} onExit={onExit} />
+      labelFi="SANASTO" labelEn="Vocabulary" title={bi('Ei kerrattavaa', 'Nothing due')}
+      body="Your words come back here right before you'd forget them. Learn new words to fill the bank."
+      ctaFi="Opi sanoja" ctaEn="Learn words" onCta={() => go('learn')} onExit={onExit} />
   }
   return <RecallRunner key={data.map((it) => it.card.cardId).join(',')} items={data} userId={userId}
     titleFi="Sanasto" titleEn="Vocabulary" onExit={onExit} onProgress={() => go('progress')} />
@@ -149,38 +153,33 @@ function SentenceTrack({ userId, go, onExit }: { userId: string; go: (s: AppScre
     async () => (await fetchDueIslandRecall(userId, SESSION_SIZE)).map((card): ReviewItem => ({ kind: 'island', card })),
     [userId],
   )
-  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
-  if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={110} />
+  if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={BODY_BOTTOM + 14} />
+  if (error) return <StatePane tone="error" title="Couldn't load the session" detail={error} bottom={BODY_BOTTOM + 14} />
   if (!data || data.length === 0) {
     return <EmptyTrack
-      label={bi('Omat lauseet', 'Your sentences')} title={bi('Ei kerrattavaa', 'Nothing due')}
-      body="Add your own sentences in My Sentence Bank — they come back here to review, day by day."
+      labelFi="OMAT LAUSEET" labelEn="Your sentences" title={bi('Ei kerrattavaa', 'Nothing due')}
+      body="Build sentences from your own life in the Sentence Bank. They come back here to review, day by day."
       ctaFi="Lisää lauseita" ctaEn="Add sentences" onCta={() => go('islands')} onExit={onExit} />
   }
   return <RecallRunner key={data.map((it) => it.card.cardId).join(',')} items={data} userId={userId}
     titleFi="Omat lauseet" titleEn="Your sentences" onExit={onExit} onProgress={() => go('progress')} />
 }
 
-function EmptyTrack({ label, title, body, ctaFi, ctaEn, onCta, onExit }: {
-  label: ReactNode; title: ReactNode; body: string
+function EmptyTrack({ labelFi, labelEn, title, body, ctaFi, ctaEn, onCta, onExit }: {
+  labelFi: string; labelEn: string; title: ReactNode; body: string
   ctaFi: string; ctaEn: string; onCta: () => void; onExit: () => void
 }) {
-  const { bi } = useLang()
   return (
-    <ScreenScroll bottom={110}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <IconBtn icon="arrowL" tone="glass" size={40} onClick={onExit} />
-        <Label color="var(--written)">{label}</Label>
-        <span style={{ width: 40 }} />
-      </div>
+    <ScreenScroll bottom={26}>
+      <ExBar nav="back" onNav={onExit} center={<CenterLabel fi={labelFi} en={labelEn} />} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
         alignItems: 'center', textAlign: 'center', gap: 20 }}>
-        <OrbCluster size={140} />
+        <BrandMark size={120} />
         <div>
           <h2 className="ps-title-1">{title}</h2>
           <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>{body}</p>
         </div>
-        <Btn variant="primary" iconRight="arrow" onClick={onCta}>{bi(ctaFi, ctaEn)}</Btn>
+        <CTA fi={ctaFi} en={ctaEn} iconRight="arrow" variant="ink" style={{ maxWidth: 320 }} onClick={onCta} />
       </div>
     </ScreenScroll>
   )

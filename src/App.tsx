@@ -1,33 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import './styles/tokens.css'
-import { BottomNav, AppScreen } from './components/Shell'
+import { AppScreen } from './components/Shell'
 import { StatePane } from './components/StatePane'
 import { Onboarding } from './screens/Onboarding'
+import { Home } from './screens/Home'
 import { DayOne } from './screens/DayOne'
+import { Learn } from './screens/Learn'
 import { Daily } from './screens/Daily'
 import { Islands } from './screens/Islands'
 import { Practice } from './screens/Practice'
 import { Listen } from './screens/Listen'
+import { Read } from './screens/Read'
 import { Write } from './screens/Write'
 import { Progress } from './screens/Progress'
 import { Auth } from './screens/Auth'
 import { useAuth } from './lib/auth/useAuth'
 import { useProgress, UserProgress } from './lib/data/progress'
 
-// Screens that show the bottom navigation. (listen/write are nav-hidden sub-screens
-// of the Practice hub, with their own back arrow.)
-const APP_SCREENS: AppScreen[] = ['dayone', 'daily', 'islands', 'practice', 'progress']
-
 // Where a signed-in user lands when they open the app:
-//   never onboarded        → Onboarding (→ Day One Sprint)
-//   sprint finished a set   → Daily review (the next step in the journey)
-//   otherwise               → Day One Sprint (start, or resume where they left off)
+//   never onboarded → Onboarding (→ the Day One sprint)
+//   otherwise       → Home (which leads with resume-sprint or the daily plan)
 function landingScreen(progress: UserProgress): AppScreen {
-  // Having any sprint progress implies onboarding was already seen.
   const seen = progress.onboarded || Boolean(progress.sprint)
   if (!seen) return 'onboarding'
-  if (progress.sprint?.completed) return 'daily'
-  return 'dayone'
+  return 'home'
 }
 
 export default function App() {
@@ -57,23 +53,21 @@ export default function App() {
     return <div className="ps-app-frame"><StatePane title="Ladataan…" /></div>
   }
 
+  // Each hub screen renders its own bottom tab bar (drills and sub-flows
+  // hide it, per the design: modal tasks get a close/back button instead).
   const screens: Record<AppScreen, React.ReactNode> = {
     onboarding: <Onboarding go={go} />,
+    home:       <Home go={go} />,
     dayone:     <DayOne go={go} />,
+    learn:      <Learn go={go} />,
     daily:      <Daily go={go} />,
-    islands:    <Islands />,
+    islands:    <Islands go={go} />,
     practice:   <Practice go={go} />,
     listen:     <Listen go={go} />,
+    read:       <Read go={go} />,
     write:      <Write go={go} />,
     progress:   <Progress go={go} />,
   }
 
-  const showNav = APP_SCREENS.includes(screen)
-
-  return (
-    <div className="ps-app-frame">
-      {screens[screen]}
-      {showNav && <BottomNav active={screen} onNav={go} />}
-    </div>
-  )
+  return <div className="ps-app-frame">{screens[screen]}</div>
 }

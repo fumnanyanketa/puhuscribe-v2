@@ -1,13 +1,21 @@
 import { useState, useRef, useEffect } from 'react'
-import { OrbCluster, Label, RegDot, Sentence } from '../components/primitives'
-import { Btn, SpeakerBtn, IconBtn } from '../components/ui'
+import { BrandMark } from '../components/primitives'
+import { Bar } from '../components/ui'
 import { I } from '../components/icons'
+import { RegisterCard } from '../components/RegisterCard'
+import { CTA, ExBar, CenterLabel, Counter, StackLabel, Waveform } from '../components/kit'
 import { ScreenScroll } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useLang } from '../lib/lang/useLang'
 import { fetchIslandSentences, RegisterSentence, ShadowLine } from '../lib/data/content'
+import { bumpPracticeCount } from '../lib/practiceStats'
 import { speak } from '../lib/tts'
+
+/* ---------------------------------------------------------------------------
+ * Speaking practice — hear the native (kirjakieli) audio, say it aloud,
+ * record yourself, compare. Reused by the Sentence Bank sets (phrases prop).
+ * ------------------------------------------------------------------------- */
 
 type RecState = 'idle' | 'recording' | 'review'
 
@@ -19,27 +27,9 @@ function pickMime(): string | undefined {
   return undefined
 }
 
-function Wave({ active, color }: { active: boolean; color: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 3, height: 40, flex: 1 }}>
-      {Array.from({ length: 22 }).map((_, idx) => {
-        const base = 6 + Math.abs(Math.sin(idx * 0.9)) * 28
-        return (
-          <span key={idx} style={{
-            width: 3, borderRadius: 2,
-            height: active ? base : 6 + (idx % 3) * 4,
-            background: color, opacity: active ? 1 : 0.4,
-            transition: 'height .25s ease', transitionDelay: (idx * 18) + 'ms',
-          }} />
-        )
-      })}
-    </div>
-  )
-}
-
 export function Speak({ onBack, phrases, title }: { onBack: () => void; phrases?: ShadowLine[]; title?: string }) {
-  // When sentences are passed in (a personal island), shadow those; otherwise
-  // fall back to fetching the curated "first useful sentences" set.
+  // When sentences are passed in (a personal set), practice those; otherwise
+  // fall back to fetching the curated "first useful sentences".
   if (phrases) {
     if (phrases.length === 0) return <StatePane title="No sentences yet" detail="Add a sentence to this set first." bottom={110} />
     return <SpeakPractice phrases={phrases} onBack={onBack} title={title} />
@@ -49,9 +39,8 @@ export function Speak({ onBack, phrases, title }: { onBack: () => void; phrases?
 
 function SpeakFetch({ onBack }: { onBack: () => void }) {
   const { bi } = useLang()
-  // The curated "first useful sentences" set (falls back to general sentences).
   const { data: phrases, loading, error } = useAsync<RegisterSentence[]>(
-    () => fetchIslandSentences(12),
+    () => fetchIslandSentences(10),
     [],
   )
 
@@ -63,7 +52,7 @@ function SpeakFetch({ onBack }: { onBack: () => void }) {
 }
 
 function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBack: () => void; title?: string }) {
-  const { bi } = useLang()
+  const { bilingual } = useLang()
   const [i, setI] = useState(0)
   const [st, setSt] = useState<RecState>('idle')
   const [sec, setSec] = useState(0)
@@ -71,6 +60,7 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
   const [playingMine, setPlayingMine] = useState(false)
   const [recUrl, setRecUrl] = useState<string | null>(null)
   const [recErr, setRecErr] = useState('')
+  const [done, setDone] = useState(false)
 
   const mrRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -108,11 +98,11 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
           return
         }
         const blob = new Blob(chunksRef.current, { type: chunksRef.current[0].type || mime || 'audio/webm' })
-        setRecUrl(URL.createObjectURL(blob)) // previous url revoked by the effect below
+        setRecUrl(URL.createObjectURL(blob))
         setSt('review')
       }
       mrRef.current = mr
-      mr.start(250) // timeslice → reliable data delivery across browsers (esp. iOS)
+      mr.start(250) // timeslice keeps data delivery reliable across browsers
       setSt('recording'); setSec(0)
       timerRef.current = setInterval(() => setSec((s) => +(s + 0.1).toFixed(1)), 100)
     } catch {
@@ -143,9 +133,9 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
   const reRecord = () => { setRecUrl(null); setSt('idle'); setSec(0); setRecErr(''); setPlayingMine(false) }
 
   const nextPhrase = () => {
-    setRecUrl(null)
-    setI((x) => (x + 1) % phrases.length)
-    setSt('idle'); setSec(0); setRecErr(''); setPlayingMine(false); setPlayingNative(false)
+    setRecUrl(null); setSt('idle'); setSec(0); setRecErr(''); setPlayingMine(false); setPlayingNative(false)
+    if (i < phrases.length - 1) setI(i + 1)
+    else { bumpPracticeCount('speak'); setDone(true) }
   }
 
   // Revoke the previous recording's object URL when it changes / on unmount.
@@ -160,135 +150,102 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
     streamRef.current?.getTracks().forEach((t) => t.stop())
   }, [])
 
-  // Auto-play the native (kirjakieli) audio when the phrase changes (and on
-  // first mount), so the learner hears the model without tapping the speaker.
+  // Auto-play the native audio on each new phrase (and on first mount).
   useEffect(() => { playNative() }, [i]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-grad)' }}>
-      {/* Hero band */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 258, overflow: 'hidden',
-        background: 'linear-gradient(160deg, #6E4BC0, #4E2A86)' }}>
-        <OrbCluster size={230} style={{ position: 'absolute', right: -34, top: -20, opacity: 0.95 }} />
-        <div style={{ position: 'absolute', left: -40, bottom: -50, width: 160, height: 160,
-          borderRadius: '50%', border: '2px solid rgba(255,255,255,.18)' }} />
-      </div>
-
-      <ScreenScroll bg="transparent" bottom={110}>
-        {/* Hero content */}
-        <div style={{ color: 'var(--on-dark)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <IconBtn icon="arrowL" tone="solid" size={44} onClick={onBack} />
-            <span className="ps-chip" style={{
-              background: 'rgba(15,14,32,.36)', color: '#fff',
-              border: '1px solid rgba(255,255,255,.28)', backdropFilter: 'blur(6px)',
-            }}>
-              <I name="island" size={15} /> {bi('Lause', 'Sentence')} {i + 1} / {phrases.length}
-            </span>
-          </div>
-          <div style={{ marginTop: 22 }}>
-            <Label color="rgba(255,255,255,.75)">{bi('Puhuharjoitus', 'Speaking practice')}</Label>
-            <h1 className="ps-title-1" style={{ color: 'var(--on-dark)', marginTop: 10 }}>{title ? title : bi('Toista ääneen', 'Say it aloud')}</h1>
-          </div>
-        </div>
-
-        <div style={{ height: 50 }} />
-
-        {/* Practice card */}
-        <div className="ps-card" style={{ padding: 20, borderRadius: 'var(--r-2xl)', boxShadow: 'var(--sh-3)' }}>
-          <div style={{ paddingBottom: 14, marginBottom: 16, borderBottom: '1px solid var(--glass-edge)' }}>
-            <div className="ps-caption" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <I name="speaker" size={14} /> {bi('Kuuntele, sitten sano ääneen', 'Listen, then say it aloud')}
-            </div>
-            <div style={{ marginTop: 8, fontStyle: 'italic', color: 'var(--ink-2)', fontFamily: 'var(--font-body)', fontSize: 15 }}>“{p.gloss}”</div>
-          </div>
-
+  if (done) {
+    return (
+      <ScreenScroll bottom={26}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          alignItems: 'center', textAlign: 'center', gap: 24 }}>
+          <BrandMark size={140} />
           <div>
-            <RegDot reg="kirja" />
-            <div style={{ marginTop: 9 }}>
-              <Sentence tokens={p.kirja} font="var(--font-display)" weight={600} size={26} color="var(--ink)" />
-            </div>
+            <StackLabel fi="PUHUMINEN VALMIS" en="Speaking complete" color="var(--spoken)" style={{ marginBottom: 10 }} />
+            <h2 className="ps-title-1">Hyvää työtä!</h2>
+            <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>
+              You said {phrases.length} real sentences out loud. Saying it is what makes it yours.
+            </p>
           </div>
-
-          <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--spoken-bg)',
-            border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
-            <RegDot reg="puhe" />
-            <div style={{ marginTop: 8 }}>
-              <Sentence tokens={p.puhe} font="var(--font-body)" weight={600} size={18} color="var(--ink)" />
-            </div>
-          </div>
-
-          <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 14 }}>
-            <SpeakerBtn reg="kirja" playing={playingNative} onClick={playNative} size={48} />
-            <Wave active={playingNative} color="var(--written)" />
-          </div>
-        </div>
-
-        <div style={{ flex: 1, minHeight: 18 }} />
-
-        {/* Record / playback control */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-          {/* Always-mounted element that plays the learner's own recording back —
-              a stable ref means playback keeps working across phrases. */}
-          <audio ref={myAudioRef} src={recUrl ?? undefined} onEnded={() => setPlayingMine(false)} />
-          {recErr && (
-            <div className="ps-body" style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{recErr}</div>
-          )}
-
-          {st === 'review' ? (
-            <div style={{ width: '100%' }}>
-              <div className="ps-glass" style={{ padding: 16 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15 }}>{bi('Nauhoitus valmis', 'Recording done')}</div>
-                <div className="ps-caption" style={{ marginTop: 2 }}>Play yourself back and compare with the native audio. (Pronunciation scoring comes later.)</div>
-
-                <button onClick={playMine} className="ps-press" style={{
-                  marginTop: 14, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)', border: 'none', cursor: 'pointer',
-                  background: playingMine ? 'var(--spoken)' : 'var(--spoken-bg)', color: playingMine ? '#fff' : 'var(--spoken)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                  fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
-                }}>
-                  <I name="play" size={20} /> {bi('Kuuntele oma puheesi', 'Play your recording')}
-                </button>
-
-                <button onClick={playNative} className="ps-press" style={{
-                  marginTop: 10, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)', cursor: 'pointer',
-                  background: '#fff', color: 'var(--ink)', border: '1px solid var(--glass-line)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                  fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
-                }}>
-                  <I name="speaker" size={20} /> {bi('Kuuntele malli', 'Hear the native audio')}
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-                <Btn variant="light" icon="mic" style={{ flex: 1 }} onClick={reRecord}>{bi('Uudelleen', 'Again')}</Btn>
-                <Btn variant="primary" iconRight="arrow" style={{ flex: 1.2 }} onClick={nextPhrase}>{bi('Seuraava', 'Next')}</Btn>
-              </div>
-            </div>
-          ) : (
-            <>
-              <button onClick={toggleRecord} className="ps-press" aria-label="Record" style={{
-                width: 80, height: 80, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                background: st === 'recording' ? 'var(--spoken)' : 'var(--ink)', color: '#fff',
-                boxShadow: st === 'recording' ? '0 0 0 8px var(--spoken-bg), var(--sh-2)' : 'var(--sh-2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background .15s, box-shadow .15s',
-              }}>
-                {st === 'recording'
-                  ? <span style={{ width: 24, height: 24, borderRadius: 7, background: 'currentColor' }} />
-                  : <I name="mic" size={32} sw={1.9} />}
-              </button>
-              <span className="ps-caption ps-num" style={{
-                color: st === 'recording' ? 'var(--spoken)' : 'var(--ink-2)', fontWeight: 600,
-              }}>
-                {st === 'recording'
-                  ? <>● {sec.toFixed(1)}s · {bi('lopeta', 'tap to stop')}</>
-                  : bi('Nauhoita itsesi', 'Tap to record yourself')}
-              </span>
-            </>
-          )}
+          <CTA fi="Valmis" en="Done" iconRight="arrow" variant="spoken" style={{ maxWidth: 320 }} onClick={onBack} />
         </div>
       </ScreenScroll>
-    </div>
+    )
+  }
+
+  return (
+    <ScreenScroll bottom={26}>
+      <ExBar nav="close" onNav={onBack}
+        center={<CenterLabel fi={title ? title.toUpperCase() : 'PUHUMINEN'} en={title ? undefined : 'Speaking'} color="var(--spoken)" />}
+        right={<Counter a={i + 1} b={phrases.length} />}>
+        <Bar value={((i + 1) / phrases.length) * 100} color="var(--spoken)" track="var(--glass-deep)" h={7} />
+      </ExBar>
+
+      <div style={{ textAlign: 'center', marginTop: 10 }}>
+        <StackLabel fi="SANO ÄÄNEEN" en="Say it out loud" />
+      </div>
+
+      <div style={{ marginTop: 10 }}>
+        <RegisterCard gloss={p.gloss} kirja={p.kirja} puhe={p.puhe}
+          onPlay={() => playNative()} playing={playingNative ? 'kirja' : null} compact />
+      </div>
+
+      <div style={{ flex: 1, minHeight: 8 }} />
+
+      {/* Always-mounted player for the learner's own recording. */}
+      <audio ref={myAudioRef} src={recUrl ?? undefined} onEnded={() => setPlayingMine(false)} />
+      {recErr && (
+        <div className="ps-body" style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)',
+          background: 'var(--flag-bg)', color: 'var(--flag)', marginBottom: 12 }}>{recErr}</div>
+      )}
+
+      {st === 'review' ? (
+        <div style={{ width: '100%' }}>
+          <div className="ps-card" style={{ padding: 16, borderRadius: 'var(--r-lg)' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--ink)' }}>
+              Nauhoitus valmis{' '}
+              {bilingual && <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 12, color: 'var(--ink-3)' }}>Recording done</span>}
+            </div>
+            <div className="ps-caption" style={{ marginTop: 2 }}>Play yourself back and compare with the native audio.</div>
+
+            <button onClick={playMine} className="ps-press" style={{
+              marginTop: 14, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)', border: 'none', cursor: 'pointer',
+              background: playingMine ? 'var(--spoken)' : 'var(--spoken-bg)', color: playingMine ? '#fff' : 'var(--spoken)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
+            }}>
+              <I name="play" size={20} /> Kuuntele oma puheesi
+            </button>
+
+            <button onClick={playNative} className="ps-press" style={{
+              marginTop: 10, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)', cursor: 'pointer',
+              background: '#fff', color: 'var(--ink)', border: '1px solid var(--glass-line)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
+            }}>
+              <I name="volume" size={20} /> Kuuntele malli
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+            <CTA fi="Uudelleen" en="Again" icon="mic" variant="light" flex="1" onClick={reRecord} />
+            <CTA fi="Seuraava" en="Next" iconRight="arrow" variant="spoken" flex="1.2" onClick={nextPhrase} />
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+          <Waveform color="var(--spoken)" n={30} active={st === 'recording' ? 0.9 : playingNative ? 0.55 : 0.3} h={32} />
+          <p style={{ textAlign: 'center', fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13.5,
+            color: st === 'recording' ? 'var(--spoken)' : 'var(--ink-3)', margin: 0 }}>
+            {st === 'recording'
+              ? <span className="ps-num">● {sec.toFixed(1)}s</span>
+              : <>Kuuntele, sano perässä, nauhoita{bilingual && <span> · Listen, repeat, record</span>}</>}
+          </p>
+          <CTA
+            fi={st === 'recording' ? 'Lopeta' : 'Nauhoita'}
+            en={st === 'recording' ? 'Tap to stop' : 'Tap to record yourself'}
+            icon="mic" variant="spoken" onClick={toggleRecord} />
+        </div>
+      )}
+    </ScreenScroll>
   )
 }

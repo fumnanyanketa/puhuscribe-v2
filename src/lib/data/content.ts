@@ -157,6 +157,20 @@ export function levelForBank(bankSize: number): CefrLevel {
   return 'B2'
 }
 
+/** Position within the current CEFR band: % through it + words to the next level. */
+export function levelProgress(bankSize: number): { level: CefrLevel; next: CefrLevel | null; pct: number; toNext: number } {
+  const bands: { level: CefrLevel; lo: number; hi: number }[] = [
+    { level: 'A1', lo: 0, hi: 60 },
+    { level: 'A2', lo: 60, hi: 200 },
+    { level: 'B1', lo: 200, hi: 600 },
+    { level: 'B2', lo: 600, hi: 1500 },
+  ]
+  const band = bands.find((b) => bankSize < b.hi) ?? bands[bands.length - 1]
+  const i = bands.indexOf(band)
+  const pct = Math.min(100, Math.round(((bankSize - band.lo) / (band.hi - band.lo)) * 100))
+  return { level: band.level, next: i < bands.length - 1 ? bands[i + 1].level : null, pct, toNext: Math.max(0, band.hi - bankSize) }
+}
+
 /**
  * Level-matched sentences for the listening + writing practice ("graded" = CEFR
  * tuned to the bank size). Prefers the curated 'arki' set, then any sentence at

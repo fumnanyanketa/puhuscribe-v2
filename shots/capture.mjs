@@ -36,37 +36,44 @@ async function clickText(page, text, opts = {}) {
   await sleep(opts.wait ?? 650)
 }
 async function advance(page, n) {
-  for (let i = 0; i < n; i++) await clickText(page, 'Continue')
+  for (let i = 0; i < n; i++) await clickText(page, 'Jatka')
 }
 async function typeAndCheck(page, answer) {
   const ta = page.locator('textarea').first()
   await ta.waitFor({ state: 'visible', timeout: 5000 })
   await ta.fill(answer)
-  await clickText(page, 'Check')
+  await clickText(page, 'Tarkista')
 }
 
+// name · screen (+query) · optional interactions
 const CAPTURES = [
   { name: '01-auth', screen: 'auth' },
   { name: '02-onboarding-welcome', screen: 'onboarding' },
   { name: '03-onboarding-two-registers', screen: 'onboarding', prep: (p) => advance(p, 1) },
   { name: '04-onboarding-method', screen: 'onboarding', prep: (p) => advance(p, 2) },
   { name: '05-onboarding-journey', screen: 'onboarding', prep: (p) => advance(p, 3) },
-  { name: '06-dayone-vocab-hub', screen: 'dayone' },
-  { name: '07-dayone-word-card', screen: 'dayone', prep: (p) => clickText(p, 'words') },
-  { name: '08-dayone-quiz', screen: 'dayone', prep: async (p) => { await clickText(p, 'words'); await clickText(p, 'Test me') } },
-  { name: '09-daily-review-hub', screen: 'daily' },
-  { name: '10-daily-vocab-recall', screen: 'daily', prep: (p) => clickText(p, 'Review') },
-  { name: '11-daily-recall-graded', screen: 'daily', prep: async (p) => { await clickText(p, 'Review'); await typeAndCheck(p, 'talo') } },
-  { name: '12-sentencebank-list', screen: 'islands' },
-  { name: '13-sentencebank-new-topics', screen: 'islands', prep: (p) => clickText(p, 'Add a new set') },
-  { name: '14-sentencebank-questions', screen: 'islands', prep: async (p) => { await clickText(p, 'Add a new set'); await clickText(p, 'About me') } },
-  { name: '15-sentencebank-detail', screen: 'islands', prep: (p) => clickText(p, 'About me') },
-  { name: '16-practice-hub', screen: 'practice' },
-  { name: '17-practice-speak', screen: 'practice', prep: (p) => clickText(p, 'Speak') },
-  { name: '18-listen', screen: 'listen' },
-  { name: '19-listen-choose', screen: 'listen', prep: (p) => clickText(p, 'What does it mean') },
-  { name: '20-write', screen: 'write' },
-  { name: '21-progress', screen: 'progress' },
+  { name: '06-home-sprint-open', screen: 'home', query: '&sprint=open' },
+  { name: '07-home-hub', screen: 'home' },
+  { name: '08-sprint-intro', screen: 'learn', query: '&sprint=open&intro=1' }, // intro shows pre-completion on Learn
+  { name: '09-sprint-word-card', screen: 'dayone', query: '&sprint=open' },
+  { name: '10-sprint-quiz', screen: 'dayone', query: '&sprint=open', prep: (p) => clickText(p, 'Testaa minua') },
+  { name: '11-learn-daily-vocab', screen: 'learn' },
+  { name: '12-review-hub', screen: 'daily' },
+  { name: '13-review-recall', screen: 'daily', prep: (p) => clickText(p, 'Kertaa') },
+  { name: '14-review-recall-graded', screen: 'daily', prep: async (p) => { await clickText(p, 'Kertaa'); await typeAndCheck(p, 'olla') } },
+  { name: '15-sentencebank-list', screen: 'islands' },
+  { name: '16-sentencebank-topics', screen: 'islands', prep: (p) => clickText(p, 'Uusi setti') },
+  { name: '17-sentencebank-questions', screen: 'islands', prep: async (p) => {
+    await clickText(p, 'Uusi setti'); await clickText(p, 'Minä'); await clickText(p, 'Jatka') } },
+  { name: '18-sentencebank-detail', screen: 'islands', prep: (p) => clickText(p, 'About me') },
+  { name: '19-practice-hub', screen: 'practice' },
+  { name: '20-practice-speak', screen: 'practice', prep: (p) => clickText(p, 'Puhuminen') },
+  { name: '21-practice-listen', screen: 'listen' },
+  { name: '22-practice-listen-choose', screen: 'listen', prep: async (p) => {
+    await typeAndCheck(p, 'Minä olen kotona'); await clickText(p, 'Seuraava') } },
+  { name: '23-practice-read', screen: 'read' },
+  { name: '24-practice-write', screen: 'write' },
+  { name: '25-progress', screen: 'progress' },
 ]
 
 async function waitForServer() {
@@ -96,7 +103,10 @@ async function main() {
     for (const cap of CAPTURES) {
       const page = await context.newPage()
       try {
-        await page.goto(`${BASE}?screen=${cap.screen}`, { waitUntil: 'networkidle' })
+        // The app caches progress in localStorage; clear it so each capture's
+        // ?sprint= state is honoured rather than merged with a previous page's.
+        await page.addInitScript(() => { try { localStorage.clear() } catch { /* ignore */ } })
+        await page.goto(`${BASE}?screen=${cap.screen}${cap.query ?? ''}`, { waitUntil: 'networkidle' })
         await page.evaluate(() => document.fonts && document.fonts.ready).catch(() => {})
         await page.waitForSelector('.ps-app-frame', { timeout: 8000 })
         await sleep(700)
@@ -114,9 +124,9 @@ async function main() {
 
         const frame = page.locator('.ps-app-frame')
         await frame.screenshot({ path: resolve(OUT, `${cap.name}.png`) })
-        results.push(`  ✓ ${cap.name}`)
+        results.push(`  OK ${cap.name}`)
       } catch (e) {
-        results.push(`  ✗ ${cap.name} — ${e.message.split('\n')[0]}`)
+        results.push(`  FAIL ${cap.name} -- ${e.message.split('\n')[0]}`)
       } finally {
         await page.close()
       }

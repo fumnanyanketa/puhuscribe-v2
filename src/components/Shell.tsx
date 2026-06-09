@@ -36,34 +36,42 @@ export function ScreenScroll({ children, pad = 22, bottom = 22, bg = 'var(--bg-g
   )
 }
 
-/* ---------- Floating frosted pill nav ---------- */
+/* ---------- Bottom tab bar — identical across every hub screen ----------
+   Meaningful icons (owner request): home=dashboard, book=learn/vocabulary,
+   lines=your sentences, mic=practice, chart=progress. In-flow drills do NOT
+   show the bar; they are modal tasks with a close/back button. */
 const NAV = [
-  { id: 'dayone',   icon: 'sparkle' },
-  { id: 'daily',    icon: 'cards'  },
-  { id: 'islands',  icon: 'island' },
-  { id: 'practice', icon: 'mic'    },
-  { id: 'progress', icon: 'chart'  },
+  { id: 'home',     icon: 'home'  },
+  { id: 'learn',    icon: 'book'  },
+  { id: 'islands',  icon: 'lines' },
+  { id: 'practice', icon: 'mic'   },
+  { id: 'progress', icon: 'chart' },
 ] as const
 
-export type AppScreen = 'onboarding' | 'dayone' | 'daily' | 'islands' | 'practice' | 'listen' | 'write' | 'progress'
+export type AppScreen =
+  | 'onboarding' | 'home' | 'dayone' | 'learn' | 'daily' | 'islands'
+  | 'practice' | 'listen' | 'read' | 'write' | 'progress'
 
-export function BottomNav({ active, onNav }: { active: AppScreen; onNav: (s: AppScreen) => void }) {
+export type NavTab = typeof NAV[number]['id']
+
+export function BottomNav({ active, onNav }: { active: NavTab; onNav: (s: AppScreen) => void }) {
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 40,
-      paddingBottom: 26, display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
-      <div className="ps-glass" style={{ display: 'flex', gap: 8, padding: 8, borderRadius: 999,
-        background: 'var(--glass-2)', boxShadow: 'var(--sh-2)', pointerEvents: 'auto' }}>
+      paddingBottom: 18, paddingLeft: 18, paddingRight: 18, pointerEvents: 'none' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '10px 16px', borderRadius: 999, background: '#fff',
+        boxShadow: 'var(--sh-2)', border: '1px solid var(--glass-line)', pointerEvents: 'auto' }}>
         {NAV.map((t) => {
           const on = active === t.id
           return (
             <button key={t.id} onClick={() => onNav(t.id)} aria-label={t.id} className="ps-press" style={{
-              width: 58, height: 58, borderRadius: '50%', border: 'none', cursor: 'pointer',
+              width: on ? 50 : 44, height: on ? 50 : 44, borderRadius: '50%', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: on ? 'var(--ink)' : 'transparent',
-              color: on ? 'var(--on-dark)' : 'var(--ink-2)',
-              transition: 'background .15s, color .15s',
+              color: on ? 'var(--on-dark)' : 'var(--ink-3)',
+              transition: 'background .15s, color .15s, width .15s, height .15s',
             }}>
-              <I name={t.icon as any} size={24} sw={on ? 2 : 1.8} />
+              <I name={t.icon} size={23} sw={on ? 2 : 1.8} />
             </button>
           )
         })}

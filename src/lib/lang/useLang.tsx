@@ -66,7 +66,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
         <span style={{ display: 'inline-block', lineHeight: 1.12, verticalAlign: 'top' }}>
           {fi}
           <span style={{
-            display: 'block', fontWeight: 500, fontSize: '0.72em',
+            display: 'block', fontStyle: 'italic', fontWeight: 500, fontSize: '0.72em',
             color: 'var(--ink-3)', marginTop: 1, letterSpacing: 'normal', textTransform: 'none',
           }}>
             {en}
