@@ -64,7 +64,7 @@ export function Islands() {
 /* List — the learner's islands + "new island"                                 */
 /* -------------------------------------------------------------------------- */
 function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew: () => void; onOpen: (id: string) => void; onShadow: (id: string) => void }) {
-  const { bi, bilingual } = useLang()
+  const { bi, bilingual, biText } = useLang()
   const [reload, setReload] = useState(0)
   const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId, reload])
   const [addingStarter, setAddingStarter] = useState(false)
@@ -180,11 +180,13 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
                         <span className="ps-label" style={{ display: 'block', color: 'var(--written)', fontSize: 10, marginBottom: 2 }}>{bi('Aloita tästä', 'Start here')}</span>
                       )}
                       <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17 }}>{isl.title}</span>
-                      <span className="ps-caption">{isl.count} {isl.count === 1 ? bi('lause', 'sentence') : bi('lausetta', 'sentences')}</span>
+                      <span className="ps-caption">{biText(`${isl.count} ${isl.count === 1 ? 'lause' : 'lausetta'}`, isl.count === 1 ? 'sentence' : 'sentences')}</span>
                     </span>
                     <I name="arrow" size={20} style={{ color: 'var(--ink-3)', flexShrink: 0 }} />
                   </button>
-                  <IconBtn icon="trash" tone="glass" size={38} onClick={() => setDelId(isl.id)} label="Delete island" />
+                  {isl.topicSlug !== 'starter' && (
+                    <IconBtn icon="trash" tone="glass" size={38} onClick={() => setDelId(isl.id)} label="Delete island" />
+                  )}
                 </div>
               )}
             </div>
@@ -546,7 +548,7 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
 
       <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <SkillChip skill="speak" />
-        <span className="ps-label ps-num" style={{ color: 'var(--ink-3)' }}>{list.length} {bi('lausetta', 'sentences')}</span>
+        <span className="ps-label ps-num" style={{ color: 'var(--ink-3)' }}>{biText(`${list.length} ${list.length === 1 ? 'lause' : 'lausetta'}`, list.length === 1 ? 'sentence' : 'sentences')}</span>
       </div>
 
       {/* Practice actions */}
