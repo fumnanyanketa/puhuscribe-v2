@@ -271,3 +271,15 @@ Shipped (plan-mode approved): closed the four-skills gap from the pedagogy press
 Blocked: AI writing feedback needs the owner to add ANTHROPIC_API_KEY as a GitHub repo secret, then re-run "Deploy TTS Worker" (workflow already updated to pass it). Until then Write uses the free self-check (graceful). Higher CEFR levels (B1/B2) have little seeded content, so fetchGradedSentences falls back to the arki/A1-A2 set.
 
 Next: load island seed in Supabase; owner adds ANTHROPIC secret for live writing feedback; later: real native listening clips, reading mode, mnemonics.
+
+---
+
+## Pending owner actions (handoff snapshot, 2026-06-09)
+The app degrades gracefully without these, but to be fully live:
+1. Supabase SQL editor (idempotent, safe to re-run):
+   - `ALTER TABLE users ADD COLUMN IF NOT EXISTS progress jsonb NOT NULL DEFAULT '{}'::jsonb;`
+   - `GRANT DELETE ON TABLE public.cards TO authenticated;`
+   - then run `supabase/seeds/05_island_sentences.sql` (the 50 real "arki" sentences → Listen/Write/Speak; else they fall back to old content).
+2. AI writing feedback (optional upgrade): add `ANTHROPIC_API_KEY` as a GitHub repo secret, then re-run the "Deploy TTS Worker" Action. Until then Write uses the free self-check. (worker /correct route + workflow already committed.)
+3. Finnish-speaker pass on the puhekieli column in `docs/island-sentences.md` (kirjakieli is Voikko-validated; puhekieli needs a human eyeball).
+Notes: VITE_TTS_WORKER_URL already set in Vercel (TTS works). Earlier migrations (content_fixes, IPA, grants, user_progress, grant_card_delete) were run by the owner. Read docs/pedagogy-pressure-test.md for the four-skills rationale + what's still missing (real native listening clips, reading mode, mnemonics).
