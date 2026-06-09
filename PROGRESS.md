@@ -294,6 +294,16 @@ Next (finishing islands): let the learner edit/redo a translation before saving;
 
 ---
 
+## Session: 2026-06-09 (Island sentence quality: beginner Finnish + full sentences + review-before-save)
+
+Shipped: (1) Translation is now beginner-first. The `/island/translate` Worker route gets the QUESTION for context and is told to produce a COMPLETE, very simple CEFR-A1 Finnish sentence (so a fragment like "both" becomes a real sentence), and returns the completed full English too — so the saved card always reads as a proper sentence. (2) The question bank carries a full-sentence `eg` example per question, shown as an italic hint + the input placeholder, with copy that nudges writing full sentences ("fuller English makes simpler, better Finnish"). (3) New review-and-edit step in the create flow: answer → Translate → **review** each sentence (completed English + kirja/puhe + audio + draft badge) → Redo or Remove any → **Save**; nothing saves unseen, and the island row is only created on Save. Build clean, 31 JS tests, worker.js syntax-checked. Worker auto-deploys on push.
+
+Blocked: nothing new. Sentences still save as DRAFT until the Voikko service is deployed (unchanged). Owner flagged: they haven't seen island sentences in Daily yet — expected, because the current fold only surfaces STARTED cards that are due; the next task (Daily split) will make new sentences visible.
+
+Next (owner's island list, in order): split Daily into two tracks — a **vocabulary bank** review and a **sentence-island** review (they shouldn't share one queue), and surface new island sentences there; AI follow-up questions (2–3 tailored per topic); edit/delete a single sentence in the island detail; reframe the 50 `arki` sentences as a "Starter pack". North-star to design toward: lead the learner to build ~1000–2000 words + ~1000 sentences, consistently, daily.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.

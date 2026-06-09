@@ -70,17 +70,20 @@ async function correct(request, env) {
   }
 }
 
-// Ask Claude to translate one English sentence into kirjakieli + puhekieli.
-// Returns { kirjakieli, puhekieli } or null. `note` lets us nudge a correction
-// of words Voikko rejected on a retry.
-async function translateOnce(en, env, note) {
-  const system = "You translate one English sentence for an adult beginner learning Finnish. "
-    + "Produce (1) standard WRITTEN Finnish (kirjakieli) and (2) natural SPOKEN Helsinki Finnish (puhekieli). "
-    + "Keep it ONE everyday sentence, natural, around CEFR A2-B1. "
+// Ask Claude to turn the learner's answer into a complete, very simple Finnish
+// sentence. It gets the QUESTION for context so a fragment ("both") becomes a
+// real sentence. Returns { en, kirjakieli, puhekieli } or null. `note` lets us
+// nudge a correction of words Voikko rejected on a retry.
+async function translateOnce(question, en, env, note) {
+  const system = "You help an absolute beginner (CEFR A1) build a personal Finnish sentence. "
+    + "You are given the QUESTION they answered and their ANSWER (often a rough fragment). Produce: "
+    + '"en": one natural, COMPLETE, simple English sentence that captures their answer in the context of the question '
+    + '(if the answer is already a full sentence keep its meaning; if it is a fragment like "both", expand it into a full sentence that answers the question). Keep it short. '
+    + '"kirjakieli": that sentence in VERY SIMPLE beginner (A1) standard WRITTEN Finnish - short, the most common words, basic structure; avoid advanced vocabulary, idioms, rare cases and long clauses. '
+    + '"puhekieli": the natural SPOKEN Helsinki version of the same sentence. '
     + "Use ONLY real, standard Finnish words and real inflections - never invent words or endings. "
     + (note ? `Avoid these non-words from your previous try: ${note}. ` : '')
-    + "Reply with ONLY a JSON object (no markdown) with exactly: "
-    + '"kirjakieli" (string) and "puhekieli" (string).'
+    + 'Reply with ONLY a JSON object (no markdown) with exactly: "en", "kirjakieli", "puhekieli".'
 
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -93,7 +96,7 @@ async function translateOnce(en, env, note) {
       model: 'claude-sonnet-4-6',
       max_tokens: 400,
       system,
-      messages: [{ role: 'user', content: `English: "${en}"` }],
+      messages: [{ role: 'user', content: `Question: "${question}"\nTheir answer: "${en}"` }],
     }),
   })
   if (!r.ok) return null
@@ -104,8 +107,9 @@ async function translateOnce(en, env, note) {
     const out = JSON.parse(t)
     const kirjakieli = String(out.kirjakieli || '').trim()
     const puhekieli = String(out.puhekieli || '').trim()
+    const enFull = String(out.en || '').trim() || en
     if (!kirjakieli) return null
-    return { kirjakieli, puhekieli }
+    return { en: enFull, kirjakieli, puhekieli }
   } catch {
     return null
   }
@@ -135,19 +139,20 @@ async function voikkoValidate(kirjakieli, env) {
 // the learner authors; we translate + verify; nothing invented ships.
 async function islandTranslate(request, env) {
   if (request.method !== 'POST') return json({ ok: false }, 405)
-  let en = ''
-  try { en = String((await request.json()).en || '') } catch { /* ignore */ }
+  let en = '', question = ''
+  try { const b = await request.json(); en = String(b.en || ''); question = String(b.question || '') } catch { /* ignore */ }
   en = en.trim().slice(0, 300)
+  question = question.trim().slice(0, 200)
   if (!en) return json({ ok: false }, 400)
   if (!env.ANTHROPIC_API_KEY) return json({ ok: false, configured: false }, 503)
 
-  let t = await translateOnce(en, env)
+  let t = await translateOnce(question, en, env)
   if (!t) return json({ ok: false, configured: true }, 502)
 
   let { verified, invalid } = await voikkoValidate(t.kirjakieli, env)
   // One corrective pass if Voikko rejected words and the service is live.
   if (!verified && invalid.length > 0) {
-    const retry = await translateOnce(en, env, invalid.join(', '))
+    const retry = await translateOnce(question, en, env, invalid.join(', '))
     if (retry) {
       const second = await voikkoValidate(retry.kirjakieli, env)
       if (second.verified) { t = retry; verified = true; invalid = [] }
@@ -155,7 +160,7 @@ async function islandTranslate(request, env) {
     }
   }
 
-  return json({ ok: true, kirjakieli: t.kirjakieli, puhekieli: t.puhekieli, verified, invalidWords: invalid, configured: true })
+  return json({ ok: true, en: t.en, kirjakieli: t.kirjakieli, puhekieli: t.puhekieli, verified, invalidWords: invalid, configured: true })
 }
 
 export default {

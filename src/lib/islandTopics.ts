@@ -6,8 +6,16 @@
  * memorising is about their actual life — never generic, never AI-authored.
  * (Mikael's method: "You want to sound like yourself.")
  *
- * Each topic is a "language island": a group of sentences for one situation.
+ * Each question carries a full-sentence `eg` example. It models what a good answer
+ * looks like (a complete simple sentence, not one word) and doubles as the input
+ * placeholder — so the learner is nudged to write real sentences, which become
+ * real, learnable Finnish.
  */
+
+export interface IslandQuestion {
+  q: string
+  eg: string // a model full-sentence answer, in simple English
+}
 
 export interface IslandTopic {
   slug: string
@@ -15,7 +23,7 @@ export interface IslandTopic {
   en: string
   icon: string
   blurb: string
-  questions: string[] // English prompts; the learner answers in their own words
+  questions: IslandQuestion[]
 }
 
 export const ISLAND_TOPICS: IslandTopic[] = [
@@ -26,12 +34,12 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'sparkle',
     blurb: 'Introduce yourself the way you actually would.',
     questions: [
-      'What is your name and where are you from?',
-      'Where do you live now, and who do you live with?',
-      'Why did you come to Finland?',
-      'What do you do (work or study)?',
-      'What languages do you speak?',
-      'What are you hoping to do here in the next year?',
+      { q: 'What is your name and where are you from?', eg: 'My name is Maria and I am from Nigeria.' },
+      { q: 'Where do you live now, and who do you live with?', eg: 'I live in Espoo with my family.' },
+      { q: 'Why did you come to Finland?', eg: 'I came to Finland for work.' },
+      { q: 'What do you do — work or study?', eg: 'I am a nurse.' },
+      { q: 'What languages do you speak?', eg: 'I speak English and a little Finnish.' },
+      { q: 'What do you hope to do here this year?', eg: 'I want to learn Finnish and find a job.' },
     ],
   },
   {
@@ -41,12 +49,12 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'cards',
     blurb: 'Talk about your job and things you say at work.',
     questions: [
-      'What is your job, and where do you work?',
-      'What do you do on a normal day at work?',
-      'What do you like most about your work?',
-      'What is difficult or annoying about it?',
-      'What do you often say to your colleagues?',
-      'What kind of work would you like to do in Finland?',
+      { q: 'What is your job, and where do you work?', eg: 'I am a cook and I work in a restaurant.' },
+      { q: 'What do you do on a normal day at work?', eg: 'I make food and I help customers.' },
+      { q: 'What do you like most about your work?', eg: 'I like my coworkers.' },
+      { q: 'What is difficult about it?', eg: 'The days are long.' },
+      { q: 'What do you often say to your colleagues?', eg: 'Good morning, how are you?' },
+      { q: 'What work would you like to do in Finland?', eg: 'I want to work in a hospital.' },
     ],
   },
   {
@@ -56,11 +64,11 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'flame',
     blurb: 'What you love doing — and why.',
     questions: [
-      'What is your favourite hobby?',
-      'Why do you like it so much?',
-      'How often do you do it, and when did you start?',
-      'Is there a hobby you want to try in Finland?',
-      'What do you like to do on the weekend?',
+      { q: 'What is your favourite hobby?', eg: 'My favourite hobby is football.' },
+      { q: 'Why do you like it so much?', eg: 'I like it because it is fun.' },
+      { q: 'How often do you do it?', eg: 'I play every week.' },
+      { q: 'Is there a hobby you want to try in Finland?', eg: 'I want to try ice skating.' },
+      { q: 'What do you like to do on the weekend?', eg: 'On the weekend I walk in the forest.' },
     ],
   },
   {
@@ -70,11 +78,11 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'home',
     blurb: 'The people in your life — and what you say to them.',
     questions: [
-      'Tell me about your family — who is in it?',
-      'What do they do?',
-      'What do you like to do together?',
-      'Do you have friends here yet? How did you meet?',
-      'What do you usually say to your friends when you meet?',
+      { q: 'Who is in your family?', eg: 'I have a wife and two children.' },
+      { q: 'What do they do?', eg: 'My wife is a teacher.' },
+      { q: 'What do you like to do together?', eg: 'We like to cook together.' },
+      { q: 'Do you have friends here? How did you meet?', eg: 'I have one friend. We met at work.' },
+      { q: 'What do you say to your friends when you meet?', eg: 'Hi! How are you?' },
     ],
   },
   {
@@ -84,11 +92,11 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'island',
     blurb: 'Shops, transport, ordering, asking for help.',
     questions: [
-      'What do you say when you order a coffee or food?',
-      'How do you ask for directions or help in a shop?',
-      'How do you buy a bus or train ticket / ask which one to take?',
-      'What do you say at the checkout?',
-      'How do you ask someone to repeat or speak more slowly?',
+      { q: 'What do you say when you order a coffee or food?', eg: 'I would like one coffee, please.' },
+      { q: 'How do you ask for help in a shop?', eg: 'Excuse me, where is the milk?' },
+      { q: 'How do you buy a bus or train ticket?', eg: 'One ticket to the centre, please.' },
+      { q: 'What do you say at the checkout?', eg: 'Can I pay by card?' },
+      { q: 'How do you ask someone to speak more slowly?', eg: 'Sorry, can you speak more slowly?' },
     ],
   },
   {
@@ -98,11 +106,11 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'lock',
     blurb: 'KELA, the doctor, the bank, your landlord.',
     questions: [
-      'How do you book or ask about an appointment?',
-      'What would you say to a doctor about how you feel?',
-      'What do you need to ask your landlord?',
-      'What might you say at KELA or the bank?',
-      'How do you explain that you are still learning Finnish?',
+      { q: 'How do you ask about an appointment?', eg: 'I would like to book an appointment.' },
+      { q: 'What would you say to a doctor?', eg: 'I have a headache.' },
+      { q: 'What do you need to ask your landlord?', eg: 'When do I pay the rent?' },
+      { q: 'What might you say at KELA or the bank?', eg: 'I need help with this form.' },
+      { q: 'How do you say you are still learning Finnish?', eg: 'I am still learning Finnish. Please speak slowly.' },
     ],
   },
   {
@@ -112,11 +120,11 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'pencil',
     blurb: 'Something that happened to you, told in order.',
     questions: [
-      'Where and when did it happen?',
-      'What happened first?',
-      'What happened next?',
-      'How did it end?',
-      'How did you feel about it?',
+      { q: 'Where and when did it happen?', eg: 'Last summer I was in Helsinki.' },
+      { q: 'What happened first?', eg: 'First, I missed the bus.' },
+      { q: 'What happened next?', eg: 'Then I walked to work.' },
+      { q: 'How did it end?', eg: 'In the end, I was not late.' },
+      { q: 'How did you feel about it?', eg: 'I felt happy.' },
     ],
   },
   {
@@ -126,11 +134,11 @@ export const ISLAND_TOPICS: IslandTopic[] = [
     icon: 'speaker',
     blurb: 'Weather, opinions, agreeing and disagreeing.',
     questions: [
-      'What do you think about the weather here?',
-      'What do you like about living in Finland?',
-      'What is something you find strange or surprising?',
-      'How do you say you agree with someone?',
-      'How do you politely disagree?',
+      { q: 'What do you think about the weather here?', eg: 'I think the winter is very cold.' },
+      { q: 'What do you like about living in Finland?', eg: 'I like that it is quiet and clean.' },
+      { q: 'What do you find strange or surprising?', eg: 'It is strange that summer days are so long.' },
+      { q: 'How do you say you agree with someone?', eg: 'Yes, I think so too.' },
+      { q: 'How do you politely disagree?', eg: 'I am not sure about that.' },
     ],
   },
 ]

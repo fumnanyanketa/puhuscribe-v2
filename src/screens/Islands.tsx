@@ -12,7 +12,8 @@ import {
   Island, IslandSentence,
   fetchIslands, createIsland, addIslandSentence, fetchIslandLines, deleteIsland, fetchIslandRecall,
 } from '../lib/data/islands'
-import { translateSentence } from '../lib/islandsApi'
+import { translateSentence, Translation } from '../lib/islandsApi'
+import { toRegisterTokens } from '../lib/data/content'
 import { rateCard, previewIntervals } from '../lib/data/cards'
 import { Rating } from '../lib/fsrs/types'
 import { speak } from '../lib/tts'
@@ -124,49 +125,80 @@ function IslandList({ userId, onNew, onOpen }: { userId: string; onNew: () => vo
 }
 
 /* -------------------------------------------------------------------------- */
-/* Create flow — pick a topic, answer its questions, build the island          */
+/* Create flow — topic → answer questions → review & edit → save               */
 /* -------------------------------------------------------------------------- */
+
+// One translated sentence awaiting the learner's review before it is saved.
+type Draft = {
+  question: string
+  en: string
+  kirjakieli: string
+  puhekieli: string
+  verified: boolean
+  kirja: ReturnType<typeof toRegisterTokens>['kirja']
+  puhe: ReturnType<typeof toRegisterTokens>['puhe']
+}
+
 function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: () => void; onDone: (id: string) => void }) {
   const { bi, biText } = useLang()
   const [topic, setTopic] = useState<IslandTopic | null>(null)
   const [answers, setAnswers] = useState<string[]>([])
-  const [building, setBuilding] = useState(false)
+  const [phase, setPhase] = useState<'write' | 'translating' | 'review'>('write')
+  const [drafts, setDrafts] = useState<Draft[]>([])
   const [progress, setProgress] = useState('')
+  const [redoIdx, setRedoIdx] = useState<number | null>(null)
+  const [saving, setSaving] = useState(false)
   const [err, setErr] = useState('')
 
-  const pick = (t: IslandTopic) => { setTopic(t); setAnswers(t.questions.map(() => '')) }
+  const pick = (t: IslandTopic) => { setTopic(t); setAnswers(t.questions.map(() => '')); setPhase('write'); setDrafts([]); setErr('') }
   const setAnswer = (i: number, val: string) => setAnswers((a) => a.map((x, idx) => (idx === i ? val : x)))
   const filledCount = answers.filter((a) => a.trim()).length
 
-  const build = async () => {
-    if (!topic || building) return
-    const written = answers.map((a) => a.trim()).filter(Boolean)
-    if (written.length === 0) { setErr('Write at least one answer first.'); return }
-    setBuilding(true); setErr('')
+  const toDraft = (question: string, t: Translation): Draft => {
+    const { kirja, puhe } = toRegisterTokens(t.kirjakieli, t.puhekieli || t.kirjakieli)
+    return { question, en: t.en, kirjakieli: t.kirjakieli, puhekieli: t.puhekieli, verified: t.verified, kirja, puhe }
+  }
 
-    let islandId = ''
+  // Translate every answer, then show the review step so nothing saves unseen.
+  const translateAll = async () => {
+    if (!topic || phase === 'translating') return
+    const items = topic.questions.map((qq, i) => ({ q: qq.q, a: answers[i].trim() })).filter((x) => x.a)
+    if (items.length === 0) { setErr('Write at least one answer first.'); return }
+    setPhase('translating'); setErr('')
+    const out: Draft[] = []
+    for (let i = 0; i < items.length; i++) {
+      setProgress(`${biText('Käännetään', 'Translating')} ${i + 1}/${items.length}…`)
+      const t = await translateSentence(items[i].q, items[i].a)
+      if (t.configured && t.kirjakieli) out.push(toDraft(items[i].q, t))
+    }
+    setProgress('')
+    if (out.length === 0) { setPhase('write'); setErr('Translation is unavailable right now. Please try again in a moment.'); return }
+    setDrafts(out); setPhase('review')
+  }
+
+  // Re-translate one sentence (LLM variance, or after Voikko flagged a word).
+  const redo = async (i: number) => {
+    if (redoIdx !== null || saving) return
+    setRedoIdx(i)
+    const t = await translateSentence(drafts[i].question, drafts[i].en)
+    if (t.configured && t.kirjakieli) setDrafts((d) => d.map((x, idx) => (idx === i ? toDraft(drafts[i].question, t) : x)))
+    setRedoIdx(null)
+  }
+  const removeDraft = (i: number) => setDrafts((d) => d.filter((_, idx) => idx !== i))
+
+  const save = async () => {
+    if (!topic || saving || drafts.length === 0) return
+    setSaving(true); setErr('')
     try {
-      islandId = await createIsland(userId, topic.en, topic.slug)
-      let saved = 0
-      for (let i = 0; i < written.length; i++) {
-        setProgress(`${biText('Käännetään', 'Translating')} ${i + 1}/${written.length}…`)
-        const t = await translateSentence(written[i])
-        if (t.configured && t.kirjakieli) {
-          await addIslandSentence(userId, islandId, {
-            en: written[i], kirjakieli: t.kirjakieli, puhekieli: t.puhekieli, verified: t.verified, sortOrder: i,
-          })
-          saved++
-        }
+      const id = await createIsland(userId, topic.en, topic.slug)
+      for (let i = 0; i < drafts.length; i++) {
+        await addIslandSentence(userId, id, {
+          en: drafts[i].en, kirjakieli: drafts[i].kirjakieli, puhekieli: drafts[i].puhekieli, verified: drafts[i].verified, sortOrder: i,
+        })
       }
-      if (saved === 0) {
-        await deleteIsland(userId, islandId)
-        setBuilding(false); setProgress('')
-        setErr('Translation is unavailable right now. Please try again in a moment.')
-        return
-      }
-      onDone(islandId)
+      onDone(id)
     } catch (e) {
-      setBuilding(false); setProgress('')
+      setSaving(false)
       setErr(e instanceof Error ? e.message : String(e))
     }
   }
@@ -207,17 +239,17 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
     )
   }
 
-  // Building state.
-  if (building) {
+  // Translating state.
+  if (phase === 'translating') {
     return (
       <ScreenScroll bottom={110}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: 22 }}>
           <OrbCluster size={140} />
           <div>
-            <h2 className="ps-title-1">{bi('Rakennetaan saartasi', 'Building your island')}</h2>
+            <h2 className="ps-title-1">{bi('Tehdään lauseita', 'Making your sentences')}</h2>
             <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10 }}>{progress || bi('Hetki…', 'One moment…')}</p>
             <p className="ps-caption" style={{ marginTop: 8, maxWidth: 260, marginInline: 'auto' }}>
-              Turning your words into real Finnish, checked word by word.
+              Turning your words into simple Finnish, checked word by word.
             </p>
           </div>
         </div>
@@ -225,7 +257,76 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
     )
   }
 
-  // Step 2: answer the topic's questions.
+  // Step 3: review & edit the translations before saving.
+  if (phase === 'review') {
+    return (
+      <ScreenScroll bottom={120}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <IconBtn icon="arrowL" tone="glass" size={40} onClick={() => setPhase('write')} />
+          <Label color="var(--spoken)">{bi('Tarkista', 'Check')}</Label>
+          <span style={{ width: 40 }} />
+        </div>
+
+        <div style={{ marginTop: 14 }}>
+          <h1 className="ps-title-1">{bi('Tarkista lauseet', 'Check your sentences')}</h1>
+          <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
+            Here is your Finnish, kept simple. Redo any that look off, remove what you don't want, then save.
+          </p>
+        </div>
+
+        {err && (
+          <div className="ps-body" style={{ marginTop: 14, padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{err}</div>
+        )}
+
+        <div style={{ display: 'grid', gap: 12, marginTop: 18 }}>
+          {drafts.map((d, i) => (
+            <div key={i} className="ps-card" style={{ padding: 16, opacity: redoIdx === i ? 0.6 : 1 }}>
+              <div className="ps-caption" style={{ fontStyle: 'italic' }}>“{d.en}”</div>
+              <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <RegDot reg="kirja" />
+                  <div style={{ marginTop: 7 }}>
+                    <Sentence tokens={d.kirja} font="var(--font-display)" weight={600} size={20} color="var(--ink)" />
+                  </div>
+                </div>
+                <SpeakerBtn reg="kirja" onClick={() => speak(d.kirjakieli)} size={40} />
+              </div>
+              {d.puhekieli && (
+                <div style={{ marginTop: 12, padding: '10px 12px', background: 'var(--spoken-bg)', border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
+                  <RegDot reg="puhe" />
+                  <div style={{ marginTop: 7 }}>
+                    <Sentence tokens={d.puhe} font="var(--font-body)" weight={600} size={16} color="var(--ink)" />
+                  </div>
+                </div>
+              )}
+              {!d.verified && (
+                <div className="ps-caption" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ink-3)' }}>
+                  <I name="lock" size={13} /> {bi('Luonnos — suomi vielä vahvistamatta', 'Draft — Finnish not yet verified')}
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                <Btn variant="light" style={{ flex: 1 }} disabled={redoIdx !== null || saving} onClick={() => void redo(i)}>
+                  {redoIdx === i ? bi('Hetki…', 'Redoing…') : bi('Yritä uudelleen', 'Redo')}
+                </Btn>
+                <button className="ps-press" disabled={redoIdx !== null || saving} onClick={() => removeDraft(i)} style={{
+                  flex: 1, padding: '12px', borderRadius: 'var(--r-md)', cursor: 'pointer',
+                  border: '1.5px solid var(--glass-line)', background: 'transparent', color: 'var(--ink-2)',
+                  fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+                }}>{biText('Poista', 'Remove')}</button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ flex: 1, minHeight: 16 }} />
+        <Btn variant="primary" block iconRight="arrow" disabled={drafts.length === 0 || saving || redoIdx !== null} onClick={() => void save()}>
+          {saving ? bi('Tallennetaan…', 'Saving…') : <>{bi('Tallenna saari', 'Save island')} ({drafts.length})</>}
+        </Btn>
+      </ScreenScroll>
+    )
+  }
+
+  // Step 2: answer the topic's questions (write full sentences, like the examples).
   return (
     <ScreenScroll bottom={120}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -237,7 +338,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       <div style={{ marginTop: 14 }}>
         <h1 className="ps-title-1">{bi('Vastaa omin sanoin', 'Answer in your own words')}</h1>
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
-          Write in English. Answer the ones that fit your life — skip the rest. This is *your* island, so sound like you.
+          Write a full sentence for each — like the example under it. Skip the ones that don't fit. Fuller English makes simpler, better Finnish.
         </p>
       </div>
 
@@ -246,13 +347,14 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       )}
 
       <div style={{ display: 'grid', gap: 14, marginTop: 18 }}>
-        {topic.questions.map((q, i) => (
+        {topic.questions.map((qq, i) => (
           <div key={i} className="ps-card" style={{ padding: 14 }}>
-            <div className="ps-body" style={{ fontWeight: 600 }}>{q}</div>
+            <div className="ps-body" style={{ fontWeight: 600 }}>{qq.q}</div>
+            <div className="ps-caption" style={{ marginTop: 3, fontStyle: 'italic' }}>e.g. {qq.eg}</div>
             <textarea
               value={answers[i]}
               onChange={(e) => setAnswer(i, e.target.value)}
-              placeholder={biText('Kirjoita vastauksesi…', 'Your answer…')}
+              placeholder={qq.eg}
               rows={2}
               style={{
                 marginTop: 10, width: '100%', padding: '11px 13px', borderRadius: 'var(--r-md)',
@@ -267,8 +369,8 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       </div>
 
       <div style={{ flex: 1, minHeight: 16 }} />
-      <Btn variant="primary" block iconRight="arrow" disabled={filledCount === 0} onClick={() => void build()}>
-        {filledCount === 0 ? bi('Kirjoita vastaus', 'Write an answer') : <>{bi('Rakenna saari', 'Build island')} ({filledCount})</>}
+      <Btn variant="primary" block iconRight="arrow" disabled={filledCount === 0} onClick={() => void translateAll()}>
+        {filledCount === 0 ? bi('Kirjoita vastaus', 'Write an answer') : <>{bi('Käännä', 'Translate')} ({filledCount})</>}
       </Btn>
     </ScreenScroll>
   )

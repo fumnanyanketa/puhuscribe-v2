@@ -1,10 +1,11 @@
 // Personal Language Islands — translation client.
 //
-// The learner writes a sentence in English; the Worker's /island/translate route
-// asks Claude for the standard-written (kirjakieli) + spoken (puhekieli) Finnish,
-// then Voikko-gates the kirjakieli (the SAME bar as our seed content). A sentence
-// is only `verified` once Voikko has confirmed every kirjakieli word is real
-// Finnish — so we never ship hallucinated Finnish to the learner.
+// The learner answers a question in rough English; the Worker's /island/translate
+// route asks Claude to turn it into a COMPLETE, very simple (CEFR A1) Finnish
+// sentence — written (kirjakieli) + spoken (puhekieli) — and returns the full
+// English too (so a fragment like "both" becomes a real, learnable sentence).
+// The kirjakieli is then Voikko-gated (the SAME bar as our seed content); a
+// sentence is only `verified` once Voikko confirms every word is real Finnish.
 //
 // Degrades gracefully: if the Worker isn't reachable, `configured` is false and
 // the UI can let the learner save a clearly-labelled DRAFT instead of failing.
@@ -13,6 +14,7 @@ const WORKER = (import.meta.env.VITE_TTS_WORKER_URL as string | undefined)?.repl
 
 export interface Translation {
   ok: boolean
+  en: string               // the completed, full English sentence (may expand a fragment)
   kirjakieli: string
   puhekieli: string
   verified: boolean        // true only when Voikko confirmed the kirjakieli
@@ -24,22 +26,24 @@ export function islandsApiConfigured(): boolean {
   return !!WORKER
 }
 
-const EMPTY: Translation = { ok: false, kirjakieli: '', puhekieli: '', verified: false, invalidWords: [], configured: false }
+const EMPTY: Translation = { ok: false, en: '', kirjakieli: '', puhekieli: '', verified: false, invalidWords: [], configured: false }
 
-export async function translateSentence(en: string): Promise<Translation> {
+/** Translate one answer. `question` gives the model context to complete a fragment. */
+export async function translateSentence(question: string, en: string): Promise<Translation> {
   const text = en.trim()
   if (!WORKER || !text) return EMPTY
   try {
     const resp = await fetch(`${WORKER}/island/translate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ en: text }),
+      body: JSON.stringify({ question: question.trim(), en: text }),
     })
     if (!resp.ok) return EMPTY // 503 = the AI secret isn't set on the Worker
     const j = await resp.json()
     if (!j || j.configured === false || !j.kirjakieli) return EMPTY
     return {
       ok: true,
+      en: String(j.en || text),
       kirjakieli: String(j.kirjakieli),
       puhekieli: String(j.puhekieli ?? ''),
       verified: !!j.verified,
