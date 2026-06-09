@@ -1,5 +1,5 @@
 import { supabase } from '../supabase/client'
-import { toRegisterTokens, ShadowLine } from './content'
+import { toRegisterTokens, ShadowLine, fetchIslandSentences } from './content'
 import type { CardSchedule } from './cards'
 
 /* ---------------------------------------------------------------------------
@@ -88,6 +88,66 @@ export async function deleteIsland(userId: string, islandId: string): Promise<vo
   // Sentences + their FSRS cards cascade away via FK ON DELETE CASCADE.
   const { error } = await supabase.from('user_islands').delete().eq('id', islandId).eq('user_id', userId)
   if (error) throw new Error(error.message)
+}
+
+/** Delete one sentence from an island (its FSRS card cascades via FK). */
+export async function deleteIslandSentence(userId: string, sentenceId: string): Promise<void> {
+  const { error } = await supabase.from('user_island_sentences').delete().eq('id', sentenceId).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+/** Update one sentence's content (after the learner edits + re-translates it).
+ *  The FSRS schedule on its card is left untouched. */
+export async function updateIslandSentence(
+  userId: string,
+  sentenceId: string,
+  fields: { en: string; kirjakieli: string; puhekieli: string; verified: boolean },
+): Promise<IslandSentence> {
+  const { data, error } = await supabase
+    .from('user_island_sentences')
+    .update({
+      en: fields.en.trim(),
+      kirjakieli: fields.kirjakieli.trim(),
+      puhekieli: fields.puhekieli.trim() || null,
+      verified: fields.verified,
+    })
+    .eq('id', sentenceId).eq('user_id', userId)
+    .select('id, island_id, en, kirjakieli, puhekieli, verified')
+    .single()
+  if (error) throw new Error(error.message)
+  return toLine(data)
+}
+
+/**
+ * Create the "Starter pack" island from the 50 Voikko-validated everyday (arki)
+ * sentences — a ready-made first island for total beginners that flows through
+ * the same shadow/recall/FSRS engines as any personal island. Batched inserts.
+ */
+export async function createStarterIsland(userId: string): Promise<string> {
+  const sents = await fetchIslandSentences(50)
+  if (sents.length === 0) throw new Error('Starter sentences are not loaded yet.')
+
+  const islandId = await createIsland(userId, 'Everyday basics', 'starter')
+
+  const rows = sents.map((s, i) => ({
+    island_id: islandId, user_id: userId,
+    en: s.gloss,
+    kirjakieli: s.kirja.map((t) => t.t).join(' '),
+    puhekieli: s.puhe.map((t) => t.t).join(' ') || null,
+    verified: true, // the arki kirjakieli is Voikko-validated seed content
+    sort_order: i,
+  }))
+  const { data: inserted, error } = await supabase.from('user_island_sentences').insert(rows).select('id')
+  if (error) throw new Error(error.message)
+
+  const cards = (inserted ?? []).map((r) => ({
+    user_id: userId, island_sentence_id: r.id, card_type: 'island_recall' as const,
+    state: 'new' as const, due: new Date().toISOString(),
+    stability: 0, difficulty: 0, elapsed_days: 0, scheduled_days: 0, reps: 0, lapses: 0, last_review: null,
+  }))
+  if (cards.length) await supabase.from('cards').insert(cards)
+
+  return islandId
 }
 
 export async function fetchIslandLines(userId: string, islandId: string): Promise<IslandSentence[]> {

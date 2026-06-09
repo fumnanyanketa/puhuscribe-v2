@@ -54,3 +54,24 @@ export async function translateSentence(question: string, en: string): Promise<T
     return EMPTY
   }
 }
+
+/**
+ * The coach's follow-up questions for a topic — 2-3 more, tailored to what the
+ * learner has already said. Questions only (the learner still authors the
+ * answers). Returns [] if the Worker isn't available.
+ */
+export async function fetchFollowupQuestions(topic: string, answers: string[]): Promise<string[]> {
+  if (!WORKER) return []
+  try {
+    const resp = await fetch(`${WORKER}/island/questions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, answers }),
+    })
+    if (!resp.ok) return []
+    const j = await resp.json()
+    return Array.isArray(j?.questions) ? j.questions.map((q: unknown) => String(q)) : []
+  } catch {
+    return []
+  }
+}

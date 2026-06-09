@@ -163,6 +163,50 @@ async function islandTranslate(request, env) {
   return json({ ok: true, en: t.en, kirjakieli: t.kirjakieli, puhekieli: t.puhekieli, verified, invalidWords: invalid, configured: true })
 }
 
+// POST /island/questions — the coach asks 2-3 more tailored follow-up questions
+// for a topic (questions only, never the answers). Uses Haiku (cheap; this is
+// simple generation). Returns { ok, questions, configured }.
+async function islandQuestions(request, env) {
+  if (request.method !== 'POST') return json({ ok: false }, 405)
+  let topic = '', answers = []
+  try { const b = await request.json(); topic = String(b.topic || ''); if (Array.isArray(b.answers)) answers = b.answers.map(String) } catch { /* ignore */ }
+  topic = topic.trim().slice(0, 120)
+  if (!env.ANTHROPIC_API_KEY) return json({ ok: false, configured: false }, 503)
+
+  const said = answers.map((a) => a.trim()).filter(Boolean).slice(0, 8).join(' | ').slice(0, 600)
+  const system = "You are a warm language coach helping an adult beginner build personal Finnish sentences about a topic. "
+    + "Suggest 2-3 SHORT, simple follow-up QUESTIONS in English that prompt them to say more about their real life and would make easy beginner sentences. "
+    + "Build on what they already said, do not repeat their points, and NEVER write the sentences for them. "
+    + 'Reply with ONLY a JSON object (no markdown): {"questions": ["...", "..."]}.'
+  const userMsg = `Topic: "${topic}"\nWhat they've said so far: ${said || '(nothing yet)'}`
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      system,
+      messages: [{ role: 'user', content: userMsg }],
+    }),
+  })
+  if (!r.ok) return json({ ok: false }, 502)
+  try {
+    const data = await r.json()
+    let t = ((data.content && data.content[0] && data.content[0].text) || '').trim()
+    t = t.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim()
+    const out = JSON.parse(t)
+    const questions = Array.isArray(out.questions) ? out.questions.map((q) => String(q).trim()).filter(Boolean).slice(0, 3) : []
+    return json({ ok: true, questions, configured: true })
+  } catch {
+    return json({ ok: false, configured: true })
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS })
@@ -170,6 +214,7 @@ export default {
     const url = new URL(request.url)
     if (url.pathname === '/correct') return correct(request, env)
     if (url.pathname === '/island/translate') return islandTranslate(request, env)
+    if (url.pathname === '/island/questions') return islandQuestions(request, env)
 
     let text = url.searchParams.get('text') || ''
     if (request.method === 'POST') {

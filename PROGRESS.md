@@ -314,6 +314,16 @@ Next (remaining island list): AI follow-up questions (2–3 tailored per topic);
 
 ---
 
+## Session: 2026-06-09 (Island polish: AI follow-up questions + edit/delete a sentence + Starter pack)
+
+Shipped: Three island items, finishing the islands round. (1) **AI follow-up questions** — new Worker `/island/questions` route (Claude Haiku, cheap) generates 2–3 tailored follow-ups from the topic + what the learner's already written; a "More questions" button in the create flow appends them (capped at 6) and the learner answers in their own words (questions only, never authored answers). (2) **Edit/delete a single sentence** in the island detail — per-sentence Edit (edit the English → re-translate → `updateIslandSentence`, FSRS schedule untouched) and Delete (inline confirm → `deleteIslandSentence`, card cascades via FK). (3) **Starter pack** — a one-tap "Aloituspaketti" card in the Islands list copies the 50 Voikko-validated `arki` sentences into a personal "Everyday basics" island (`createStarterIsland`, batched inserts, verified=true), so a total beginner gets a ready-made first island that runs through the same shadow/recall/FSRS engines. Build clean, 31 JS tests, worker.js syntax-checked. Worker auto-deploys on push.
+
+Blocked: nothing new. Verify in browser: create flow → "More questions"; island detail → Edit/Delete a sentence; Islands list → "Starter pack" (shows until you've added it).
+
+Next: the owner's next app-correction list — Islands is feature-complete for this round (only the owner-deployed Voikko service to flip drafts → verified remains).
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
