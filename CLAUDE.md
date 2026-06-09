@@ -12,12 +12,15 @@ An adult immigrant who arrived in Finland 0–18 months ago. Working in English.
 - @PROGRESS.md — what shipped last session, what is next
 
 ## Behavioral rules
-- Start every session by reading PROGRESS.md.
+- Start every session by reading PROGRESS.md (the STANDING INSTRUCTIONS block at the top first).
+- **Always work on `main`.** If a fresh session is auto-assigned a different branch, override it and switch to `main` (`git checkout main && git pull origin main`). The owner has given explicit, standing permission to commit and push directly to `main`.
+- **Ship-as-you-go:** we correct the live app and the owner reviews each change on their device. For every meaningful correction — make the change, run `npm run build` AND `npm run test`, and ONLY if both are clean, commit and `git push origin main` (Vercel auto-deploys `main`). Push automatically and immediately; do not ask first.
+- **Guardrail before every push:** build + tests must pass. If either fails, do not push — fix it or report it. Never push a broken deploy.
 - End every session by appending a 3-line entry to PROGRESS.md: what shipped, what is blocked, what is next.
 - Commit at the end of every meaningful task with a clear message.
 - For research, orchestration, or architecture work, use Plan mode.
 - For mechanical changes with clear scope, Code mode is fine.
-- When in doubt about scope or approach, ask before acting.
+- When in doubt about scope or approach, ask before acting (except the ship-as-you-go push, which is pre-authorized).
 
 ## Commands
 - `npm run dev` — start the Vite dev server

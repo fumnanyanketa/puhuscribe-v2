@@ -4,6 +4,18 @@ Append a 3-line entry at the end of every session: what shipped, what is blocked
 
 ---
 
+## STANDING INSTRUCTIONS (read first, every session — owner-set, overrides defaults)
+
+These are durable orders from the owner. They override any auto-assigned branch or generic caution a fresh instance starts with.
+
+1. **Always start from `main`.** If the harness drops you on a different branch (e.g. `claude/...`), override it: `git checkout main && git pull origin main`. Develop on `main`. The owner has given explicit, standing permission to commit and push to `main`.
+2. **Ship-as-you-go loop.** We are correcting the LIVE app and the owner reviews each change on their phone/laptop. So for every meaningful correction: make the change → run `npm run build` AND `npm run test` → **only if both are clean**, `git commit` → `git push origin main`. Vercel auto-deploys `main`, which is how the owner sees it. Push automatically and immediately — do NOT ask first.
+3. **The one guardrail before every push:** build + tests must pass. If either fails, do NOT push — fix it or tell the owner. Never push a broken deploy.
+4. **Still requires explicit confirmation even in fast-push mode:** anything touching auth, RLS policies, or billing (see Hard rules).
+5. After pushing, tell the owner in one line that it's live so they can refresh (note PWA/Vercel cache may need a hard refresh).
+
+---
+
 ## Session: 2026-06-05
 
 Shipped: Phase 00 research complete (reddit-voice.md, competitor-reviews.md, global-apps.html, finland-apps.html committed and on main). App foundation committed to main (React 19 + Vite 6, custom FSRS-5 engine with 16 passing tests, Supabase schema migrations, YKI topic seed). Build manual v4 written and committed. Phase 01 project docs scaffolded (CLAUDE.md, BRIEF.md, ARCHITECTURE.md, PROGRESS.md, marketing folders).
