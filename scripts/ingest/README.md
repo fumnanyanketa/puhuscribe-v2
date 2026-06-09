@@ -2,8 +2,8 @@
 
 Reproducible scripts that turn the **real Creative Commons corpora** into the
 PuhuScribe seed SQL. They exist so Finnish content is **never hand-typed or
-AI-guessed again** — the root cause of the content-quality problems documented
-in `docs/CONTENT-CORRECTIONS-HANDOFF.md`.
+AI-guessed again** — the root cause of the early content-quality problems
+(LLM-generated Finnish with CC attribution attached on top).
 
 > **Why this is needed:** earlier sessions *generated* the vocabulary, sentences
 > and mnemonics with an LLM and then attached CC attribution on top. The data

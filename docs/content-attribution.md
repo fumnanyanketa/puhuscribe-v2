@@ -3,9 +3,8 @@
 > **Status (2026-06-07): content is being migrated to genuine CC sources.**
 > This file describes what is *actually* the provenance of the content, not an
 > aspiration. It is kept honest on purpose — an earlier version attached CC
-> attribution to content that was in fact LLM-generated, which is the root cause
-> of the content-quality problems tracked in
-> `docs/CONTENT-CORRECTIONS-HANDOFF.md`.
+> attribution to content that was in fact LLM-generated, which was the root
+> cause of the content-quality problems since corrected.
 
 ## Current state of the seeded content (must be replaced)
 

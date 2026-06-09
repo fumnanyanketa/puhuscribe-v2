@@ -88,8 +88,8 @@ Voikko validates **standard written Finnish (kirjakieli)** only. Spoken Finnish
 correctly rejects it — so puhekieli is **not** passed through the gate. The
 generator still produces a puhekieli pair for each item, but puhekieli has no
 morphological validator and no CC source, so it stays on the **human-verified**
-path (consistent with `docs/CONTENT-CORRECTIONS-HANDOFF.md` and
-`scripts/ingest/`). The gate's guarantee covers the kirjakieli layer.
+path (consistent with `scripts/ingest/`). The gate's guarantee covers the
+kirjakieli layer.
 
 ## Model & "lower the temperature"
 

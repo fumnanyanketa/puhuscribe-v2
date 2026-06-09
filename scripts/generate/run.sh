@@ -4,7 +4,7 @@
 # validated Finnish content and emits the loadable Supabase SQL.
 #
 # THIS is "content generation". Do NOT reingest from CC corpora (that is the
-# separate, deferred §0 path in docs/CONTENT-CORRECTIONS-HANDOFF.md).
+# separate, deferred CC-reingest path under scripts/ingest/).
 #
 # Requirements: run from the repo root on branch claude/peaceful-carson-mEZVc,
 # with ANTHROPIC_API_KEY set in the environment.
