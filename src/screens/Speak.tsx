@@ -6,7 +6,7 @@ import { ScreenScroll } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useLang } from '../lib/lang/useLang'
-import { fetchIslandSentences, RegisterSentence } from '../lib/data/content'
+import { fetchIslandSentences, RegisterSentence, ShadowLine } from '../lib/data/content'
 import { speak } from '../lib/tts'
 
 type RecState = 'idle' | 'recording' | 'review'
@@ -37,7 +37,17 @@ function Wave({ active, color }: { active: boolean; color: string }) {
   )
 }
 
-export function Speak({ onBack }: { onBack: () => void }) {
+export function Speak({ onBack, phrases, title }: { onBack: () => void; phrases?: ShadowLine[]; title?: string }) {
+  // When sentences are passed in (a personal island), shadow those; otherwise
+  // fall back to fetching the curated "first useful sentences" set.
+  if (phrases) {
+    if (phrases.length === 0) return <StatePane title="No sentences yet" detail="Add a sentence to this island first." bottom={110} />
+    return <SpeakPractice phrases={phrases} onBack={onBack} title={title} />
+  }
+  return <SpeakFetch onBack={onBack} />
+}
+
+function SpeakFetch({ onBack }: { onBack: () => void }) {
   const { bi } = useLang()
   // The curated "first useful sentences" set (falls back to general sentences).
   const { data: phrases, loading, error } = useAsync<RegisterSentence[]>(
@@ -52,7 +62,7 @@ export function Speak({ onBack }: { onBack: () => void }) {
   return <SpeakPractice phrases={phrases} onBack={onBack} />
 }
 
-function SpeakPractice({ phrases, onBack }: { phrases: RegisterSentence[]; onBack: () => void }) {
+function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBack: () => void; title?: string }) {
   const { bi } = useLang()
   const [i, setI] = useState(0)
   const [st, setSt] = useState<RecState>('idle')
@@ -174,7 +184,7 @@ function SpeakPractice({ phrases, onBack }: { phrases: RegisterSentence[]; onBac
           </div>
           <div style={{ marginTop: 22 }}>
             <Label color="rgba(255,255,255,.75)">{bi('Puhuharjoitus', 'Speaking practice')}</Label>
-            <h1 className="ps-title-1" style={{ color: 'var(--on-dark)', marginTop: 10 }}>{bi('Toista ääneen', 'Say it aloud')}</h1>
+            <h1 className="ps-title-1" style={{ color: 'var(--on-dark)', marginTop: 10 }}>{title ? title : bi('Toista ääneen', 'Say it aloud')}</h1>
           </div>
         </div>
 

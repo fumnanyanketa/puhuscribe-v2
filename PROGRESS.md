@@ -274,13 +274,24 @@ Next: load island seed in Supabase; owner adds ANTHROPIC secret for live writing
 
 ---
 
+## Session: 2026-06-09 (Personal Language Islands — author-your-own-sentences, the real method)
+
+Shipped: Reframed Language Islands from a generic curated phrase pack to the actual method (after pressure-testing it against the Mikael "language islands" video) — the learner authors their OWN sentences and the AI only ever ASKS. New 5th nav tab `Islands` (Kielisaaret): a curated question bank (src/lib/islandTopics.ts — 8 real-life topics, his categories), a create flow (pick a topic → answer its questions in English → each answer is translated EN→FI by the Worker's new `/island/translate` route → saved), an island detail screen, and practice that REUSES the existing engines — shadowing (generalised Speak.tsx to take any `ShadowLine[]`) and active recall (English→produce Finnish) scheduled by the SAME FSRS `cards` table (new `island_recall` card_type + `island_sentence_id` column, so personal sentences get spaced repetition for free). Honest validation per the owner's bar: the kirjakieli is Voikko-gated by a new runtime service (services/voikko/ — reuses the seed pipeline's exact VoikkoGate; Dockerfile + runbook) the Worker calls; until that service is deployed, sentences save as clearly-labelled DRAFTS (verified=false) rather than shipping unverified Finnish. New owner-only tables `user_islands` + `user_island_sentences` (3 idempotent migrations, RLS own-rows). Build clean (TS strict), 31 JS tests pass, worker.js + app.py syntax-checked.
+
+Blocked: Owner runs the 3 new migrations in Supabase (20260609000001 tables → 20260609000002 enum value → 20260609000003 cards column/constraint, in order) before the tab works. `/island/translate` auto-deploys on this push (ANTHROPIC key already set) so translation works immediately — but every island sentence stays a DRAFT until the owner deploys the Voikko service (services/voikko/README.md: docker build → any host → set `VOIKKO_SERVICE_URL` [+ `VOIKKO_SHARED_SECRET`] repo secrets → re-run "Deploy TTS Worker"). Container can't reach Supabase/Cloudflare, so verify in the browser; check the 5-tab nav fits on a phone.
+
+Next: deploy the Voikko service to flip drafts → verified; mix due `island_recall` cards into Daily review (so personal sentences resurface in the main loop, not only inside the island); let the learner edit/redo a translated sentence before saving; AI-generated follow-up questions; reframe the 50 `arki` sentences as a "Starter pack" inside the Islands tab.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Supabase SQL run: `users.progress` jsonb column (cross-device resume), `GRANT DELETE ON cards` (reset), and the `supabase/seeds/05_island_sentences.sql` seed (the 50 real "arki" sentences → Listen/Write/Speak are live, not the fallback). Earlier migrations (content_fixes, IPA, grants, user_progress, grant_card_delete) also run.
 - AI writing feedback: `ANTHROPIC_API_KEY` added as a GitHub repo secret + the "Deploy TTS Worker" Action re-run, so Write now uses live Claude Haiku `/correct` (no longer the self-check fallback).
 - Azure Speech key rotated.
 
-STILL PENDING (needs a human, not a deploy):
+STILL PENDING:
+- Personal Language Islands (new this session): run migrations `20260609000001/2/3` in Supabase (in order) to turn the tab on. The `/island/translate` route auto-deploys on push. To upgrade island sentences from "draft" to Voikko-verified, deploy `services/voikko/` to any container host and set `VOIKKO_SERVICE_URL` (+ `VOIKKO_SHARED_SECRET` if used) as repo secrets, then re-run "Deploy TTS Worker".
 - Finnish-speaker verification pass on the puhekieli column (`docs/island-sentences.md` + `docs/generated_puhekieli_REVIEW.tsv`). Kirjakieli is Voikko-validated; puhekieli has no machine validator, so it stays text-only until a Finnish speaker eyeballs it. Then puhekieli audio can be enabled.
 
 Notes: VITE_TTS_WORKER_URL set in Vercel (TTS works). Read docs/pedagogy-pressure-test.md for the four-skills rationale + what's still missing (real native listening clips, reading mode, mnemonics).

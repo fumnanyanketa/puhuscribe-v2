@@ -96,13 +96,19 @@ export async function fetchTopics(): Promise<TopicRow[]> {
 
 export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
 
-export interface RegisterSentence {
-  id: number
-  gloss: string                 // English translation
-  level: CefrLevel
-  topicId: number | null
+// The minimum a sentence needs to be shadowed (heard + repeated): an English
+// gloss and the two register token streams. Both seed sentences and the
+// learner's own island sentences satisfy this, so they share one Speak screen.
+export interface ShadowLine {
+  gloss: string                 // English meaning
   kirja: Token[]                // kirjakieli tokens
   puhe: Token[]                 // puhekieli tokens
+}
+
+export interface RegisterSentence extends ShadowLine {
+  id: number
+  level: CefrLevel
+  topicId: number | null
 }
 
 export interface FetchSentencesOpts {

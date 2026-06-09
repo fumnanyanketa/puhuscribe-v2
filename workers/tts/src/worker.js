@@ -70,12 +70,101 @@ async function correct(request, env) {
   }
 }
 
+// Ask Claude to translate one English sentence into kirjakieli + puhekieli.
+// Returns { kirjakieli, puhekieli } or null. `note` lets us nudge a correction
+// of words Voikko rejected on a retry.
+async function translateOnce(en, env, note) {
+  const system = "You translate one English sentence for an adult beginner learning Finnish. "
+    + "Produce (1) standard WRITTEN Finnish (kirjakieli) and (2) natural SPOKEN Helsinki Finnish (puhekieli). "
+    + "Keep it ONE everyday sentence, natural, around CEFR A2-B1. "
+    + "Use ONLY real, standard Finnish words and real inflections - never invent words or endings. "
+    + (note ? `Avoid these non-words from your previous try: ${note}. ` : '')
+    + "Reply with ONLY a JSON object (no markdown) with exactly: "
+    + '"kirjakieli" (string) and "puhekieli" (string).'
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 400,
+      system,
+      messages: [{ role: 'user', content: `English: "${en}"` }],
+    }),
+  })
+  if (!r.ok) return null
+  try {
+    const data = await r.json()
+    let t = ((data.content && data.content[0] && data.content[0].text) || '').trim()
+    t = t.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim()
+    const out = JSON.parse(t)
+    const kirjakieli = String(out.kirjakieli || '').trim()
+    const puhekieli = String(out.puhekieli || '').trim()
+    if (!kirjakieli) return null
+    return { kirjakieli, puhekieli }
+  } catch {
+    return null
+  }
+}
+
+// Voikko-gate the kirjakieli via the validation sidecar (same bar as seed content).
+// Returns { verified, invalid }. If the service isn't configured, verified=false
+// with no invalid list — the app then saves the sentence as a labelled draft.
+async function voikkoValidate(kirjakieli, env) {
+  if (!env.VOIKKO_SERVICE_URL) return { verified: false, invalid: [] }
+  try {
+    const headers = { 'Content-Type': 'application/json' }
+    if (env.VOIKKO_SHARED_SECRET) headers['X-Voikko-Secret'] = env.VOIKKO_SHARED_SECRET
+    const vr = await fetch(env.VOIKKO_SERVICE_URL.replace(/\/+$/, '') + '/validate', {
+      method: 'POST', headers, body: JSON.stringify({ text: kirjakieli }),
+    })
+    if (!vr.ok) return { verified: false, invalid: [] }
+    const vj = await vr.json()
+    return { verified: !!vj.ok, invalid: Array.isArray(vj.invalid) ? vj.invalid : [] }
+  } catch {
+    return { verified: false, invalid: [] }
+  }
+}
+
+// POST /island/translate — translate the learner's own English sentence to
+// validated Finnish for a personal Language Island. The heart of the method:
+// the learner authors; we translate + verify; nothing invented ships.
+async function islandTranslate(request, env) {
+  if (request.method !== 'POST') return json({ ok: false }, 405)
+  let en = ''
+  try { en = String((await request.json()).en || '') } catch { /* ignore */ }
+  en = en.trim().slice(0, 300)
+  if (!en) return json({ ok: false }, 400)
+  if (!env.ANTHROPIC_API_KEY) return json({ ok: false, configured: false }, 503)
+
+  let t = await translateOnce(en, env)
+  if (!t) return json({ ok: false, configured: true }, 502)
+
+  let { verified, invalid } = await voikkoValidate(t.kirjakieli, env)
+  // One corrective pass if Voikko rejected words and the service is live.
+  if (!verified && invalid.length > 0) {
+    const retry = await translateOnce(en, env, invalid.join(', '))
+    if (retry) {
+      const second = await voikkoValidate(retry.kirjakieli, env)
+      if (second.verified) { t = retry; verified = true; invalid = [] }
+      else { invalid = second.invalid }
+    }
+  }
+
+  return json({ ok: true, kirjakieli: t.kirjakieli, puhekieli: t.puhekieli, verified, invalidWords: invalid, configured: true })
+}
+
 export default {
   async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS })
 
     const url = new URL(request.url)
     if (url.pathname === '/correct') return correct(request, env)
+    if (url.pathname === '/island/translate') return islandTranslate(request, env)
 
     let text = url.searchParams.get('text') || ''
     if (request.method === 'POST') {

@@ -230,13 +230,67 @@ export type Database = {
         }
         Relationships: []
       }
+      user_islands: {
+        Row: {
+          id: string
+          user_id: string
+          title: string
+          topic_slug: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title: string
+          topic_slug?: string
+          created_at?: string
+        }
+        Update: {
+          title?: string
+          topic_slug?: string
+        }
+        Relationships: []
+      }
+      user_island_sentences: {
+        Row: {
+          id: string
+          island_id: string
+          user_id: string
+          en: string
+          kirjakieli: string
+          puhekieli: string | null
+          verified: boolean
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          island_id: string
+          user_id: string
+          en: string
+          kirjakieli: string
+          puhekieli?: string | null
+          verified?: boolean
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          en?: string
+          kirjakieli?: string
+          puhekieli?: string | null
+          verified?: boolean
+          sort_order?: number
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           id: string
           user_id: string
           word_id: number | null
           sentence_id: number | null
-          card_type: 'word_recognition' | 'word_production' | 'sentence_listening' | 'sentence_speaking'
+          island_sentence_id: string | null
+          card_type: 'word_recognition' | 'word_production' | 'sentence_listening' | 'sentence_speaking' | 'island_recall'
           due: string
           stability: number
           difficulty: number
@@ -253,7 +307,8 @@ export type Database = {
           user_id: string
           word_id?: number | null
           sentence_id?: number | null
-          card_type: 'word_recognition' | 'word_production' | 'sentence_listening' | 'sentence_speaking'
+          island_sentence_id?: string | null
+          card_type: 'word_recognition' | 'word_production' | 'sentence_listening' | 'sentence_speaking' | 'island_recall'
           due?: string
           stability?: number
           difficulty?: number
@@ -312,7 +367,7 @@ export type Database = {
     Enums: {
       cefr_level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
       card_state: 'new' | 'learning' | 'review' | 'relearning'
-      card_type: 'word_recognition' | 'word_production' | 'sentence_listening' | 'sentence_speaking'
+      card_type: 'word_recognition' | 'word_production' | 'sentence_listening' | 'sentence_speaking' | 'island_recall'
       dialect: 'standard' | 'colloquial'
       speaker_gender: 'M' | 'F'
     }
