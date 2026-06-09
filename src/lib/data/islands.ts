@@ -167,18 +167,17 @@ export async function fetchIslandRecall(userId: string, islandId: string): Promi
 }
 
 /**
- * Due personal island sentences across ALL islands — the ones that have come
- * back around for spaced review. These mix into the main Daily review so the
- * learner's own sentences resurface in the everyday loop. Only STARTED cards
- * (a brand-new sentence is first met inside its island, not dumped into Daily),
- * due now or earlier, soonest-due first.
+ * Due personal island sentences across ALL islands — the sentence track of the
+ * daily review. Due now or earlier, soonest-due first, INCLUDING brand-new ones
+ * (a freshly-authored sentence is due immediately, so it shows up to review the
+ * same day rather than disappearing).
  */
 export async function fetchDueIslandRecall(userId: string, limit: number): Promise<IslandRecallCard[]> {
   const now = new Date().toISOString()
   const { data: cards, error } = await supabase
     .from('cards').select(RECALL_COLS)
     .eq('user_id', userId).eq('card_type', 'island_recall').not('island_sentence_id', 'is', null)
-    .in('state', ['review', 'learning', 'relearning']).lte('due', now)
+    .lte('due', now)
     .order('due', { ascending: true }).limit(limit)
   if (error) throw new Error(error.message)
   const rows = cards ?? []

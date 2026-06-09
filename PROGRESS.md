@@ -304,6 +304,16 @@ Next (owner's island list, in order): split Daily into two tracks — a **vocabu
 
 ---
 
+## Session: 2026-06-09 (Daily split into two tracks: vocabulary bank + sentence islands)
+
+Shipped: Split Daily review into TWO distinct tracks per the owner's north star (grow ~1000–2000 words AND ~1000 own sentences, daily). New Daily HUB shows two banks each with a progress bar toward its goal: **Vocabulary** (X / 1000 words) and **Your sentences** (Y / 1000 sentences), each with a "due" count and its own review session — no more one mixed pile. `fetchReviewOverview` (src/lib/data/review.ts) head-counts both banks + what's due; the vocab track runs the word-recall session (fetchVocabSession), the sentence track runs the island-recall session. Fixed the "I can't see island sentences in Daily" report: `fetchDueIslandRecall` now includes brand-new sentences (dropped the started-only filter), so a freshly-authored sentence is reviewable the same day. Each track has an empty state routing to Day One / Islands. Build clean, 31 JS tests.
+
+Blocked: nothing new. Verify in browser: Review tab now shows two track cards with bank progress; tap each to review; a new island sentence appears under "Your sentences" the same day.
+
+Next (remaining island list): AI follow-up questions (2–3 tailored per topic); edit/delete a single sentence in the island detail; reframe the 50 `arki` sentences as a "Starter pack". Then the owner's next app-correction list.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
