@@ -48,7 +48,7 @@ function Hub({ userId, go, onVocab, onSentences }: {
       <Label color="var(--written)">Daily Review</Label>
       <h1 className="ps-title-1" style={{ marginTop: 8 }}>Päivän kertaus</h1>
       <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
-        Type each one from memory — that's what makes it stick. Two banks grow a little every day: your words and your own sentences.
+        Type each one from memory, because that's what makes it stick. Two banks grow a little every day: your words and your own sentences.
       </p>
 
       <div style={{ display: 'flex', justifyContent: 'center', margin: '12px 0 4px' }}>
