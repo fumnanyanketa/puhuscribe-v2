@@ -79,7 +79,7 @@ function TrackCard({ icon, accent, accentBg, fi, en, unitFi, unitEn, bank, goal,
   bank: number; goal: number; due: number
   startFi: string; startEn: string; onStart: () => void; onReview: () => void
 }) {
-  const { bi } = useLang()
+  const { bi, bilingual } = useLang()
   const pct = Math.min(100, Math.round((bank / goal) * 100))
   const empty = bank === 0
 
@@ -92,7 +92,10 @@ function TrackCard({ icon, accent, accentBg, fi, en, unitFi, unitEn, bank, goal,
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17 }}>{bi(fi, en)}</div>
-          <div className="ps-caption ps-num" style={{ marginTop: 2 }}>{bank} / {goal} {bi(unitFi, unitEn)}</div>
+          <div className="ps-caption ps-num" style={{ marginTop: 2 }}>
+            {bank} / {goal} {unitFi}
+            {bilingual && <span style={{ fontStyle: 'italic', opacity: 0.55 }}> ({unitEn})</span>}
+          </div>
         </div>
         {!empty && due > 0 && (
           <span className="ps-chip" style={{ background: accentBg, color: accent, fontSize: 11, padding: '5px 10px', flexShrink: 0 }}>
