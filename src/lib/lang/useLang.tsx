@@ -56,19 +56,20 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   const toggle = useCallback(() => setBilingual(!bilingual), [bilingual, setBilingual])
 
-  // Finnish dominant; the English sits on the line below in faded italic parens.
-  // Uses em-relative sizing so it scales with whatever context renders it
-  // (eyebrow label, heading, button…). Finnish-only mode returns the bare string.
+  // Finnish dominant; the English sits quietly on the line below as a muted
+  // secondary — no parentheses, no italic (the owner found the bracketed gloss
+  // "isolated and cheap"). Muted ink-3, medium weight; em-relative so it scales
+  // with whatever context renders it. Finnish-only mode returns the bare string.
   const bi = useCallback<Bi>(
     (fi, en) =>
       bilingual ? (
-        <span style={{ display: 'inline-block', lineHeight: 1.12 }}>
+        <span style={{ display: 'inline-block', lineHeight: 1.12, verticalAlign: 'top' }}>
           {fi}
           <span style={{
-            display: 'block', fontStyle: 'italic', fontWeight: 400, fontSize: '0.78em',
-            opacity: 0.6, marginTop: 1, letterSpacing: 'normal', textTransform: 'none',
+            display: 'block', fontWeight: 500, fontSize: '0.72em',
+            color: 'var(--ink-3)', marginTop: 1, letterSpacing: 'normal', textTransform: 'none',
           }}>
-            ({en})
+            {en}
           </span>
         </span>
       ) : (
@@ -78,7 +79,8 @@ export function LangProvider({ children }: { children: ReactNode }) {
   )
 
   // Plain-string label for string-only contexts (placeholders, template literals).
-  const biText = useCallback<BiText>((fi, en) => (bilingual ? `${fi} (${en})` : fi), [bilingual])
+  // A thin middot pairs the two inline, with no brackets.
+  const biText = useCallback<BiText>((fi, en) => (bilingual ? `${fi} · ${en}` : fi), [bilingual])
 
   return (
     <LangContext.Provider value={{ bilingual, setBilingual, toggle, bi, biText }}>

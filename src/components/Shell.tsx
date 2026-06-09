@@ -1,12 +1,12 @@
 import React from 'react'
-import { Orb } from './primitives'
+import { BrandMark } from './primitives'
 import { I } from './icons'
 
 /* ---------- Wordmark ---------- */
 export function PuhuMark({ size = 20, light = false }: { size?: number; light?: boolean }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-      <Orb size={size * 1.15} from="var(--orb-magenta)" to="var(--orb-violet)" dots />
+      <BrandMark size={size * 1.5} />
       <span style={{
         fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: size,
         letterSpacing: '-0.03em', color: light ? 'var(--on-dark)' : 'var(--ink)',

@@ -11,57 +11,79 @@ export function Label({ children, color = 'var(--ink-3)', style }: {
   return <span className="ps-label" style={{ color, ...style }}>{children}</span>
 }
 
-/* ---------- Glossy speech bubble ---------- */
-const BUBBLE = 'M28 10 H72 A20 20 0 0 1 92 30 V50 A20 20 0 0 1 72 70 H44 L24 88 L31 70 H28 A20 20 0 0 1 8 50 V30 A20 20 0 0 1 28 10 Z'
+/* ---------- Brand mark — "Sprout" logo tile ----------
+   A rounded-square seedling in the cool orb gradient. Replaces the old
+   speech-bubble cluster as the app's brand mark (the owner-chosen direction).
+   Belongs at entry/brand moments (Auth, Welcome, Home); kept small or absent
+   inside focused drills so a task never looks like a logo showcase. */
+export function BrandMark({ size = 80, style }: { size?: number; style?: React.CSSProperties }) {
+  const uid = useId().replace(/[^a-z0-9]/gi, '')
+  const gV = 'bmv' + uid, gl = 'bml' + uid
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true"
+      style={{ display: 'block', flexShrink: 0, ...style }}>
+      <defs>
+        <linearGradient id={gV} x1="12%" y1="4%" x2="82%" y2="96%">
+          <stop offset="0%" stopColor="var(--orb-violet)" />
+          <stop offset="100%" stopColor="var(--orb-deep)" />
+        </linearGradient>
+        <radialGradient id={gl} cx="34%" cy="26%" r="58%">
+          <stop offset="0%" stopColor="rgba(255,255,255,.6)" />
+          <stop offset="62%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+      </defs>
+      <rect x={8} y={8} width={84} height={84} rx={26} fill={`url(#${gV})`} />
+      <path d="M50 78 L50 50" stroke="#fff" strokeWidth={5} strokeLinecap="round" fill="none" />
+      <path d="M50 62 C 50 45 37 39 23 41 C 25 58 40 65 50 62 Z" fill="rgba(255,255,255,.96)" />
+      <path d="M50 55 C 50 41 63 36 77 38 C 75 53 60 59 50 55 Z" fill="rgba(255,255,255,.80)" />
+      <rect x={14} y={14} width={46} height={30} rx={16} fill={`url(#${gl})`} />
+    </svg>
+  )
+}
 
-export function Orb({ size = 80, from = 'var(--orb-magenta)', to = 'var(--orb-violet)', dots = false, style }: {
+/* ---------- Glossy disc — neutral decorative accent (replaces the bubble Orb) ---------- */
+export function Disc({ size = 80, from = 'var(--orb-pink)', to = 'var(--orb-violet)', style }: {
+  size?: number
+  from?: string
+  to?: string
+  style?: React.CSSProperties
+}) {
+  const uid = useId().replace(/[^a-z0-9]/gi, '')
+  const gd = 'dsc' + uid, gl = 'dgl' + uid
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true"
+      style={{ display: 'block', flexShrink: 0, ...style }}>
+      <defs>
+        <linearGradient id={gd} x1="15%" y1="8%" x2="85%" y2="92%">
+          <stop offset="0%" stopColor={from} />
+          <stop offset="100%" stopColor={to} />
+        </linearGradient>
+        <radialGradient id={gl} cx="34%" cy="26%" r="58%">
+          <stop offset="0%" stopColor="rgba(255,255,255,.6)" />
+          <stop offset="62%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+      </defs>
+      <circle cx={50} cy={50} r={44} fill={`url(#${gd})`} />
+      <ellipse cx={37} cy={31} rx={20} ry={13} fill={`url(#${gl})`} />
+    </svg>
+  )
+}
+
+/* Back-compat aliases — every screen imports Orb / OrbCluster. Orb is now a
+   glossy Disc; OrbCluster renders the Sprout BrandMark. Keeping the names means
+   the new brand applies across every screen at once, without touching imports. */
+export function Orb({ size = 80, from, to, style }: {
   size?: number
   from?: string
   to?: string
   dots?: boolean
   style?: React.CSSProperties
 }) {
-  const uid = useId().replace(/[^a-z0-9]/gi, '')
-  const g = 'bg' + uid, h = 'bh' + uid
-  return (
-    <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true"
-      style={{ display: 'block', flexShrink: 0, filter: 'drop-shadow(0 9px 16px rgba(70,40,110,.30))', ...style }}>
-      <defs>
-        <radialGradient id={g} cx="34%" cy="26%" r="88%">
-          <stop offset="0%" stopColor={to} />
-          <stop offset="100%" stopColor={from} />
-        </radialGradient>
-        <radialGradient id={h} cx="32%" cy="22%" r="42%">
-          <stop offset="0%" stopColor="#fff" stopOpacity={0.72} />
-          <stop offset="100%" stopColor="#fff" stopOpacity={0} />
-        </radialGradient>
-      </defs>
-      <path d={BUBBLE} fill={`url(#${g})`} />
-      <path d={BUBBLE} fill={`url(#${h})`} />
-      {dots && (
-        <g fill="#fff" fillOpacity={0.95}>
-          <circle cx={34} cy={40} r={5} />
-          <circle cx={50} cy={40} r={5} />
-          <circle cx={66} cy={40} r={5} />
-        </g>
-      )}
-    </svg>
-  )
+  return <Disc size={size} from={from} to={to} style={style} />
 }
 
-/* ---------- Speech-bubble cluster (hero imagery) ---------- */
-export function OrbCluster({ size = 180, style }: { size?: number; style?: React.CSSProperties }) {
-  const s = size
-  return (
-    <div aria-hidden="true" style={{ position: 'relative', width: s, height: s, ...style }}>
-      <Orb size={s * 0.72} from="var(--orb-violet)" to="var(--orb-magenta)" dots
-        style={{ position: 'absolute', left: s * 0.02, top: s * 0.20 }} />
-      <Orb size={s * 0.5} from="var(--orb-magenta)" to="var(--orb-pink)"
-        style={{ position: 'absolute', right: s * 0.0, top: s * 0.0 }} />
-      <Orb size={s * 0.34} from="var(--orb-deep)" to="var(--orb-violet)"
-        style={{ position: 'absolute', right: s * 0.14, bottom: s * 0.02 }} />
-    </div>
-  )
+export function OrbCluster({ size = 96, style }: { size?: number; style?: React.CSSProperties }) {
+  return <BrandMark size={size} style={style} />
 }
 
 /* ---------- Register dot + label ---------- */
