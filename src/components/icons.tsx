@@ -41,6 +41,7 @@ export const icons: Record<string, string[]> = {
   sparkle: ['M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6z'],
   plus:    ['M12 5v14', 'M5 12h14'],
   chevD:   ['M6 9l6 6 6-6'],
+  trash:   ['M5 7h14', 'M10 7V5h4v2', 'M7 7l1 12h8l1-12', 'M10 11v5', 'M14 11v5'],
 }
 
 interface IProps {

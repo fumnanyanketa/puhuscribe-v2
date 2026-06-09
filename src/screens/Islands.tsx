@@ -64,10 +64,13 @@ export function Islands() {
 /* List — the learner's islands + "new island"                                 */
 /* -------------------------------------------------------------------------- */
 function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew: () => void; onOpen: (id: string) => void; onShadow: (id: string) => void }) {
-  const { bi } = useLang()
-  const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId])
+  const { bi, bilingual } = useLang()
+  const [reload, setReload] = useState(0)
+  const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId, reload])
   const [addingStarter, setAddingStarter] = useState(false)
   const [starterErr, setStarterErr] = useState('')
+  const [delId, setDelId] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const hasStarter = (islands ?? []).some((i) => i.topicSlug === 'starter')
   const addStarter = async () => {
@@ -82,11 +85,19 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
     }
   }
 
+  const removeIsland = async (id: string) => {
+    if (deleting) return
+    setDeleting(true)
+    try { await deleteIsland(userId, id); setDelId(null); setReload((n) => n + 1) } catch { /* ignore */ }
+    setDeleting(false)
+  }
+
   return (
     <ScreenScroll bottom={110}>
       <div>
         <Label color="var(--written)">Kielisaaret</Label>
-        <h1 className="ps-title-1" style={{ marginTop: 8 }}>{bi('Kielisaaret', 'Language Islands')}</h1>
+        <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kielisaaret</h1>
+        {bilingual && <div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontSize: 16, color: 'var(--ink-3)', marginTop: 2 }}>(Language Islands)</div>}
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
           Build sentences from your own life. You write what you want to say; we turn it into real Finnish you can speak.
         </p>
@@ -102,7 +113,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
           <I name="plus" size={22} />
         </span>
         <span style={{ textAlign: 'left' }}>
-          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>{bi('Uusi saari', 'New island')}</span>
+          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>{bi('Lisää uusi saari', 'Add a new island')}</span>
           <span className="ps-caption" style={{ color: 'rgba(255,255,255,.7)' }}>{bi('Vastaa kysymyksiin omin sanoin', 'Answer questions in your own words')}</span>
         </span>
       </button>
@@ -144,19 +155,39 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
       {islands && islands.length > 0 && (
         <div style={{ display: 'grid', gap: 12, marginTop: 22 }}>
           {islands.map((isl) => (
-            <button key={isl.id} onClick={() => (isl.topicSlug === 'starter' ? onShadow(isl.id) : onOpen(isl.id))} className="ps-press ps-card" style={{
-              padding: 18, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
-            }}>
-              <span style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: 'var(--written-bg)',
-                color: 'var(--written)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <I name="island" size={24} />
-              </span>
-              <span style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17 }}>{isl.title}</span>
-                <span className="ps-caption">{isl.count} {isl.count === 1 ? bi('lause', 'sentence') : bi('lausetta', 'sentences')}</span>
-              </span>
-              <I name="arrow" size={20} style={{ color: 'var(--ink-3)', flexShrink: 0 }} />
-            </button>
+            <div key={isl.id} className="ps-card" style={{ padding: 14, opacity: deleting && delId === isl.id ? 0.6 : 1 }}>
+              {delId === isl.id ? (
+                <div>
+                  <div className="ps-body" style={{ fontWeight: 600 }}>{bi('Poistetaanko tämä saari?', 'Delete this island?')}</div>
+                  <div className="ps-caption" style={{ marginTop: 4 }}>This removes its sentences and their review history.</div>
+                  <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                    <Btn variant="light" style={{ flex: 1 }} disabled={deleting} onClick={() => setDelId(null)}>{bi('Peruuta', 'Cancel')}</Btn>
+                    <Btn variant="primary" style={{ flex: 1 }} disabled={deleting} onClick={() => void removeIsland(isl.id)}>{bi('Poista', 'Delete')}</Btn>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <button onClick={() => (isl.topicSlug === 'starter' ? onShadow(isl.id) : onOpen(isl.id))} className="ps-press" style={{
+                    flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 14,
+                    background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '4px 0',
+                  }}>
+                    <span style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: 'var(--written-bg)',
+                      color: 'var(--written)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <I name={isl.topicSlug === 'starter' ? 'sparkle' : 'island'} size={24} />
+                    </span>
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      {isl.topicSlug === 'starter' && (
+                        <span className="ps-label" style={{ display: 'block', color: 'var(--written)', fontSize: 10, marginBottom: 2 }}>{bi('Aloita tästä', 'Start here')}</span>
+                      )}
+                      <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17 }}>{isl.title}</span>
+                      <span className="ps-caption">{isl.count} {isl.count === 1 ? bi('lause', 'sentence') : bi('lausetta', 'sentences')}</span>
+                    </span>
+                    <I name="arrow" size={20} style={{ color: 'var(--ink-3)', flexShrink: 0 }} />
+                  </button>
+                  <IconBtn icon="trash" tone="glass" size={38} onClick={() => setDelId(isl.id)} label="Delete island" />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
