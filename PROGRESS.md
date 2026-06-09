@@ -334,6 +334,16 @@ Next: the owner's next app-correction list (Islands is feature-complete).
 
 ---
 
+## Session: 2026-06-09 (Real active recall: type-to-produce + auto-grading; starter pack → practice)
+
+Shipped: Reworked recall from "reveal then rate yourself" (recognition, easy to fudge) into **true active recall**. New shared `src/components/RecallRunner.tsx` + `src/lib/grade.ts`: the learner is shown the English and must **TYPE the Finnish**; the system grades it (`gradeAnswer`: exact → Good, one-typo / missing-ä via Levenshtein tolerance → Hard, wrong/blank → Again, plus an honest "I don't know" = Again) and applies the FSRS rating **itself** — no self-rating, no escape hatch. Used everywhere recall happens: both Daily tracks (vocabulary + sentences) and the island Recall, replacing the old self-rating `Session`/`RecallSession`. Also: the **Starter pack** now opens straight into **Listen & repeat** (one sentence at a time) instead of dumping the 50-sentence list — meeting brand-new content gently; typed recall comes later in Daily once it's in the bank. 8 new grade unit tests (39 total), build clean. Frontend-only (no worker change).
+
+Blocked: nothing. Verify in browser: Review → either track now asks you to TYPE the Finnish and grades it (no easy/hard buttons); Islands → tap "Starter pack" and it opens directly into practice.
+
+Next: the owner's next app-correction list.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.

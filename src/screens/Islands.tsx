@@ -15,10 +15,10 @@ import {
 } from '../lib/data/islands'
 import { translateSentence, fetchFollowupQuestions, Translation } from '../lib/islandsApi'
 import { toRegisterTokens } from '../lib/data/content'
-import { rateCard, previewIntervals } from '../lib/data/cards'
-import { Rating } from '../lib/fsrs/types'
+import { ReviewItem } from '../lib/data/review'
 import { speak } from '../lib/tts'
 import { Speak } from './Speak'
+import { RecallRunner } from '../components/RecallRunner'
 
 type View =
   | { v: 'list' }
@@ -55,13 +55,14 @@ export function Islands() {
   }
   return <IslandList key={reload} userId={uid}
     onNew={() => setView({ v: 'create' })}
-    onOpen={(id) => setView({ v: 'detail', id })} />
+    onOpen={(id) => setView({ v: 'detail', id })}
+    onShadow={(id) => setView({ v: 'shadow', id })} />
 }
 
 /* -------------------------------------------------------------------------- */
 /* List — the learner's islands + "new island"                                 */
 /* -------------------------------------------------------------------------- */
-function IslandList({ userId, onNew, onOpen }: { userId: string; onNew: () => void; onOpen: (id: string) => void }) {
+function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew: () => void; onOpen: (id: string) => void; onShadow: (id: string) => void }) {
   const { bi } = useLang()
   const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId])
   const [addingStarter, setAddingStarter] = useState(false)
@@ -73,7 +74,7 @@ function IslandList({ userId, onNew, onOpen }: { userId: string; onNew: () => vo
     setAddingStarter(true); setStarterErr('')
     try {
       const id = await createStarterIsland(userId)
-      onOpen(id)
+      onShadow(id) // straight into Listen & repeat, one at a time — not the 50-list
     } catch (e) {
       setAddingStarter(false)
       setStarterErr(e instanceof Error ? e.message : String(e))
@@ -609,130 +610,19 @@ function ShadowView({ userId, islandId, onBack }: { userId: string; islandId: st
 }
 
 /* -------------------------------------------------------------------------- */
-/* Recall — active recall (English -> produce Finnish), scheduled by FSRS       */
+/* Recall — active recall: type the Finnish, the system grades it (RecallRunner) */
 /* -------------------------------------------------------------------------- */
-const RATING_ROW: { r: Rating; fi: string; en: string }[] = [
-  { r: Rating.Again, fi: 'Uudelleen', en: 'Again' },
-  { r: Rating.Hard, fi: 'Vaikea', en: 'Hard' },
-  { r: Rating.Good, fi: 'Hyvä', en: 'Good' },
-  { r: Rating.Easy, fi: 'Helppo', en: 'Easy' },
-]
-
 function RecallView({ userId, islandId, onBack }: { userId: string; islandId: string; onBack: () => void }) {
   const { bi } = useLang()
-  const { data, loading, error } = useAsync(() => fetchIslandRecall(userId, islandId), [userId, islandId])
+  const { data, loading, error } = useAsync<ReviewItem[]>(
+    async () => (await fetchIslandRecall(userId, islandId)).map((card): ReviewItem => ({ kind: 'island', card })),
+    [userId, islandId],
+  )
 
   if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
   if (error) return <StatePane tone="error" title="Couldn't load recall" detail={error} bottom={110} />
   if (!data || data.length === 0) return <StatePane title={bi('Ei lauseita', 'No sentences')} detail="Add a sentence to this island first." bottom={110} />
 
-  return <RecallSession key={data.map((c) => c.cardId).join(',')} cards={data} userId={userId} onBack={onBack} />
-}
-
-function RecallSession({ cards, userId, onBack }: {
-  cards: Awaited<ReturnType<typeof fetchIslandRecall>>; userId: string; onBack: () => void
-}) {
-  const { bi } = useLang()
-  const [i, setI] = useState(0)
-  const [revealed, setRevealed] = useState(false)
-  const [busy, setBusy] = useState(false)
-  const [done, setDone] = useState(false)
-
-  const card = cards[i]
-  const previews = previewIntervals(card)
-
-  const rate = async (r: Rating) => {
-    if (busy) return
-    setBusy(true)
-    try { await rateCard(userId, card, r) } catch { /* keep moving; schedule retried next session */ }
-    setBusy(false)
-    if (i < cards.length - 1) { setI(i + 1); setRevealed(false) }
-    else setDone(true)
-  }
-
-  if (done) return (
-    <ScreenScroll bottom={110}>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: 22 }}>
-        <OrbCluster size={180} />
-        <div>
-          <Label color="var(--spoken)" style={{ display: 'block', marginBottom: 10 }}>{bi('Kertaus valmis', 'Recall complete')}</Label>
-          <h2 className="ps-title-1">{bi('Hyvää työtä!', 'Great work!')}</h2>
-          <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>
-            Saying your own sentences from memory is where real speaking is built.
-          </p>
-        </div>
-        <Btn variant="primary" onClick={onBack}>{bi('Takaisin', 'Back to island')}</Btn>
-      </div>
-    </ScreenScroll>
-  )
-
-  return (
-    <ScreenScroll bottom={110}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <IconBtn icon="arrowL" tone="glass" size={40} onClick={onBack} />
-        <span className="ps-label ps-num" style={{ color: 'var(--ink-2)' }}>{i + 1} / {cards.length}</span>
-        <span style={{ width: 40 }} />
-      </div>
-
-      <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Label color="var(--spoken)">{bi('Sano se suomeksi', 'Say it in Finnish')}</Label>
-        <SkillChip skill="speak" />
-      </div>
-
-      {/* English prompt */}
-      <div className="ps-glass" style={{ marginTop: 18, padding: 18 }}>
-        <div className="ps-caption">{bi('Sano tämä suomeksi', 'Say this in Finnish')}</div>
-        <div style={{ marginTop: 8, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 23, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
-          “{card.line.en}”
-        </div>
-      </div>
-
-      {!revealed ? (
-        <>
-          <div style={{ flex: 1, minHeight: 16 }} />
-          <p className="ps-caption" style={{ textAlign: 'center', marginBottom: 12 }}>
-            {bi('Sano se ääneen, sitten tarkista.', 'Say it aloud, then check yourself.')}
-          </p>
-          <Btn variant="primary" block iconRight="arrow" onClick={() => setRevealed(true)}>{bi('Näytä vastaus', 'Reveal')}</Btn>
-        </>
-      ) : (
-        <>
-          <div className="ps-card" style={{ marginTop: 14, padding: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <RegDot reg="kirja" />
-                <div style={{ marginTop: 7 }}>
-                  <Sentence tokens={card.line.kirja} font="var(--font-display)" weight={600} size={21} color="var(--ink)" />
-                </div>
-              </div>
-              <SpeakerBtn reg="kirja" onClick={() => speak(card.line.kirjaText)} size={42} />
-            </div>
-            {card.line.puheText && (
-              <div style={{ marginTop: 12, padding: '10px 12px', background: 'var(--spoken-bg)', border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
-                <RegDot reg="puhe" />
-                <div style={{ marginTop: 7 }}>
-                  <Sentence tokens={card.line.puhe} font="var(--font-body)" weight={600} size={16} color="var(--ink)" />
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div style={{ flex: 1, minHeight: 14 }} />
-          <div className="ps-caption" style={{ textAlign: 'center', marginBottom: 8 }}>{bi('Miten meni?', 'How did it go?')}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-            {RATING_ROW.map(({ r, fi, en }) => (
-              <button key={r} disabled={busy} onClick={() => void rate(r)} className="ps-press" style={{
-                padding: '12px 4px', borderRadius: 'var(--r-md)', cursor: busy ? 'default' : 'pointer',
-                border: '1.5px solid var(--glass-line)', background: 'var(--glass-2)', color: 'var(--ink)',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-              }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13 }}>{bi(fi, en)}</span>
-                <span className="ps-num" style={{ fontSize: 11, color: 'var(--ink-3)' }}>{previews[r]}</span>
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </ScreenScroll>
-  )
+  return <RecallRunner key={data.map((it) => it.card.cardId).join(',')} items={data} userId={userId}
+    titleFi="Kielisaari" titleEn="Island recall" onExit={onBack} />
 }
