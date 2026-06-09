@@ -261,3 +261,13 @@ Shipped: (1) Instructional onboarding rebuilt into 4 teach-the-method slides —
 Blocked: Nothing new. Owner still to run supabase/seeds/05_island_sentences.sql + verify puhekieli. Journey thresholds (50/300/1500) are first-pass; tune later.
 
 Next: puhekieli verification; tune journey thresholds; optional navigation simplification; mnemonics (bigger).
+
+---
+
+## Session: 2026-06-09 (Four YKI skills: Practice hub, Listening, Writing + feedback, journey upgrade)
+
+Shipped (plan-mode approved): closed the four-skills gap from the pedagogy pressure-test. (1) New src/lib/yki.ts (YkiSkill + YKI map) + SkillChip (primitives) — every activity is tagged with its YKI skill. (2) Journey.tsx upgraded: per-stage YKI skill chips + CEFR bands, emphasized current node, locked stages show "Unlocks at N words". (3) Navigation: 3rd tab is now a Practice HUB (Speak/Listen/Write cards, each skill-tagged) — stays 4 tabs; Island.tsx → Speak.tsx (onBack); App/Shell routing adds practice/listen/write (listen/write are nav-hidden sub-screens). (4) Graded Listening (src/screens/Listen.tsx): audio-first (speak(kirja), text hidden) → pick the meaning (DayOne option pattern) → reveal text; sentences level-matched via new content.ts levelForBank() + fetchGradedSentences(). (5) Micro-writing (src/screens/Write.tsx): translate the English prompt → free model-answer self-check now; auto-upgrades to Claude Haiku correction once the worker secret lands (worker /correct route in workers/tts/src/worker.js via claude-haiku-4-5-20251001; getWritingFeedback in tts.ts; configured flag flips the UI). Build clean, 31 + 16 tests green.
+
+Blocked: AI writing feedback needs the owner to add ANTHROPIC_API_KEY as a GitHub repo secret, then re-run "Deploy TTS Worker" (workflow already updated to pass it). Until then Write uses the free self-check (graceful). Higher CEFR levels (B1/B2) have little seeded content, so fetchGradedSentences falls back to the arki/A1-A2 set.
+
+Next: load island seed in Supabase; owner adds ANTHROPIC secret for live writing feedback; later: real native listening clips, reading mode, mnemonics.

@@ -1,8 +1,9 @@
 name: Deploy TTS Worker
 
-# Deploys the Azure-TTS Cloudflare Worker. Runs on push to main when the worker
-# changes, or manually from the Actions tab. Requires these repo secrets:
-#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, AZURE_SPEECH_KEY
+# Deploys the Azure-TTS + writing-feedback Cloudflare Worker. Runs on push to main
+# when the worker changes, or manually from the Actions tab. Requires these repo
+# secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, AZURE_SPEECH_KEY,
+# and (for the /correct writing-feedback route) ANTHROPIC_API_KEY.
 on:
   workflow_dispatch: {}
   push:
@@ -24,5 +25,7 @@ jobs:
           workingDirectory: workers/tts
           secrets: |
             AZURE_SPEECH_KEY
+            ANTHROPIC_API_KEY
         env:
           AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
