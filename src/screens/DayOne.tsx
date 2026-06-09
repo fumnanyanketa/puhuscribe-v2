@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Orb, OrbCluster, Label } from '../components/primitives'
-import { Btn, IconBtn, Bar } from '../components/ui'
+import { Btn, IconBtn } from '../components/ui'
 import { I } from '../components/icons'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
@@ -70,9 +70,6 @@ function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => 
     saveSprint({ size, idx: 0, completed: false })
     setSession({ deck: words.slice(0, size), startIdx: 0, mode: 'initial', size })
   }
-  const resume = () => {
-    if (resumable) setSession({ deck: words.slice(0, resumable.size), startIdx: Math.min(resumable.idx, resumable.size - 1), mode: 'initial', size: resumable.size })
-  }
   // Daily intake: fetch the next N words the learner hasn't met, then run them.
   const startDaily = async (n: number) => {
     if (!user || loading) return
@@ -101,82 +98,27 @@ function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => 
     )
   }
 
-  // No active session: once the initial set is done, Day One becomes the daily
-  // intake; before that, it's the first-set picker (with resume).
-  if (progress.sprint?.completed) {
-    return <DailyStart onLearn={startDaily} loading={loading} err={err} go={go} />
-  }
-  return <Start sizeOptions={sizeOptions} saved={resumable} onPick={startInitial} onContinue={resume} go={go} />
+  // No active session: the vocabulary hub — new words daily, or a bigger sprint.
+  // (An in-progress set auto-resumes above, so no manual "continue" is needed.)
+  return <Start sizeOptions={sizeOptions} onPick={startInitial}
+    onDaily={startDaily} dailyLoading={loading} dailyErr={err} go={go} />
 }
 
 /* -------------------------------------------------------------------------- */
-/* Daily intake — learn the next most-useful words you haven't met yet        */
+/* Start — the vocabulary hub: new words daily, or a bigger first sprint       */
 /* -------------------------------------------------------------------------- */
-function DailyStart({ onLearn, loading, err, go }: {
-  onLearn: (n: number) => void
-  loading: boolean
-  err: string
+function Start({ sizeOptions, onPick, onDaily, dailyLoading, dailyErr, go }: {
+  sizeOptions: number[]
+  onPick: (size: number) => void
+  onDaily: (n: number) => void
+  dailyLoading: boolean
+  dailyErr: string
   go: (s: AppScreen) => void
 }) {
   const { bi } = useLang()
-  const OPTIONS = [10, 15, 30]
+  const DAILY = [10, 15, 30]
   return (
     <ScreenScroll bottom={110}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
-        <Label color="var(--written)">{bi('Sanasto', 'Vocabulary')}</Label>
-        <span style={{ width: 40 }} />
-      </div>
-
-      <div style={{ textAlign: 'center', marginTop: 10 }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={112} /></div>
-        <h1 className="ps-title-1" style={{ marginTop: 12 }}>{bi('Uudet sanat', 'New words')}</h1>
-        <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8, maxWidth: 300, marginInline: 'auto' }}>
-          Add the next most useful Finnish words to your bank. A little every day is how it grows.
-        </p>
-      </div>
-
-      {err && (
-        <div className="ps-body" style={{ marginTop: 16, padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{err}</div>
-      )}
-
-      <div style={{ marginTop: 22 }}>
-        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Montako tänään?', 'How many today?')}</Label>
-        <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
-          {OPTIONS.map((n) => (
-            <button key={n} className="ps-press ps-card" disabled={loading} onClick={() => onLearn(n)} style={{
-              padding: '18px 20px', cursor: loading ? 'default' : 'pointer', textAlign: 'left',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, opacity: loading ? 0.6 : 1,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, letterSpacing: '-0.03em' }}>{n}</span>
-                <span className="ps-caption">{bi('uutta sanaa', 'new words')}</span>
-              </div>
-              <span style={{ color: 'var(--written)' }}><I name="arrow" size={20} /></span>
-            </button>
-          ))}
-        </div>
-        <div className="ps-caption" style={{ textAlign: 'center', marginTop: 14 }}>
-          {loading ? bi('Haetaan…', 'Loading…') : bi('Kertaa opitut Kertaus-välilehdellä', 'Review what you have learned in the Review tab')}
-        </div>
-      </div>
-    </ScreenScroll>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/* Start screen — choose a set, or continue where you left off                */
-/* -------------------------------------------------------------------------- */
-function Start({ sizeOptions, saved, onPick, onContinue, go }: {
-  sizeOptions: number[]
-  saved: Saved | null
-  onPick: (size: number) => void
-  onContinue: () => void
-  go: (s: AppScreen) => void
-}) {
-  const { bi } = useLang()
-  return (
-    <ScreenScroll>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
         <Label color="var(--written)">{bi('Päivä yksi', 'Day One')}</Label>
@@ -184,41 +126,46 @@ function Start({ sizeOptions, saved, onPick, onContinue, go }: {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: 10 }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={112} /></div>
-        <h1 className="ps-title-1" style={{ marginTop: 12 }}>{bi('Aloitusryntäys', 'Day One Sprint')}</h1>
+        <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={104} /></div>
+        <h1 className="ps-title-1" style={{ marginTop: 12 }}>{bi('Sanasto', 'Vocabulary')}</h1>
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8, maxWidth: 300, marginInline: 'auto' }}>
-          Recognise the most frequent Finnish words. See it, hear it, tap the meaning. Pick how many to start with, and you can continue where you left off.
+          Learn new words and grow your bank. A little every day is how Finnish sticks.
         </p>
       </div>
 
-      {saved && (
-        <button className="ps-press ps-glass" onClick={onContinue} style={{
-          marginTop: 22, padding: 18, textAlign: 'left', border: '1px solid var(--written-line)',
-          background: 'var(--written-bg)', cursor: 'pointer', width: '100%',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <Label color="var(--written)">{bi('Jatka', 'Continue')}</Label>
-            <span className="ps-label ps-num" style={{ color: 'var(--ink-2)' }}>{saved.idx} / {saved.size}</span>
-          </div>
-          <div style={{ marginTop: 10 }}>
-            <Bar value={(saved.idx / saved.size) * 100} color="var(--written)" />
-          </div>
-        </button>
+      {dailyErr && (
+        <div className="ps-body" style={{ marginTop: 16, padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{dailyErr}</div>
       )}
 
-      <div style={{ marginTop: 22 }}>
-        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Valitse setti', 'Choose your set')}</Label>
-        <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
-          {sizeOptions.map((n) => (
-            <button key={n} className="ps-press ps-card" onClick={() => onPick(n)} style={{
-              padding: '18px 20px', cursor: 'pointer', textAlign: 'left',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+      {/* New words — the everyday action (the next words you have not met yet) */}
+      <div style={{ marginTop: 20 }}>
+        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Uudet sanat tänään', 'New words today')}</Label>
+        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+          {DAILY.map((n) => (
+            <button key={n} disabled={dailyLoading} onClick={() => onDaily(n)} className="ps-press ps-card" style={{
+              flex: 1, padding: '16px 8px', textAlign: 'center', cursor: dailyLoading ? 'default' : 'pointer',
+              opacity: dailyLoading ? 0.6 : 1, border: '1.5px solid var(--written-line)',
             }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, letterSpacing: '-0.03em' }}>{n}</span>
-                <span className="ps-caption">{bi('sanaa', 'words')}</span>
-              </div>
-              <span style={{ color: 'var(--written)' }}><I name="arrow" size={20} /></span>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: 'var(--written)', letterSpacing: '-0.03em' }}>{n}</div>
+              <div className="ps-caption" style={{ fontSize: 11, marginTop: 2 }}>{bi('uutta', 'new')}</div>
+            </button>
+          ))}
+        </div>
+        <div className="ps-caption" style={{ marginTop: 10, marginLeft: 2 }}>
+          {dailyLoading ? bi('Haetaan…', 'Loading…') : bi('Sanat, joita et muista, näkyvät Kertaus-välilehdellä.', 'Words you miss show up in your Review tab.')}
+        </div>
+      </div>
+
+      {/* A bigger first push — the Day One Sprint sets */}
+      <div style={{ marginTop: 24 }}>
+        <Label color="var(--ink-3)" style={{ marginLeft: 2 }}>{bi('Tai iso ryntäys', 'Or a bigger sprint')}</Label>
+        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+          {sizeOptions.map((n) => (
+            <button key={n} onClick={() => onPick(n)} className="ps-press ps-card" style={{
+              flex: 1, padding: '14px 8px', textAlign: 'center', cursor: 'pointer',
+            }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 21, letterSpacing: '-0.03em' }}>{n}</div>
+              <div className="ps-caption" style={{ fontSize: 11, marginTop: 2 }}>{bi('sanaa', 'words')}</div>
             </button>
           ))}
         </div>

@@ -251,3 +251,13 @@ Shipped: (1) Fixed the speaking-practice recording: capture is now reliable (Med
 Blocked: Owner runs supabase/seeds/05_island_sentences.sql once in Supabase to load the 50 (until then Island falls back to general sentences). Puhekieli + naturalness need a Finnish-speaker pass (docs/island-sentences.md). The daily 10–15 intake only appears AFTER an initial sprint set is completed (progress.sprint.completed) — that's why it wasn't visible; surface-earlier is an option.
 
 Next: verify the 50 with a Finnish speaker; surface daily intake earlier if wanted; instructional onboarding.
+
+---
+
+## Session: 2026-06-08 (Instructional onboarding + journey/north-star + daily intake surfaced)
+
+Shipped: (1) Instructional onboarding rebuilt into 4 teach-the-method slides — Welcome ("Speak the Finnish Finland actually speaks"), Why two (kirjakieli/puhekieli wedge + RegisterCard), How it works (Meet words → Review → Speak), and Your path (the Journey component) → "Start learning". (2) New src/components/Journey.tsx — the visible north-star path: First words → Grow your bank → Speak with confidence → Everyday fluency (B1) → Professional (B2), with done/current/locked states driven by the learner's word-bank size (later stages shown but locked for orientation). Rendered on the Progress screen (top) and as the final onboarding slide. (3) Surfaced the daily intake: merged the gated DailyStart into the Day One start screen, which is now the vocabulary hub — "New words today" (10/15/30, next unmet words) always visible, plus "Or a bigger sprint" (the initial sets); removed the completed-gate and the manual Continue card (in-progress sets auto-resume). Added a lock icon. Build clean, 31 + 16 tests green.
+
+Blocked: Nothing new. Owner still to run supabase/seeds/05_island_sentences.sql + verify puhekieli. Journey thresholds (50/300/1500) are first-pass; tune later.
+
+Next: puhekieli verification; tune journey thresholds; optional navigation simplification; mnemonics (bigger).

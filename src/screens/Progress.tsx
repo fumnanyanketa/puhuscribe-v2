@@ -10,6 +10,7 @@ import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { resetUserLearning } from '../lib/data/cards'
 import { fetchProgressStats, ProgressStats } from '../lib/data/stats'
+import { Journey } from '../components/Journey'
 
 export function Progress({ go }: { go: (s: AppScreen) => void }) {
   const { user, signOut } = useAuth()
@@ -50,6 +51,14 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
         <div>
           <Label color="var(--written)">Progress</Label>
           <h1 className="ps-title-1" style={{ marginTop: 8 }}>Edistyminen</h1>
+        </div>
+      </div>
+
+      {/* Your journey / north star — where you are heading */}
+      <div className="ps-glass" style={{ marginTop: 16, padding: 18 }}>
+        <Label color="var(--ink-3)">{bi('Polkusi', 'Your journey')}</Label>
+        <div style={{ marginTop: 16 }}>
+          <Journey bankSize={stats.totalCards} />
         </div>
       </div>
 
