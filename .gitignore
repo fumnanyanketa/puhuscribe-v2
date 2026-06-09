@@ -19,3 +19,6 @@ scripts/ingest/out/
 __pycache__/
 *.pyc
 scripts/generate/out/
+
+# Screenshot harness output (regenerable sample-data captures)
+shots/out/

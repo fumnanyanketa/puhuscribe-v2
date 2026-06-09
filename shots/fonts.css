@@ -1,0 +1,9 @@
+/* Self-hosted Poppins (Fontsource) for the screenshot harness — the production
+ * app loads Poppins + Switzer from CDNs the sandbox can't reach. Switzer is not
+ * on Fontsource, so the body font falls back to Poppins (its existing fallback),
+ * which is far closer to production than system-ui. */
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/poppins/800.css';
