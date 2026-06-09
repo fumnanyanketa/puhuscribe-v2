@@ -133,19 +133,19 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
 
   const playMine = () => {
     const el = myAudioRef.current
-    if (!el || !recUrl || playingMine) return
+    if (!el || !recUrl) return
     setRecErr('')
-    try { el.currentTime = 0 } catch { /* not seekable yet */ }
+    try { el.pause(); el.currentTime = 0 } catch { /* not seekable yet */ }
     setPlayingMine(true)
-    el.play().catch(() => { setPlayingMine(false); setRecErr('Could not play the recording on this device.') })
+    void el.play().catch(() => { setPlayingMine(false); setRecErr('Could not play the recording on this device.') })
   }
 
-  const reRecord = () => { setRecUrl(null); setSt('idle'); setSec(0); setRecErr('') }
+  const reRecord = () => { setRecUrl(null); setSt('idle'); setSec(0); setRecErr(''); setPlayingMine(false) }
 
   const nextPhrase = () => {
     setRecUrl(null)
     setI((x) => (x + 1) % phrases.length)
-    setSt('idle'); setSec(0); setRecErr('')
+    setSt('idle'); setSec(0); setRecErr(''); setPlayingMine(false); setPlayingNative(false)
   }
 
   // Revoke the previous recording's object URL when it changes / on unmount.
@@ -159,6 +159,10 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
     if (timerRef.current) clearInterval(timerRef.current)
     streamRef.current?.getTracks().forEach((t) => t.stop())
   }, [])
+
+  // Auto-play the native (kirjakieli) audio when the phrase changes (and on
+  // first mount), so the learner hears the model without tapping the speaker.
+  useEffect(() => { playNative() }, [i]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-grad)' }}>
@@ -224,15 +228,15 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
 
         {/* Record / playback control */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+          {/* Always-mounted element that plays the learner's own recording back —
+              a stable ref means playback keeps working across phrases. */}
+          <audio ref={myAudioRef} src={recUrl ?? undefined} onEnded={() => setPlayingMine(false)} />
           {recErr && (
             <div className="ps-body" style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--flag-bg)', color: 'var(--flag)' }}>{recErr}</div>
           )}
 
           {st === 'review' ? (
             <div style={{ width: '100%' }}>
-              {/* Hidden element that plays the learner's own recording back */}
-              <audio ref={myAudioRef} src={recUrl ?? undefined} onEnded={() => setPlayingMine(false)} />
-
               <div className="ps-glass" style={{ padding: 16 }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15 }}>{bi('Nauhoitus valmis', 'Recording done')}</div>
                 <div className="ps-caption" style={{ marginTop: 2 }}>Play yourself back and compare with the native audio. (Pronunciation scoring comes later.)</div>

@@ -24,7 +24,7 @@ type View =
   | { v: 'list' }
   | { v: 'create' }
   | { v: 'detail'; id: string }
-  | { v: 'shadow'; id: string }
+  | { v: 'shadow'; id: string; from: 'list' | 'detail' }
   | { v: 'recall'; id: string }
 
 export function Islands() {
@@ -41,7 +41,8 @@ export function Islands() {
       onDone={(id) => { bump(); setView({ v: 'detail', id }) }} />
   }
   if (view.v === 'shadow') {
-    return <ShadowView userId={uid} islandId={view.id} onBack={() => setView({ v: 'detail', id: view.id })} />
+    return <ShadowView userId={uid} islandId={view.id}
+      onBack={() => (view.from === 'list' ? setView({ v: 'list' }) : setView({ v: 'detail', id: view.id }))} />
   }
   if (view.v === 'recall') {
     return <RecallView userId={uid} islandId={view.id} onBack={() => setView({ v: 'detail', id: view.id })} />
@@ -49,14 +50,14 @@ export function Islands() {
   if (view.v === 'detail') {
     return <IslandDetail key={view.id + reload} userId={uid} islandId={view.id}
       onBack={() => setView({ v: 'list' })}
-      onShadow={() => setView({ v: 'shadow', id: view.id })}
+      onShadow={() => setView({ v: 'shadow', id: view.id, from: 'detail' })}
       onRecall={() => setView({ v: 'recall', id: view.id })}
       onDeleted={() => { bump(); setView({ v: 'list' }) }} />
   }
   return <IslandList key={reload} userId={uid}
     onNew={() => setView({ v: 'create' })}
     onOpen={(id) => setView({ v: 'detail', id })}
-    onShadow={(id) => setView({ v: 'shadow', id })} />
+    onShadow={(id) => setView({ v: 'shadow', id, from: 'list' })} />
 }
 
 /* -------------------------------------------------------------------------- */
@@ -84,7 +85,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
   return (
     <ScreenScroll bottom={110}>
       <div>
-        <Label color="var(--spoken)">Kielisaaret</Label>
+        <Label color="var(--written)">Kielisaaret</Label>
         <h1 className="ps-title-1" style={{ marginTop: 8 }}>{bi('Kielisaaret', 'Language Islands')}</h1>
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
           Build sentences from your own life. You write what you want to say; we turn it into real Finnish you can speak.
@@ -111,17 +112,17 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
         <button onClick={() => void addStarter()} disabled={addingStarter} className="ps-press ps-card" style={{
           marginTop: 12, width: '100%', padding: 16, cursor: addingStarter ? 'default' : 'pointer',
           textAlign: 'left', display: 'flex', alignItems: 'center', gap: 13, opacity: addingStarter ? 0.6 : 1,
-          border: '1.5px solid var(--spoken-line)',
+          border: '1.5px solid var(--written-line)',
         }}>
-          <span style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'var(--spoken-bg)',
-            color: 'var(--spoken)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'var(--written-bg)',
+            color: 'var(--written)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <I name="sparkle" size={22} />
           </span>
           <span style={{ flex: 1, minWidth: 0 }}>
             <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16 }}>{bi('Aloituspaketti', 'Starter pack')}</span>
             <span className="ps-caption">{addingStarter ? bi('Lisätään…', 'Adding…') : '50 ready-made everyday sentences for newcomers'}</span>
           </span>
-          {!addingStarter && <I name="plus" size={20} style={{ color: 'var(--spoken)', flexShrink: 0 }} />}
+          {!addingStarter && <I name="plus" size={20} style={{ color: 'var(--written)', flexShrink: 0 }} />}
         </button>
       )}
       {starterErr && (
@@ -146,8 +147,8 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
             <button key={isl.id} onClick={() => (isl.topicSlug === 'starter' ? onShadow(isl.id) : onOpen(isl.id))} className="ps-press ps-card" style={{
               padding: 18, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
             }}>
-              <span style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: 'var(--spoken-bg)',
-                color: 'var(--spoken)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: 'var(--written-bg)',
+                color: 'var(--written)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <I name="island" size={24} />
               </span>
               <span style={{ flex: 1, minWidth: 0 }}>
@@ -263,7 +264,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       <ScreenScroll bottom={110}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <IconBtn icon="arrowL" tone="glass" size={40} onClick={onCancel} />
-          <Label color="var(--spoken)">{bi('Uusi saari', 'New island')}</Label>
+          <Label color="var(--written)">{bi('Uusi saari', 'New island')}</Label>
           <span style={{ width: 40 }} />
         </div>
         <div style={{ marginTop: 14 }}>
@@ -317,7 +318,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       <ScreenScroll bottom={120}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <IconBtn icon="arrowL" tone="glass" size={40} onClick={() => setPhase('write')} />
-          <Label color="var(--spoken)">{bi('Tarkista', 'Check')}</Label>
+          <Label color="var(--written)">{bi('Tarkista', 'Check')}</Label>
           <span style={{ width: 40 }} />
         </div>
 
@@ -380,7 +381,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
     <ScreenScroll bottom={120}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <IconBtn icon="arrowL" tone="glass" size={40} onClick={() => setTopic(null)} />
-        <Label color="var(--spoken)">{bi(topic.fi, topic.en)}</Label>
+        <Label color="var(--written)">{bi(topic.fi, topic.en)}</Label>
         <span style={{ width: 40 }} />
       </div>
 
@@ -401,7 +402,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
             <div className="ps-body" style={{ fontWeight: 600 }}>{qq.q}</div>
             {qq.eg
               ? <div className="ps-caption" style={{ marginTop: 3, fontStyle: 'italic' }}>e.g. {qq.eg}</div>
-              : <div className="ps-caption" style={{ marginTop: 3, color: 'var(--spoken)' }}>{bi('Lisäkysymys', 'Follow-up question')}</div>}
+              : <div className="ps-caption" style={{ marginTop: 3, color: 'var(--written)' }}>{bi('Lisäkysymys', 'Follow-up question')}</div>}
             <textarea
               value={answers[i] || ''}
               onChange={(e) => setAnswer(i, e.target.value)}
@@ -412,7 +413,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
                 border: '1.5px solid var(--glass-line)', background: 'var(--glass)', resize: 'none',
                 fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 15.5, color: 'var(--ink)', outline: 'none',
               }}
-              onFocus={(e) => (e.target.style.borderColor = 'var(--spoken)')}
+              onFocus={(e) => (e.target.style.borderColor = 'var(--written)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--glass-line)')}
             />
           </div>
@@ -422,7 +423,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
       <button onClick={() => void loadMore()} disabled={loadingQs || extraQs.length >= 6} className="ps-press" style={{
         marginTop: 14, width: '100%', padding: '12px', borderRadius: 'var(--r-md)',
         cursor: loadingQs || extraQs.length >= 6 ? 'default' : 'pointer',
-        border: '1.5px dashed var(--spoken-line)', background: 'transparent', color: 'var(--spoken)',
+        border: '1.5px dashed var(--written-line)', background: 'transparent', color: 'var(--written)',
         fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
         opacity: extraQs.length >= 6 ? 0.5 : 1,
@@ -443,7 +444,7 @@ function CreateFlow({ userId, onCancel, onDone }: { userId: string; onCancel: ()
 /* -------------------------------------------------------------------------- */
 const linkBtn: CSSProperties = {
   background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
-  color: 'var(--spoken)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13,
+  color: 'var(--written)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13,
 }
 const ghostBtn: CSSProperties = {
   flex: 1, padding: '12px', borderRadius: 'var(--r-md)', cursor: 'pointer',
@@ -508,7 +509,7 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
     <ScreenScroll bottom={120}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <IconBtn icon="arrowL" tone="glass" size={40} onClick={onBack} />
-        <Label color="var(--spoken)">Kielisaari</Label>
+        <Label color="var(--written)">Kielisaari</Label>
         <IconBtn icon="close" tone="glass" size={40} onClick={() => setConfirmDel(true)} />
       </div>
 
@@ -547,7 +548,7 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
                   rows={2}
                   style={{
                     marginTop: 8, width: '100%', padding: '11px 13px', borderRadius: 'var(--r-md)',
-                    border: '1.5px solid var(--spoken)', background: 'var(--glass)', resize: 'none',
+                    border: '1.5px solid var(--written)', background: 'var(--glass)', resize: 'none',
                     fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 15.5, color: 'var(--ink)', outline: 'none',
                   }}
                 />
