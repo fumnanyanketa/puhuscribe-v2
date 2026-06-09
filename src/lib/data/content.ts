@@ -143,6 +143,31 @@ export async function fetchIslandSentences(limit = 12): Promise<RegisterSentence
   return fetchSentences({ limit })
 }
 
+/** CEFR level matched to the learner's vocabulary bank size (echoes the Journey thresholds). */
+export function levelForBank(bankSize: number): CefrLevel {
+  if (bankSize < 60) return 'A1'
+  if (bankSize < 200) return 'A2'
+  if (bankSize < 600) return 'B1'
+  return 'B2'
+}
+
+/**
+ * Level-matched sentences for the listening + writing practice ("graded" = CEFR
+ * tuned to the bank size). Prefers the curated 'arki' set, then any sentence at
+ * that level, then the island fallback — so content is never empty.
+ */
+export async function fetchGradedSentences(bankSize: number, limit = 10): Promise<RegisterSentence[]> {
+  const level = levelForBank(bankSize)
+  const { data: topic } = await supabase.from('topics').select('id').eq('slug', 'arki').maybeSingle()
+  if (topic?.id != null) {
+    const curated = await fetchSentences({ topicId: topic.id, level, limit })
+    if (curated.length > 0) return curated
+  }
+  const byLevel = await fetchSentences({ level, limit })
+  if (byLevel.length > 0) return byLevel
+  return fetchIslandSentences(limit)
+}
+
 /* ---------------------------------------------------------------------------
  * Register tokenisation + azure-flag diff
  * ------------------------------------------------------------------------- */

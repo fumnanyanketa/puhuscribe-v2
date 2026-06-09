@@ -111,7 +111,7 @@ function Session({ cards, userId, go }: { cards: VocabCard[]; userId: string; go
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Btn variant="light" onClick={() => go('island')}>{bi('Kielisaari', 'Island')}</Btn>
+          <Btn variant="light" onClick={() => go('practice')}>{bi('Harjoittele', 'Practice')}</Btn>
           <Btn variant="primary" icon="chart" onClick={() => go('progress')}>{bi('Edistyminen', 'Progress')}</Btn>
         </div>
       </div>

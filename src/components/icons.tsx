@@ -28,6 +28,7 @@ export const icons: Record<string, string[]> = {
   mic:     ['M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z', 'M5 11a7 7 0 0 0 14 0', 'M12 18v3'],
   check:   ['M4 12.5 9.5 18 20 6.5'],
   lock:    ['M6 11h12v9H6z', 'M8.5 11V8a3.5 3.5 0 0 1 7 0v3'],
+  pencil:  ['M4 20h4L19 9l-4-4L4 16z', 'M14.5 5.5l4 4'],
   arrow:   ['M5 12h14', 'M13 6l6 6-6 6'],
   arrowUR: ['M7 17 17 7', 'M8 7h9v9'],
   arrowL:  ['M19 12H5', 'M11 6l-6 6 6 6'],

@@ -5,14 +5,17 @@ import { StatePane } from './components/StatePane'
 import { Onboarding } from './screens/Onboarding'
 import { DayOne } from './screens/DayOne'
 import { Daily } from './screens/Daily'
-import { Island } from './screens/Island'
+import { Practice } from './screens/Practice'
+import { Listen } from './screens/Listen'
+import { Write } from './screens/Write'
 import { Progress } from './screens/Progress'
 import { Auth } from './screens/Auth'
 import { useAuth } from './lib/auth/useAuth'
 import { useProgress, UserProgress } from './lib/data/progress'
 
-// Screens that show the bottom navigation.
-const APP_SCREENS: AppScreen[] = ['dayone', 'daily', 'island', 'progress']
+// Screens that show the bottom navigation. (listen/write are nav-hidden sub-screens
+// of the Practice hub, with their own back arrow.)
+const APP_SCREENS: AppScreen[] = ['dayone', 'daily', 'practice', 'progress']
 
 // Where a signed-in user lands when they open the app:
 //   never onboarded        → Onboarding (→ Day One Sprint)
@@ -57,7 +60,9 @@ export default function App() {
     onboarding: <Onboarding go={go} />,
     dayone:     <DayOne go={go} />,
     daily:      <Daily go={go} />,
-    island:     <Island go={go} />,
+    practice:   <Practice go={go} />,
+    listen:     <Listen go={go} />,
+    write:      <Write go={go} />,
     progress:   <Progress go={go} />,
   }
 

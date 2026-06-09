@@ -40,11 +40,11 @@ export function ScreenScroll({ children, pad = 22, bottom = 22, bg = 'var(--bg-g
 const NAV = [
   { id: 'dayone',   icon: 'sparkle' },
   { id: 'daily',    icon: 'cards'  },
-  { id: 'island',   icon: 'island' },
+  { id: 'practice', icon: 'island' },
   { id: 'progress', icon: 'chart'  },
 ] as const
 
-export type AppScreen = 'onboarding' | 'dayone' | 'daily' | 'island' | 'progress'
+export type AppScreen = 'onboarding' | 'dayone' | 'daily' | 'practice' | 'listen' | 'write' | 'progress'
 
 export function BottomNav({ active, onNav }: { active: AppScreen; onNav: (s: AppScreen) => void }) {
   return (

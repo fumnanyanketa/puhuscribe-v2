@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { OrbCluster, Label, RegDot, Sentence } from '../components/primitives'
 import { Btn, SpeakerBtn, IconBtn } from '../components/ui'
 import { I } from '../components/icons'
-import { ScreenScroll, AppScreen } from '../components/Shell'
+import { ScreenScroll } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useLang } from '../lib/lang/useLang'
@@ -37,7 +37,7 @@ function Wave({ active, color }: { active: boolean; color: string }) {
   )
 }
 
-export function Island({ go }: { go: (s: AppScreen) => void }) {
+export function Speak({ onBack }: { onBack: () => void }) {
   const { bi } = useLang()
   // The curated "first useful sentences" set (falls back to general sentences).
   const { data: phrases, loading, error } = useAsync<RegisterSentence[]>(
@@ -46,13 +46,13 @@ export function Island({ go }: { go: (s: AppScreen) => void }) {
   )
 
   if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={110} />
-  if (error) return <StatePane tone="error" title="Couldn't load the island" detail={error} bottom={110} />
+  if (error) return <StatePane tone="error" title="Couldn't load speaking practice" detail={error} bottom={110} />
   if (!phrases || phrases.length === 0) return <StatePane title={bi('Ei lauseita vielä', 'No sentences yet')} detail="No sentences available yet." bottom={110} />
 
-  return <Practice phrases={phrases} go={go} />
+  return <SpeakPractice phrases={phrases} onBack={onBack} />
 }
 
-function Practice({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppScreen) => void }) {
+function SpeakPractice({ phrases, onBack }: { phrases: RegisterSentence[]; onBack: () => void }) {
   const { bi } = useLang()
   const [i, setI] = useState(0)
   const [st, setSt] = useState<RecState>('idle')
@@ -164,7 +164,7 @@ function Practice({ phrases, go }: { phrases: RegisterSentence[]; go: (s: AppScr
         {/* Hero content */}
         <div style={{ color: 'var(--on-dark)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <IconBtn icon="arrowL" tone="solid" size={44} onClick={() => go('daily')} />
+            <IconBtn icon="arrowL" tone="solid" size={44} onClick={onBack} />
             <span className="ps-chip" style={{
               background: 'rgba(15,14,32,.36)', color: '#fff',
               border: '1px solid rgba(255,255,255,.28)', backdropFilter: 'blur(6px)',
