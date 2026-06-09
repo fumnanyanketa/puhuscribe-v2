@@ -381,6 +381,16 @@ Blocked: nothing. Next: the owner's next correction list.
 
 ---
 
+## Session: 2026-06-09 (Daily copy polish + offline screenshot harness)
+
+Shipped: Daily Review subtitle corrections — removed the em dash so it reads as one continuous sentence ("Type each one from memory, because that's what makes it stick."), then dropped the redundant "Two banks grow…" line per owner; and the Daily track bank caption now renders on ONE clean line ("60 / 1000 sanaa (words)") with the English gloss inline-italic, instead of the jumbled bi() stack where "(words)" hung indented under the count. Built a committed OFFLINE screenshot harness so the whole app can be page-captured without Supabase: shots/mock-supabase.ts (a fake client serving curated fixtures), shots/shots.tsx + shots.html + vite.shots.config.ts (renders the REAL screens in the real provider tree, supabase import redirected to the mock), and shots/capture.mjs (drives the pre-installed /opt/pw-browsers Chromium to snapshot all 21 pages: auth → onboarding ×4 → Day One hub/card/quiz → Daily hub/recall/graded → Sentence Bank list/create/questions/detail → Practice hub/Speak → Listen ×2 → Write → Progress). Self-hosted Poppins via Fontsource (--no-save) since the CDN fonts are allowlist-blocked. Delivered the 21 PNGs as a zip for the owner's Claude Design UI redesign. Generated output gitignored (shots/out/, puhuscribe-screens.zip).
+
+Blocked: Live/real-data screenshots can't be produced here — verified the egress allowlist returns 403 ("Host not in allowlist") for both the Vercel app and Supabase, so even with email confirmation off there's no route to sign up a fake user and capture the genuine brand-new-user flow. Possible only from a networked environment (broader network policy) or a local Playwright run.
+
+Next: Owner is redesigning the UI in Claude Design from the captured pages; when the new design lands, apply it across every screen (then re-run `node shots/capture.mjs` to visually verify each page). Puhekieli human-verification still the only standing pending item.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
