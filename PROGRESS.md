@@ -391,6 +391,16 @@ Next: Owner is redesigning the UI in Claude Design from the captured pages; when
 
 ---
 
+## Session: 2026-06-09 (Full Claude Design redesign implemented across the app)
+
+Shipped: The complete "PuhuScribe App Screens" handoff (read README + all 3 chats + every design file first). Phase 1: Sprout brand mark replaces the speech bubbles everywhere (BrandMark/Disc in primitives, back-compat Orb/OrbCluster aliases), bilingual relabel (Finnish primary, quiet italic English secondary, NO brackets; collapses in Finnish-only mode), new icon set. Phase 2+3 (everything): new shared kit (src/components/kit.tsx: CTA/Eyebrow/Gloss/HubHeader/ExBar/Counter/ChoiceCard/IconTile/OptionRow/FieldInput/FieldArea/Waveform/StatTile/StackLabel), new 5-tab nav (home/book/lines/mic/chart) rendered by hub screens only (drills are modal with close/back, per design + chats), NEW Home dashboard (resume-sprint hero state + daily-plan hub state, real streak/due/level data via lib/data/home.ts), Day One = 150-word sprint only (intro takeover, redesigned word card + quiz; in-flight sprints auto-enter the runner even when progress resolves late), NEW Learn tab = daily vocab bank (15 unmet words/day toward 1000), Daily Review hub redesigned + RecallRunner gets the design's full-screen graded tint with FSRS intervals phrased bilingually, Sentence Bank restyled end-to-end (stat strip, learned-progress set rows, 3-step create flow incl. describe-your-own custom topics, redesigned detail), Practice = 4 YKI skills with honest local session counters (lib/practiceStats.ts), NEW Reading drill, Listen alternates dictation+choose, Write gains hint-word chips, Progress = level ring + stage + real tiles/skills/weekly, Onboarding/Auth/Journey re-skinned. levelProgress() helper; fetchIslands now returns per-set learned counts. Harness reworked to the new IA: 25 pages captured (incl. both Home states via a ?sprint=open mock switch + per-capture localStorage isolation) and visually verified. Build clean, 39 tests green, no rendered em dashes or bracket glosses.
+
+Blocked: Nothing. All FSRS/auth/Supabase/Worker logic untouched and rewired into the new screens. Verify on the phone after deploy (hard refresh for PWA cache).
+
+Next: Owner reviews the live app page by page (zip of all 25 screens delivered in chat). Possible follow-ups: tune Home plan numbers, native listening clips, mnemonics; puhekieli human-verification still the standing pending item.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
