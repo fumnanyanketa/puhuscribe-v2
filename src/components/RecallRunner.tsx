@@ -99,91 +99,89 @@ export function RecallRunner({ items, userId, titleFi, titleEn, onExit, onProgre
         <span className="ps-label ps-num" style={{ color: 'var(--ink-2)', flexShrink: 0 }}>{i + 1}/{items.length}</span>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Prompt: the English meaning */}
-        <div className="ps-glass" style={{ padding: 22, borderRadius: 'var(--r-2xl)' }}>
-          <Label color={isWord ? 'var(--written)' : 'var(--spoken)'}>{bi('Kirjoita suomeksi', 'Write it in Finnish')}</Label>
-          <div style={{ marginTop: 12, fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: isWord ? 30 : 23, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
-            {promptEn}
-          </div>
+      {/* Prompt: the English meaning */}
+      <div className="ps-glass" style={{ padding: 22, borderRadius: 'var(--r-2xl)' }}>
+        <Label color={isWord ? 'var(--written)' : 'var(--spoken)'}>{bi('Kirjoita suomeksi', 'Write it in Finnish')}</Label>
+        <div style={{ marginTop: 12, fontFamily: 'var(--font-display)', fontWeight: 700,
+          fontSize: isWord ? 30 : 23, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+          {promptEn}
         </div>
+      </div>
 
-        {/* Answer input */}
-        <textarea
-          value={typed}
-          onChange={(e) => setTyped(e.target.value)}
-          disabled={!!result}
-          autoFocus
-          placeholder={biText('Kirjoita suomeksi…', 'Type the Finnish…')}
-          rows={isWord ? 1 : 2}
-          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !result) { e.preventDefault(); check() } }}
-          style={{
-            marginTop: 14, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)',
-            border: `1.5px solid ${tier ? tier.color : 'var(--glass-line)'}`, background: 'var(--glass)', resize: 'none',
-            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18, color: 'var(--ink)', outline: 'none',
-          }}
-        />
+      {/* Answer input */}
+      <textarea
+        value={typed}
+        onChange={(e) => setTyped(e.target.value)}
+        disabled={!!result}
+        autoFocus
+        placeholder={biText('Suomeksi…', 'In Finnish…')}
+        rows={isWord ? 2 : 3}
+        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !result) { e.preventDefault(); check() } }}
+        style={{
+          marginTop: 14, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)',
+          border: `1.5px solid ${tier ? tier.color : 'var(--glass-line)'}`, background: 'var(--glass)', resize: 'none',
+          fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18, color: 'var(--ink)', outline: 'none',
+        }}
+      />
 
-        {/* Result */}
-        {result && tier && (
-          <div className="ps-card" style={{ marginTop: 14, padding: 16, border: `1px solid ${tier.color}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: tier.color }}>{bi(tier.fi, tier.en)}</span>
-              <span className="ps-num" style={{ fontSize: 12, color: 'var(--ink-3)' }}>{bi('Seuraava', 'Next')}: {previews[result.rating]}</span>
-            </div>
+      {/* Actions sit directly under the input so they stay reachable above the
+          on-screen keyboard, instead of being pinned below the fold. */}
+      {!result ? (
+        <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+          <Btn variant="light" style={{ flex: 1 }} disabled={busy} onClick={dunno}>{bi('En tiedä', "I don't know")}</Btn>
+          <Btn variant="primary" style={{ flex: 1.4 }} iconRight="arrow" disabled={busy || !typed.trim()} onClick={check}>{bi('Tarkista', 'Check')}</Btn>
+        </div>
+      ) : (
+        <>
+          {tier && (
+            <div className="ps-card" style={{ marginTop: 14, padding: 16, border: `1px solid ${tier.color}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: tier.color }}>{bi(tier.fi, tier.en)}</span>
+                <span className="ps-num" style={{ fontSize: 12, color: 'var(--ink-3)' }}>{bi('Seuraava', 'Next')}: {previews[result.rating]}</span>
+              </div>
 
-            <div style={{ marginTop: 12 }}>
-              {isWord ? (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 34, letterSpacing: '-0.03em', lineHeight: 1 }}>{item.kind === 'word' ? item.card.word.fi : ''}</div>
-                    {item.kind === 'word' && item.card.word.ipa && (
-                      <div className="ps-num" style={{ marginTop: 6, fontSize: 15, color: 'var(--written)', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>{item.card.word.ipa}</div>
+              <div style={{ marginTop: 12 }}>
+                {isWord ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 34, letterSpacing: '-0.03em', lineHeight: 1 }}>{item.kind === 'word' ? item.card.word.fi : ''}</div>
+                      {item.kind === 'word' && item.card.word.ipa && (
+                        <div className="ps-num" style={{ marginTop: 6, fontSize: 15, color: 'var(--written)', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>{item.card.word.ipa}</div>
+                      )}
+                    </div>
+                    <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={46} />
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <RegDot reg="kirja" />
+                        <div style={{ marginTop: 7 }}>
+                          {item.kind === 'island' && <Sentence tokens={item.card.line.kirja} font="var(--font-display)" weight={600} size={21} color="var(--ink)" />}
+                        </div>
+                      </div>
+                      <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={44} />
+                    </div>
+                    {item.kind === 'island' && item.card.line.puheText && (
+                      <div style={{ marginTop: 12, padding: '10px 12px', background: 'var(--spoken-bg)', border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
+                        <RegDot reg="puhe" />
+                        <div style={{ marginTop: 7 }}>
+                          <Sentence tokens={item.card.line.puhe} font="var(--font-body)" weight={600} size={16} color="var(--ink)" />
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={46} />
-                </div>
-              ) : (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <RegDot reg="kirja" />
-                      <div style={{ marginTop: 7 }}>
-                        {item.kind === 'island' && <Sentence tokens={item.card.line.kirja} font="var(--font-display)" weight={600} size={21} color="var(--ink)" />}
-                      </div>
-                    </div>
-                    <SpeakerBtn reg="kirja" playing={playing} onClick={play} size={44} />
-                  </div>
-                  {item.kind === 'island' && item.card.line.puheText && (
-                    <div style={{ marginTop: 12, padding: '10px 12px', background: 'var(--spoken-bg)', border: '1px solid var(--spoken-line)', borderRadius: 'var(--r-md)' }}>
-                      <RegDot reg="puhe" />
-                      <div style={{ marginTop: 7 }}>
-                        <Sentence tokens={item.card.line.puhe} font="var(--font-body)" weight={600} size={16} color="var(--ink)" />
-                      </div>
-                    </div>
-                  )}
-                </div>
+                )}
+              </div>
+
+              {result.tier !== 'correct' && (
+                <div className="ps-caption" style={{ marginTop: 12 }}>{bi('Sinä kirjoitit', 'You wrote')}: “{typed.trim() || '—'}”</div>
               )}
             </div>
-
-            {result.tier !== 'correct' && (
-              <div className="ps-caption" style={{ marginTop: 12 }}>{bi('Sinä kirjoitit', 'You wrote')}: “{typed.trim() || '—'}”</div>
-            )}
-          </div>
-        )}
-
-        <div style={{ flex: 1, minHeight: 16 }} />
-
-        {!result ? (
-          <div style={{ display: 'flex', gap: 10 }}>
-            <Btn variant="light" style={{ flex: 1 }} disabled={busy} onClick={dunno}>{bi('En tiedä', "I don't know")}</Btn>
-            <Btn variant="primary" style={{ flex: 1.4 }} iconRight="arrow" disabled={busy || !typed.trim()} onClick={check}>{bi('Tarkista', 'Check')}</Btn>
-          </div>
-        ) : (
-          <Btn variant="primary" block iconRight="arrow" onClick={next}>{i < items.length - 1 ? bi('Seuraava', 'Next') : bi('Valmis', 'Finish')}</Btn>
-        )}
-      </div>
+          )}
+          <Btn variant="primary" block iconRight="arrow" style={{ marginTop: 14 }} onClick={next}>{i < items.length - 1 ? bi('Seuraava', 'Next') : bi('Valmis', 'Finish')}</Btn>
+        </>
+      )}
     </ScreenScroll>
   )
 }

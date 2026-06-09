@@ -143,7 +143,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
       {islands && islands.length > 0 && (
         <div style={{ display: 'grid', gap: 12, marginTop: 22 }}>
           {islands.map((isl) => (
-            <button key={isl.id} onClick={() => onOpen(isl.id)} className="ps-press ps-card" style={{
+            <button key={isl.id} onClick={() => (isl.topicSlug === 'starter' ? onShadow(isl.id) : onOpen(isl.id))} className="ps-press ps-card" style={{
               padding: 18, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
             }}>
               <span style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: 'var(--spoken-bg)',
