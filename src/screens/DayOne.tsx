@@ -121,13 +121,13 @@ function Start({ sizeOptions, onPick, onDaily, dailyLoading, dailyErr, go }: {
     <ScreenScroll bottom={110}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <IconBtn icon="close" tone="glass" size={40} onClick={() => go('daily')} />
-        <Label color="var(--written)">{bi('Päivä yksi', 'Day One')}</Label>
+        <Label color="var(--written)">Vocabulary</Label>
         <span style={{ width: 40 }} />
       </div>
 
       <div style={{ textAlign: 'center', marginTop: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'center' }}><OrbCluster size={104} /></div>
-        <h1 className="ps-title-1" style={{ marginTop: 12 }}>{bi('Sanasto', 'Vocabulary')}</h1>
+        <h1 className="ps-title-1" style={{ marginTop: 12 }}>Sanasto</h1>
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8, maxWidth: 300, marginInline: 'auto' }}>
           Learn new words and grow your bank. A little every day is how Finnish sticks.
         </p>

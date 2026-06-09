@@ -23,8 +23,8 @@ export function Practice({ go }: { go: (s: AppScreen) => void }) {
   return (
     <ScreenScroll bottom={110}>
       <div>
-        <Label color="var(--written)">Harjoittelu</Label>
-        <h1 className="ps-title-1" style={{ marginTop: 8 }}>{bi('Harjoittele', 'Practice')}</h1>
+        <Label color="var(--written)">Practice</Label>
+        <h1 className="ps-title-1" style={{ marginTop: 8 }}>Harjoittele</h1>
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
           Train the four YKI skills, not just words. Reading comes through every card you review; speaking, listening and writing live here.
         </p>

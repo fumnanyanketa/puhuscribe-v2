@@ -45,8 +45,8 @@ function Hub({ userId, go, onVocab, onSentences }: {
 
   return (
     <ScreenScroll bottom={110}>
-      <Label color="var(--written)">{bi('Päivän kertaus', 'daily review')}</Label>
-      <h1 className="ps-title-1" style={{ marginTop: 8 }}>{bi('Kertaus', 'Review')}</h1>
+      <Label color="var(--written)">Review</Label>
+      <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kertaus</h1>
       <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
         Two banks to grow a little every day — your words and your own sentences.
       </p>

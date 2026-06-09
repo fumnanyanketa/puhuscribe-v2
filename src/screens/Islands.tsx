@@ -64,7 +64,7 @@ export function Islands() {
 /* List — the learner's islands + "new island"                                 */
 /* -------------------------------------------------------------------------- */
 function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew: () => void; onOpen: (id: string) => void; onShadow: (id: string) => void }) {
-  const { bi, bilingual, biText } = useLang()
+  const { bi, biText } = useLang()
   const [reload, setReload] = useState(0)
   const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId, reload])
   const [addingStarter, setAddingStarter] = useState(false)
@@ -95,9 +95,8 @@ function IslandList({ userId, onNew, onOpen, onShadow }: { userId: string; onNew
   return (
     <ScreenScroll bottom={110}>
       <div>
-        <Label color="var(--written)">Kielisaaret</Label>
+        <Label color="var(--written)">Language Islands</Label>
         <h1 className="ps-title-1" style={{ marginTop: 8 }}>Kielisaaret</h1>
-        {bilingual && <div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontSize: 16, color: 'var(--ink-3)', marginTop: 2 }}>(Language Islands)</div>}
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 8 }}>
           Build sentences from your own life. You write what you want to say; we turn it into real Finnish you can speak.
         </p>
