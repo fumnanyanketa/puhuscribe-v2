@@ -421,6 +421,16 @@ Next: workshop follow-ups — realistic journey timelines; Grammar = Stage 2 fro
 
 ---
 
+## Session: 2026-06-10 (Starter pack: prominent one-tap refresh)
+
+Shipped: Owner reported the previous reset was invisible/unusable and the starter still showed 50. Replaced the tiny gray "Reset starter pack" link with a PROMINENT card on the Sentence Bank list, shown whenever a starter copy exists: "Päivitä aloituspaketti / Refresh starter pack — Replace your copy (N) with the latest sentences." ONE tap calls new refreshStarterIsland() (deletes every existing starter copy, cards cascade via FK, then re-creates from the current seed via createStarterIsland → fetchIslandSentences(250)) and reloads the list so the count visibly updates (50 -> 104). Detect the starter robustly with isStarterIsland() (slug 'starter' OR title 'Everyday basics') for both the card and the set-row tag, so it works for any copy. (Earlier same-day: per-set shadow resume position via resumeKey — kept.) Build clean, 39 JS tests green.
+
+Blocked: The refreshed count depends on the DB actually holding 104 'arki' rows — if it still shows 50 after refreshing, the 05_island_sentences.sql (104-row) seed didn't take in Supabase (verify: SELECT count(*) FROM sentences WHERE topic_id=(SELECT id FROM topics WHERE slug='arki') — expect 104). The seed is a single atomic 104-row INSERT after a DELETE, so it's all-or-nothing. Container still can't reach Supabase.
+
+Next: confirm 104 renders after refresh; then workshop follow-ups (journey timelines, Grammar Stage 2, puhekieli verification, listening clips, mnemonics).
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
