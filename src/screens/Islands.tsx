@@ -95,9 +95,14 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
   const [starterErr, setStarterErr] = useState('')
   void reload
 
-  const hasStarter = (islands ?? []).some((i) => i.topicSlug === 'starter')
+  const starterIsland = (islands ?? []).find((i) => i.topicSlug === 'starter')
+  const hasStarter = !!starterIsland
   const totalSentences = (islands ?? []).reduce((a, i) => a + i.count, 0)
   const totalLearned = (islands ?? []).reduce((a, i) => a + i.learned, 0)
+
+  const [confirmReset, setConfirmReset] = useState(false)
+  const [resetBusy, setResetBusy] = useState(false)
+  const [resetErr, setResetErr] = useState('')
 
   const addStarter = async () => {
     if (addingStarter) return
@@ -109,6 +114,22 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
       setAddingStarter(false)
       setStarterErr(e instanceof Error ? e.message : String(e))
       setReload((n) => n + 1)
+    }
+  }
+
+  // Delete the starter set so it can be re-added fresh — this is how the learner
+  // pulls in an updated starter pack (a created copy doesn't auto-update when the
+  // source sentences change).
+  const resetStarter = async () => {
+    if (!starterIsland || resetBusy) return
+    setResetBusy(true); setResetErr('')
+    try {
+      await deleteIsland(userId, starterIsland.id)
+      setConfirmReset(false); setResetBusy(false)
+      setReload((n) => n + 1) // the "Add starter pack" button reappears; re-adding pulls the full set
+    } catch (e) {
+      setResetErr(e instanceof Error ? e.message : String(e))
+      setResetBusy(false)
     }
   }
 
@@ -204,6 +225,39 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
             })}
           </div>
         </>
+      )}
+
+      {/* Reset the starter pack so an updated version can be re-added fresh. */}
+      {hasStarter && (
+        <div style={{ marginTop: 22 }}>
+          {!confirmReset ? (
+            <div style={{ textAlign: 'center' }}>
+              <button onClick={() => setConfirmReset(true)} className="ps-press" style={{
+                background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
+                fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13, textDecoration: 'underline',
+              }}>
+                {bi('Nollaa aloituspaketti', 'Reset starter pack')}
+              </button>
+            </div>
+          ) : (
+            <div className="ps-card" style={{ padding: 16, borderRadius: 'var(--r-lg)' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14.5 }}>{bi('Nollaa aloituspaketti?', 'Reset starter pack?')}</div>
+              <p className="ps-caption" style={{ marginTop: 6 }}>
+                This removes the starter set and its review history so you can add it again, refreshed to the latest sentences.
+              </p>
+              {resetErr && (
+                <div className="ps-body" style={{ marginTop: 10, padding: '10px 14px', borderRadius: 'var(--r-md)',
+                  background: 'var(--flag-bg)', color: 'var(--flag)' }}>{resetErr}</div>
+              )}
+              <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+                <Btn variant="light" sm style={{ flex: 1 }} onClick={() => { setConfirmReset(false); setResetErr('') }}>{bi('Peruuta', 'Cancel')}</Btn>
+                <Btn variant="primary" sm style={{ flex: 1, background: '#C2603F' }} disabled={resetBusy} onClick={() => void resetStarter()}>
+                  {resetBusy ? 'Hetki…' : bi('Kyllä, nollaa', 'Yes, reset')}
+                </Btn>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       <div style={{ height: 16 }} />
@@ -736,7 +790,8 @@ function ShadowView({ userId, islandId, onBack }: { userId: string; islandId: st
     () => fetchIslandLines(userId, islandId), [userId, islandId])
   if (loading) return <StatePane title="Ladataan…" bottom={26} />
   if (error) return <StatePane tone="error" title="Couldn't load" detail={error} bottom={26} />
-  return <Speak phrases={lines ?? []} onBack={onBack} />
+  // Resume each set where the learner left off (per user + set).
+  return <Speak phrases={lines ?? []} onBack={onBack} resumeKey={`puhuscribe:shadow:${userId}:${islandId}`} />
 }
 
 /* -------------------------------------------------------------------------- */

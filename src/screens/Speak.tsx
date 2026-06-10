@@ -28,14 +28,25 @@ function pickMime(): string | undefined {
   return undefined
 }
 
-export function Speak({ onBack, phrases, title }: { onBack: () => void; phrases?: ShadowLine[]; title?: string }) {
+export function Speak({ onBack, phrases, title, resumeKey }: {
+  onBack: () => void; phrases?: ShadowLine[]; title?: string; resumeKey?: string
+}) {
   // When sentences are passed in (a personal set), practice those; otherwise
   // fall back to fetching the curated "first useful sentences".
   if (phrases) {
     if (phrases.length === 0) return <StatePane title="No sentences yet" detail="Add a sentence to this set first." bottom={110} />
-    return <SpeakPractice phrases={phrases} onBack={onBack} title={title} />
+    return <SpeakPractice phrases={phrases} onBack={onBack} title={title} resumeKey={resumeKey} />
   }
   return <SpeakFetch onBack={onBack} />
+}
+
+// Per-set shadow position, persisted to localStorage so a set (e.g. the starter
+// pack) resumes where the learner left off instead of restarting at sentence 1.
+function readShadowPos(key: string, len: number): number {
+  try {
+    const n = parseInt(localStorage.getItem(key) ?? '', 10)
+    return Number.isFinite(n) && n > 0 && n < len ? n : 0
+  } catch { return 0 }
 }
 
 function SpeakFetch({ onBack }: { onBack: () => void }) {
@@ -52,10 +63,12 @@ function SpeakFetch({ onBack }: { onBack: () => void }) {
   return <SpeakPractice phrases={phrases} onBack={onBack} />
 }
 
-function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBack: () => void; title?: string }) {
+function SpeakPractice({ phrases, onBack, title, resumeKey }: {
+  phrases: ShadowLine[]; onBack: () => void; title?: string; resumeKey?: string
+}) {
   const { bilingual } = useLang()
   useStudyClock()
-  const [i, setI] = useState(0)
+  const [i, setI] = useState(() => (resumeKey ? readShadowPos(resumeKey, phrases.length) : 0))
   const [st, setSt] = useState<RecState>('idle')
   const [sec, setSec] = useState(0)
   const [playingNative, setPlayingNative] = useState(false)
@@ -137,7 +150,12 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
   const nextPhrase = () => {
     setRecUrl(null); setSt('idle'); setSec(0); setRecErr(''); setPlayingMine(false); setPlayingNative(false)
     if (i < phrases.length - 1) setI(i + 1)
-    else { bumpPracticeCount('speak'); setDone(true) }
+    else {
+      bumpPracticeCount('speak')
+      // Finished — clear the saved position so the set starts fresh next time.
+      if (resumeKey) { try { localStorage.removeItem(resumeKey) } catch { /* ignore */ } }
+      setDone(true)
+    }
   }
 
   // Revoke the previous recording's object URL when it changes / on unmount.
@@ -154,6 +172,12 @@ function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBa
 
   // Auto-play the native audio on each new phrase (and on first mount).
   useEffect(() => { playNative() }, [i]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Remember how far the learner got, per set, so exiting midway resumes here.
+  useEffect(() => {
+    if (!resumeKey) return
+    try { localStorage.setItem(resumeKey, String(i)) } catch { /* storage unavailable */ }
+  }, [i, resumeKey])
 
   if (done) {
     return (
