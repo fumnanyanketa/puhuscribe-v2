@@ -12,6 +12,7 @@ import { useProgress } from '../lib/data/progress'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 import { speak } from '../lib/tts'
+import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
  * Day One = the 150-word vocabulary sprint, nothing else (owner decision:
@@ -182,6 +183,7 @@ export function SprintRunner({ deck, startIdx, labelFor, onAdvance, onExit, done
 }) {
   const { bilingual } = useLang()
   const { user } = useAuth()
+  useStudyClock()
   const total = deck.length
   const [idx, setIdx] = useState(Math.max(0, Math.min(startIdx, total - 1)))
   const [phase, setPhase] = useState<'card' | 'quiz'>('card')

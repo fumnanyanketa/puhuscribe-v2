@@ -11,6 +11,7 @@ import { useLang } from '../lib/lang/useLang'
 import { fetchGradedSentences, levelForBank, RegisterSentence } from '../lib/data/content'
 import { fetchProgressStats } from '../lib/data/stats'
 import { bumpPracticeCount } from '../lib/practiceStats'
+import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
  * Reading practice — text first: read a real everyday sentence, show you
@@ -40,6 +41,7 @@ export function Read({ go }: { go: (s: AppScreen) => void }) {
 
 function ReadSession({ sentences, level, go }: { sentences: RegisterSentence[]; level: string; go: (s: AppScreen) => void }) {
   const { bilingual } = useLang()
+  useStudyClock()
   const [i, setI] = useState(0)
   const [picked, setPicked] = useState<string | null>(null)
   const [correct, setCorrect] = useState(0)

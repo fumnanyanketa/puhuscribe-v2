@@ -9,6 +9,7 @@ import { ReviewItem } from '../lib/data/review'
 import { rateCard, previewIntervals } from '../lib/data/cards'
 import { gradeAnswer, Grade } from '../lib/grade'
 import { speak } from '../lib/tts'
+import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
  * The active-recall engine, shared by both Daily Review tracks and the set
@@ -48,6 +49,7 @@ export function RecallRunner({ items, userId, titleFi, titleEn, onExit, onProgre
   onProgress?: () => void
 }) {
   const { bi, biText, bilingual } = useLang()
+  useStudyClock()
   const [i, setI] = useState(0)
   const [typed, setTyped] = useState('')
   const [result, setResult] = useState<Grade | null>(null)

@@ -1,7 +1,9 @@
--- PuhuScribe — Language Islands starter pack: useful real-life SENTENCES for a
--- newcomer in Finland (no bare single words — those live in the Day One sprint).
--- Kirjakieli is Voikko word-validated; puhekieli (spoken) still needs a
--- Finnish-speaker verification pass (see docs/island-sentences.md).
+-- PuhuScribe — Language Islands starter pack: 100 useful real-life A1 SENTENCES
+-- for a newcomer in Finland (no bare single words — those live in the Day One
+-- sprint). The first 44 are survival phrases; the next 56 are everyday "talk
+-- about your own life" sentences sourced from a Finnish teacher's class notes
+-- (SKK1). Kirjakieli is real teacher Finnish; puhekieli (spoken) is a
+-- conservative form still pending a Finnish-speaker verification pass.
 -- Idempotent: re-running replaces the 'arki' set. Run once in the Supabase SQL editor.
 
 INSERT INTO topics (slug, name_fi, name_en, yki_category, sort_order)
@@ -11,6 +13,7 @@ ON CONFLICT (slug) DO NOTHING;
 DELETE FROM sentences WHERE topic_id = (SELECT id FROM topics WHERE slug = 'arki');
 
 INSERT INTO sentences (kirjakieli, puhekieli, translation_en, level, topic_id) VALUES
+  -- 1-44 · survival phrases
   ('Hyvää huomenta.', 'Huomenta.', 'Good morning.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Kiitos paljon.', 'Kiitos paljon.', 'Thank you very much.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Ole hyvä.', 'Ole hyvä.', 'You''re welcome.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
@@ -54,4 +57,65 @@ INSERT INTO sentences (kirjakieli, puhekieli, translation_en, level, topic_id) V
   ('Tässä on puhelinnumeroni.', 'Tässä on mun numero.', 'Here is my phone number.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Paljonko kello on?', 'Paljonks kello on?', 'What time is it?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Voitko auttaa, olen eksyksissä.', 'Voitsä auttaa, mä oon eksyksissä.', 'Can you help me, I am lost.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
-  ('Hetki, kiitos.', 'Hetki, kiitos.', 'One moment, please.', 'A1', (SELECT id FROM topics WHERE slug = 'arki'));
+  ('Hetki, kiitos.', 'Hetki, kiitos.', 'One moment, please.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  -- 45-100 · talk about your own life (from the SKK1 teacher notes)
+  ('Asun Helsingissä.', 'Mä asun Helsingissä.', 'I live in Helsinki.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Olen töissä.', 'Mä oon töissä.', 'I am at work.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Menen töihin bussilla.', 'Mä meen töihin bussilla.', 'I go to work by bus.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minulla on kaksi lasta.', 'Mul on kaks lasta.', 'I have two children.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Puhun kahta kieltä.', 'Mä puhun kahta kieltä.', 'I speak two languages.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Olen opiskellut suomea vuoden.', 'Mä oon opiskellu suomea vuoden.', 'I have studied Finnish for a year.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Opiskelen suomea joka päivä.', 'Mä opiskelen suomee joka päivä.', 'I study Finnish every day.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Opiskelen suomea katsomalla videoita.', 'Mä opiskelen suomee kattomalla videoita.', 'I study Finnish by watching videos.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Herään seitsemältä.', 'Mä herään seitsemältä.', 'I wake up at seven.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Menen nukkumaan kymmeneltä.', 'Mä meen nukkumaan kymmeneltä.', 'I go to bed at ten.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Lähden töistä kello viisi.', 'Mä lähden töistä kello viis.', 'I leave work at five.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minulla on kiire.', 'Mul on kiire.', 'I am in a hurry.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minun täytyy mennä nyt.', 'Mun täytyy mennä nyt.', 'I have to go now.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Olen myöhässä.', 'Mä oon myöhässä.', 'I am late.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Onko sinulla aikaa?', 'Onks sul aikaa?', 'Do you have time?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minulla on nälkä.', 'Mul on nälkä.', 'I am hungry.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minulla on jano.', 'Mul on jano.', 'I am thirsty.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Olen väsynyt.', 'Mä oon väsyny.', 'I am tired.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minulla on hauskaa.', 'Mul on hauskaa.', 'I am having fun.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Viihdyn Suomessa.', 'Mä viihdyn Suomessa.', 'I feel at home in Finland.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Pidän suomalaisesta ruoasta.', 'Mä tykkään suomalaisesta ruoasta.', 'I like Finnish food.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Pidän uimisesta.', 'Mä tykkään uimisesta.', 'I like swimming.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tykkään kahvista.', 'Mä tykkään kahvista.', 'I like coffee.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('En pidä pimeydestä.', 'Mä en tykkää pimeydestä.', 'I don''t like the dark.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Minusta Suomi on kaunis maa.', 'Musta Suomi on kaunis maa.', 'I think Finland is a beautiful country.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Suomessa on kaunis luonto.', 'Suomessa on kaunis luonto.', 'Finland has beautiful nature.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mistä sinä pidät?', 'Mistä sä tykkäät?', 'What do you like?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Harrastan leipomista.', 'Mä harrastan leipomista.', 'Baking is my hobby.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tykkään leipoa.', 'Mä tykkään leipoo.', 'I like to bake.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Käyn salilla kaksi kertaa viikossa.', 'Mä käyn salilla kaks kertaa viikossa.', 'I go to the gym twice a week.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Rentoudun saunomalla.', 'Mä rentoudun saunomalla.', 'I relax by going to the sauna.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mitä teet vapaa-ajalla?', 'Mitä sä teet vapaa-ajalla?', 'What do you do in your free time?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tänään on kylmä.', 'Tänään on kylmä.', 'It is cold today.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tänään on lämmin.', 'Tänään on lämmin.', 'It is warm today.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('On aurinkoista.', 'On aurinkosta.', 'It is sunny.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Sataa lunta.', 'Sataa lunta.', 'It is snowing.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Sataa vettä.', 'Sataa vettä.', 'It is raining.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Millainen sää tänään on?', 'Millainen sää tänään on?', 'What is the weather like today?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mennään kahville!', 'Mennään kahville!', 'Let''s go for coffee!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mennään kauppaan yhdessä!', 'Mennään kauppaan yhdessä!', 'Let''s go to the shop together!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Syödään lounasta yhdessä!', 'Syödään lounasta yhdessä!', 'Let''s have lunch together!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Katsotaan elokuva!', 'Katotaan elokuva!', 'Let''s watch a movie!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mennään ulos!', 'Mennään ulos!', 'Let''s go outside!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Pidetään tauko!', 'Pidetään tauko!', 'Let''s take a break!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Puhutaan vain suomea!', 'Puhutaan vaan suomee!', 'Let''s speak only Finnish!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Jos en ymmärrä, kysyn opettajalta.', 'Jos mä en ymmärrä, mä kysyn opettajalta.', 'If I don''t understand, I ask the teacher.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tämä on helppoa.', 'Tää on helppoo.', 'This is easy.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tämä on vaikeaa.', 'Tää on vaikeeta.', 'This is difficult.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Ymmärrätkö sinä?', 'Ymmärrätsä?', 'Do you understand?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mitä sinulle kuuluu?', 'Mitä sulle kuuluu?', 'How are you?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Kuinka vanha sinä olet?', 'Kuinka vanha sä oot?', 'How old are you?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Missä sinä asut?', 'Missä sä asut?', 'Where do you live?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Mitä sinä teet työksesi?', 'Mitä sä teet työksesi?', 'What do you do for work?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Oletko käynyt Suomessa ennen?', 'Ootsä käyny Suomessa ennen?', 'Have you been to Finland before?', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Juon kahvini mustana.', 'Mä juon kahvin mustana.', 'I drink my coffee black.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('En ota sokeria.', 'Mä en ota sokeria.', 'I don''t take sugar.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Lähden matkalle ensi viikolla.', 'Mä lähden matkalle ensi viikolla.', 'I am going on a trip next week.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Syön ravintolassa harvoin.', 'Mä syön ravintolassa harvoin.', 'I rarely eat at a restaurant.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Käytän kaupungin pyöriä.', 'Mä käytän kaupungin pyöriä.', 'I use the city bikes.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
+  ('Tarvitsen lisää aikaa.', 'Mä tarvin lisää aikaa.', 'I need more time.', 'A1', (SELECT id FROM topics WHERE slug = 'arki'));

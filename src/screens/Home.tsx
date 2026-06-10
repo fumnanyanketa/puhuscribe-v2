@@ -10,6 +10,7 @@ import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { fetchHomeData, HomeData } from '../lib/data/home'
 import { journeyState } from '../lib/journey'
+import { studyStreak, todayStudyMinutes, DAILY_GOAL_MIN } from '../lib/studyTime'
 
 const BODY_BOTTOM = 96
 const DAILY_WORDS = 15
@@ -70,7 +71,7 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
     <>
       {sprintDone
         ? <HomeHub d={d} go={go} />
-        : <HomeSprint d={d} go={go} sprint={progress.sprint ?? null} />}
+        : <HomeSprint go={go} sprint={progress.sprint ?? null} />}
       {nav}
     </>
   )
@@ -79,8 +80,8 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
 /* =====================================================================
    STATE 1 · FIRST SPRINT NOT YET COMPLETE — lead with resume, minimal else
    ===================================================================== */
-function HomeSprint({ d, go, sprint }: {
-  d: HomeData; go: (s: AppScreen) => void; sprint: { size: number; idx: number } | null
+function HomeSprint({ go, sprint }: {
+  go: (s: AppScreen) => void; sprint: { size: number; idx: number } | null
 }) {
   const { bilingual } = useLang()
   const size = sprint?.size ?? 150
@@ -91,7 +92,7 @@ function HomeSprint({ d, go, sprint }: {
 
   return (
     <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 60 }}>
-      <TopRow streak={d.streak} />
+      <TopRow streak={studyStreak()} />
       <Greeting {...(started ? { fi: 'Tervetuloa takaisin!', en: 'Welcome back!' } : greeting())} />
 
       {/* Resume hero */}
@@ -154,10 +155,11 @@ function HomeSprint({ d, go, sprint }: {
 function HomeHub({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
   const { bilingual } = useLang()
   const js = journeyState(d.bank, d.sentBank)
+  const todayMin = todayStudyMinutes()
 
   return (
     <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 60 }}>
-      <TopRow streak={d.streak} />
+      <TopRow streak={studyStreak()} />
       <Greeting {...greeting()} />
 
       {/* Today's plan */}
@@ -168,6 +170,17 @@ function HomeHub({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
         <hr className="ps-rule" style={{ margin: '14px 0' }} />
         <PlanRow icon="review" tone="var(--spoken)" toneBg="var(--spoken-bg)"
           fi="Kertaus" en="Reviews due" n={d.vocabDue + d.sentDue} unit="vuorossa" />
+        <div style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span className="ps-label" style={{ color: 'var(--ink-3)' }}>
+              TÄNÄÄN OPISKELTU{bilingual && <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 9.5, marginLeft: 6, textTransform: 'none', letterSpacing: 0 }}>studied today</span>}
+            </span>
+            <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: todayMin >= DAILY_GOAL_MIN ? 'var(--spoken)' : 'var(--ink-2)' }}>
+              {todayMin} / {DAILY_GOAL_MIN} min
+            </span>
+          </div>
+          <Bar value={Math.min(100, (todayMin / DAILY_GOAL_MIN) * 100)} color={todayMin >= DAILY_GOAL_MIN ? 'var(--spoken)' : 'var(--written)'} track="var(--glass-deep)" h={7} />
+        </div>
         <div style={{ marginTop: 18 }}>
           <CTA fi="Aloita päivä" en="Start today · ~15 min" iconRight="arrow" variant="ink"
             style={{ minHeight: 58 }} onClick={() => go('daily')} />

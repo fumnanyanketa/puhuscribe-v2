@@ -14,6 +14,7 @@ import { fetchProgressStats, ProgressStats } from '../lib/data/stats'
 import { fetchReviewOverview } from '../lib/data/review'
 import { journeyState, STAGE1_WORDS, STAGE1_SENTENCES } from '../lib/journey'
 import { getPracticeCounts, PRACTICE_GOAL } from '../lib/practiceStats'
+import { studyStreak } from '../lib/studyTime'
 import { YKI, YkiSkill } from '../lib/yki'
 
 const BODY_BOTTOM = 96
@@ -57,6 +58,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
   const { stats, sentBank } = data!
 
   const js = journeyState(stats.totalCards, sentBank)
+  const streak = studyStreak()
   const counts = getPracticeCounts()
   const maxWeek = Math.max(1, ...stats.week.map((d) => d.count))
   const skills: YkiSkill[] = ['read', 'listen', 'speak', 'write']
@@ -71,7 +73,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
           borderRadius: 999, background: 'var(--written-bg)', marginTop: 18 }}>
           <span style={{ color: 'var(--written)' }}><I name="flame" size={18} sw={1.8} /></span>
           <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.8, color: 'var(--written)' }}>
-            {stats.streakDays}
+            {streak}
           </span>
         </span>
       </div>
@@ -110,7 +112,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
       <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
         <StatTile n={stats.totalCards} fi="sanaa" en="words" tone="var(--written)" />
         <StatTile n={sentBank} fi="lausetta" en="sentences" tone="var(--spoken)" />
-        <StatTile n={stats.streakDays} fi="päivää" en="day streak" tone="var(--flag)" />
+        <StatTile n={streak} fi="päivää" en="day streak" tone="var(--flag)" />
       </div>
 
       {/* Skills breakdown (practice sessions toward the goal) */}

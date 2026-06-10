@@ -14,7 +14,7 @@ import { fetchReviewOverview, ReviewOverview, ReviewItem } from '../lib/data/rev
 
 const SESSION_SIZE = 12
 const VOCAB_GOAL = 2000
-const SENT_GOAL = 2000
+const SENT_GOAL = 1000
 const BODY_BOTTOM = 96
 
 type View = 'hub' | 'vocab' | 'sentences'

@@ -10,7 +10,7 @@
 
 // Stage 1 requirements (owner-set goals; tune here in one place).
 export const STAGE1_WORDS = 2000
-export const STAGE1_SENTENCES = 2000
+export const STAGE1_SENTENCES = 1000
 
 export interface JourneyStage {
   n: number
@@ -28,7 +28,7 @@ export const STAGES: JourneyStage[] = [
   {
     n: 1, fi: 'Perusta', en: 'Foundation', icon: 'sprout', cefr: 'A1 to A2',
     reqWords: STAGE1_WORDS, reqSentences: STAGE1_SENTENCES,
-    blurb: 'Build your base: the 2,000 most useful words, and 2,000 sentences from your own life.',
+    blurb: 'Build your base: the 2,000 most useful words, and 1,000 sentences from your own life.',
   },
   {
     n: 2, fi: 'Kielioppi', en: 'Grammar', icon: 'book', cefr: 'A2 to B1',

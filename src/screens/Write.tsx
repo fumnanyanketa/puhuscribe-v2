@@ -11,6 +11,7 @@ import { fetchGradedSentences, levelForBank, RegisterSentence } from '../lib/dat
 import { fetchProgressStats } from '../lib/data/stats'
 import { bumpPracticeCount } from '../lib/practiceStats'
 import { getWritingFeedback, speak } from '../lib/tts'
+import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
  * Writing practice — translate an everyday sentence into Finnish. Checked by
@@ -48,6 +49,7 @@ export function Write({ go }: { go: (s: AppScreen) => void }) {
 
 function WriteSession({ sentences, go }: { sentences: RegisterSentence[]; go: (s: AppScreen) => void }) {
   const { bilingual, biText } = useLang()
+  useStudyClock()
   const [i, setI] = useState(0)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)

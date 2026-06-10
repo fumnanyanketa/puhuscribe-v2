@@ -11,6 +11,7 @@ import { useLang } from '../lib/lang/useLang'
 import { fetchIslandSentences, RegisterSentence, ShadowLine } from '../lib/data/content'
 import { bumpPracticeCount } from '../lib/practiceStats'
 import { speak } from '../lib/tts'
+import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
  * Speaking practice — hear the native (kirjakieli) audio, say it aloud,
@@ -53,6 +54,7 @@ function SpeakFetch({ onBack }: { onBack: () => void }) {
 
 function SpeakPractice({ phrases, onBack, title }: { phrases: ShadowLine[]; onBack: () => void; title?: string }) {
   const { bilingual } = useLang()
+  useStudyClock()
   const [i, setI] = useState(0)
   const [st, setSt] = useState<RecState>('idle')
   const [sec, setSec] = useState(0)

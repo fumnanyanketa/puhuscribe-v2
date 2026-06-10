@@ -13,6 +13,7 @@ import { fetchProgressStats } from '../lib/data/stats'
 import { gradeAnswer } from '../lib/grade'
 import { bumpPracticeCount } from '../lib/practiceStats'
 import { speak } from '../lib/tts'
+import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
  * Listening practice — audio first. Two exercise kinds alternate: type what
@@ -42,6 +43,7 @@ export function Listen({ go }: { go: (s: AppScreen) => void }) {
 
 function ListenSession({ sentences, level, go }: { sentences: RegisterSentence[]; level: string; go: (s: AppScreen) => void }) {
   const { bilingual, biText } = useLang()
+  useStudyClock()
   const [i, setI] = useState(0)
   const [typed, setTyped] = useState('')
   const [picked, setPicked] = useState<string | null>(null)
