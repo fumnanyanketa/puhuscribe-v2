@@ -481,6 +481,16 @@ Next: owner review — possibly tie graded tests into the vocab progression as c
 
 ---
 
+## Session: 2026-06-10 (Home: trim to greeting/sprint + progress only)
+
+Shipped: Owner flagged the Home screen was bloating, so removed the entire "Pikavalinnat / Jump back in" quick-actions grid (the 4 vocab/review/sentences/practice cards) — those destinations all live in the bottom nav already. Home now shows only the welcome + first-sprint hero (or daily plan once done) and the ProgressDash (% valmis + the two banks). Dropped the now-unused QuickCard component. Build clean, 39 JS tests green.
+
+Blocked: nothing.
+
+Next: owner's next correction.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
