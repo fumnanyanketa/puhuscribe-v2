@@ -12,7 +12,7 @@ import { ISLAND_TOPICS, IslandTopic } from '../lib/islandTopics'
 import {
   Island, IslandSentence,
   fetchIslands, createIsland, addIslandSentence, fetchIslandLines, deleteIsland, fetchIslandRecall,
-  deleteIslandSentence, updateIslandSentence, createStarterIsland,
+  deleteIslandSentence, updateIslandSentence, createStarterIsland, refreshStarterIsland, isStarterIsland,
 } from '../lib/data/islands'
 import { translateSentence, fetchFollowupQuestions, Translation } from '../lib/islandsApi'
 import { toRegisterTokens } from '../lib/data/content'
@@ -95,14 +95,11 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
   const [starterErr, setStarterErr] = useState('')
   void reload
 
-  const starterIsland = (islands ?? []).find((i) => i.topicSlug === 'starter')
+  const starterIsland = (islands ?? []).find(isStarterIsland)
   const hasStarter = !!starterIsland
+  const starterCount = starterIsland?.count ?? 0
   const totalSentences = (islands ?? []).reduce((a, i) => a + i.count, 0)
   const totalLearned = (islands ?? []).reduce((a, i) => a + i.learned, 0)
-
-  const [confirmReset, setConfirmReset] = useState(false)
-  const [resetBusy, setResetBusy] = useState(false)
-  const [resetErr, setResetErr] = useState('')
 
   const addStarter = async () => {
     if (addingStarter) return
@@ -117,19 +114,20 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
     }
   }
 
-  // Delete the starter set so it can be re-added fresh — this is how the learner
-  // pulls in an updated starter pack (a created copy doesn't auto-update when the
-  // source sentences change).
-  const resetStarter = async () => {
-    if (!starterIsland || resetBusy) return
-    setResetBusy(true); setResetErr('')
+  // One tap: delete the old starter copy and re-create it from the latest seed.
+  // A created copy never auto-updates when the source sentences change, so this
+  // is how the learner pulls in the updated set (e.g. 50 -> 104).
+  const refreshStarter = async () => {
+    if (addingStarter) return
+    setAddingStarter(true); setStarterErr('')
     try {
-      await deleteIsland(userId, starterIsland.id)
-      setConfirmReset(false); setResetBusy(false)
-      setReload((n) => n + 1) // the "Add starter pack" button reappears; re-adding pulls the full set
+      await refreshStarterIsland(userId)
+      setReload((n) => n + 1) // show the refreshed count in the list right away
+      setAddingStarter(false)
     } catch (e) {
-      setResetErr(e instanceof Error ? e.message : String(e))
-      setResetBusy(false)
+      setAddingStarter(false)
+      setStarterErr(e instanceof Error ? e.message : String(e))
+      setReload((n) => n + 1)
     }
   }
 
@@ -166,6 +164,32 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
           {!addingStarter && <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="plus" size={20} /></span>}
         </button>
       )}
+
+      {/* Already have the starter pack — offer a one-tap refresh to the latest set.
+          A created copy doesn't auto-update, so this is how 50 becomes 104. */}
+      {islands && hasStarter && !loading && (
+        <button onClick={() => void refreshStarter()} disabled={addingStarter} className="ps-press ps-card" style={{
+          marginTop: 14, width: '100%', padding: 16, cursor: addingStarter ? 'default' : 'pointer',
+          textAlign: 'left', display: 'flex', alignItems: 'center', gap: 13, opacity: addingStarter ? 0.6 : 1,
+          border: '1.5px solid var(--written-line)', borderRadius: 'var(--r-lg)',
+        }}>
+          <IconTile icon="refresh" size={44} r={12} />
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span className="ps-label" style={{ display: 'block', color: 'var(--written)', fontSize: 10, marginBottom: 2 }}>
+              {bi('Aloituspaketti', 'Starter pack')}
+            </span>
+            <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>
+              {bi('Päivitä aloituspaketti', 'Refresh starter pack')}
+            </span>
+            <span className="ps-caption">
+              {addingStarter
+                ? bi('Päivitetään…', 'Refreshing')
+                : `Replace your copy (${starterCount}) with the latest sentences`}
+            </span>
+          </span>
+          {!addingStarter && <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="refresh" size={20} /></span>}
+        </button>
+      )}
       {starterErr && (
         <div className="ps-body" style={{ marginTop: 10, padding: '12px 16px', borderRadius: 'var(--r-md)',
           background: 'var(--flag-bg)', color: 'var(--flag)' }}>{starterErr}</div>
@@ -188,7 +212,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
           <Eyebrow fi="SETTISI" en="Your sets" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 14 }} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {islands.map((isl, idx) => {
-              const starter = isl.topicSlug === 'starter'
+              const starter = isStarterIsland(isl)
               const t = starter ? TONES[0] : TONES[idx % TONES.length]
               return (
                 <button key={isl.id} className="ps-card ps-press"
@@ -225,39 +249,6 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
             })}
           </div>
         </>
-      )}
-
-      {/* Reset the starter pack so an updated version can be re-added fresh. */}
-      {hasStarter && (
-        <div style={{ marginTop: 22 }}>
-          {!confirmReset ? (
-            <div style={{ textAlign: 'center' }}>
-              <button onClick={() => setConfirmReset(true)} className="ps-press" style={{
-                background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
-                fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13, textDecoration: 'underline',
-              }}>
-                {bi('Nollaa aloituspaketti', 'Reset starter pack')}
-              </button>
-            </div>
-          ) : (
-            <div className="ps-card" style={{ padding: 16, borderRadius: 'var(--r-lg)' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14.5 }}>{bi('Nollaa aloituspaketti?', 'Reset starter pack?')}</div>
-              <p className="ps-caption" style={{ marginTop: 6 }}>
-                This removes the starter set and its review history so you can add it again, refreshed to the latest sentences.
-              </p>
-              {resetErr && (
-                <div className="ps-body" style={{ marginTop: 10, padding: '10px 14px', borderRadius: 'var(--r-md)',
-                  background: 'var(--flag-bg)', color: 'var(--flag)' }}>{resetErr}</div>
-              )}
-              <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-                <Btn variant="light" sm style={{ flex: 1 }} onClick={() => { setConfirmReset(false); setResetErr('') }}>{bi('Peruuta', 'Cancel')}</Btn>
-                <Btn variant="primary" sm style={{ flex: 1, background: '#C2603F' }} disabled={resetBusy} onClick={() => void resetStarter()}>
-                  {resetBusy ? 'Hetki…' : bi('Kyllä, nollaa', 'Yes, reset')}
-                </Btn>
-              </div>
-            </div>
-          )}
-        </div>
       )}
 
       <div style={{ height: 16 }} />

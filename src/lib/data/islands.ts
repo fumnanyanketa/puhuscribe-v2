@@ -168,6 +168,32 @@ export async function createStarterIsland(userId: string): Promise<string> {
   return islandId
 }
 
+/** True for any copy of the built-in starter pack, however/whenever it was made. */
+export function isStarterIsland(i: { topicSlug?: string; title?: string }): boolean {
+  return i.topicSlug === 'starter' || i.title === 'Everyday basics'
+}
+
+/**
+ * Refresh the starter pack to the latest seed in ONE step: delete every existing
+ * starter copy (a created copy never auto-updates when the source sentences
+ * change) and create a fresh one that pulls the whole current arki set. Returns
+ * the new island's id. This is how the learner gets the updated 104 sentences.
+ */
+export async function refreshStarterIsland(userId: string): Promise<string> {
+  const { data: existing, error } = await supabase
+    .from('user_islands')
+    .select('id, topic_slug, title')
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
+  const starters = (existing ?? []).filter((i) => isStarterIsland({ topicSlug: i.topic_slug, title: i.title }))
+  for (const s of starters) {
+    // Sentences + their FSRS cards cascade away via FK ON DELETE CASCADE.
+    const { error: delErr } = await supabase.from('user_islands').delete().eq('id', s.id).eq('user_id', userId)
+    if (delErr) throw new Error(delErr.message)
+  }
+  return createStarterIsland(userId)
+}
+
 export async function fetchIslandLines(userId: string, islandId: string): Promise<IslandSentence[]> {
   const { data, error } = await supabase
     .from('user_island_sentences')
