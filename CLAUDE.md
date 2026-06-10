@@ -33,6 +33,7 @@ An adult immigrant who arrived in Finland 0–18 months ago. Working in English.
 - API keys never appear in the browser. Cloudflare Worker proxy is mandatory.
 - Sub-agent prompts must have a written definition of done before launch.
 - Puhekieli text is always paired with kirjakieli audio, never standalone TTS.
+- Do NOT run the screenshot harness (`shots/`, `node shots/capture.mjs`) automatically. Only generate screenshots when the owner explicitly asks — it wastes compute otherwise. Verify changes with `npm run build` + `npm run test`.
 
 ## Hard rules
 - NEVER commit secrets, API keys, or .env files.
