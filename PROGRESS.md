@@ -401,6 +401,16 @@ Next: Owner reviews the live app page by page (zip of all 25 screens delivered i
 
 ---
 
+## Session: 2026-06-10 (Workshop-prep day: feedback, journey/stages, 100+ sentences, 30-min streak, fixes)
+
+Shipped: (1) Live beta-feedback — floating "Palaute / Feedback" button on every hub (rendered in BottomNav, never on drills) -> mood + note -> public.feedback table (migration 20260610000001, owner ran it) with a localStorage backup; English gloss italic. (2) Made the JOURNEY the spine of the app: new src/lib/journey.ts (4 stages: 1 Perusta/Foundation [2,000 words + 1,000 sentences, A1-A2], 2 Kielioppi/Grammar [A2-B1], 3 Arjen sujuvuus [YKI B1], 4 Tyoelaman suomi [YKI B2 = North Star]; journeyState() from real bank+sentence counts). Journey.tsx is now a vertical stage map (current stage opens with live word/sentence requirement bars; done=check, locked ahead). Progress hero shows "VAIHE 1 . Perusta . X% valmis" + the map (killed the misleading CEFR "A2"); Home snapshot + Learn/Daily goals follow the stage model. Sentence goal reverted 2,000->1,000 (islands-method science: depth/automaticity of a focused set beats raw volume; words stay 2,000 for comprehension breadth). (3) Starter pack -> 104 A1 sentences (44 survival phrases + 60 "talk about your own life" from a Finnish teacher's SKK1 notes; removed 6 bare single words; createStarterIsland cap 50->250). (4) 30-MINUTE study streak (src/lib/studyTime.ts + useStudyClock on sprint/recall/speak/listen/read/write): a day counts only after 30 min of genuine on-screen study (capped per tick so a backgrounded tab can't cheat); Home shows "studied today X/30 min"; streak chip everywhere = study streak (per-device localStorage). (5) Browser refresh restores the current screen (App.tsx persists ps_screen) instead of bouncing to Home. (6) Workshop: docs/workshop-deck-prompt.md = paste-ready 6-slide Claude Design deck incl. the Language Islands USP slide; violet landing QR; landing + deck dropped the "azure" jargon. (7) CLAUDE.md: do NOT auto-run the screenshot harness unless explicitly asked.
+
+Blocked: OWNER ACTIONS - re-run supabase/seeds/05_island_sentences.sql once (idempotent DELETE+INSERT of the arki set, loads the 104), AND in the app delete the old "Everyday basics" starter island then re-add the Starter pack so the learner copy refreshes to 104 (existing copies do not auto-update). Study streak is per-device (cross-device would need a DB column).
+
+Next: workshop is today (first testers). Follow-ups if wanted: realistic timelines on the journey (B1 ~1.5-2 yrs, B2 ~3-4 yrs at 30 min/day); Grammar = Stage 2 content from the SKK1 teacher notes (cases, verb types); puhekieli human-verification; trim starter pack to exactly 100; native listening clips; mnemonics.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
