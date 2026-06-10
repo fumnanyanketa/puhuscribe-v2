@@ -441,6 +441,16 @@ Next: workshop follow-ups — journey timelines, Grammar Stage 2 (SKK1 notes), p
 
 ---
 
+## Session: 2026-06-10 (Speaking practice: reliable resume + louder playback + layout)
+
+Shipped: Four owner-reported Speak (Sentence Bank "Listen & repeat") fixes. (1) RESUME NOW STICKS — the per-set position was on bare localStorage, which a PWA can purge (so it kept resetting to 1). Moved it onto the server-synced users.progress record (new progress.shadow map {setId->idx} + saveShadow(), the same mechanism the Day One sprint uses); Speak is now position-controlled (startIndex + onIndex), ShadowView owns persistence, completion clears it. Survives localStorage loss + follows the learner across devices. (2) LOUDER SELF-PLAYBACK — an <audio> element can't exceed volume 1.0, so the quiet mic recording was barely audible; routed playback through a Web Audio gain node (3.2x) + a compressor/limiter (graceful fallback if Web Audio is unavailable). (3) Removed the redundant "Kuuntele malli" button from the review card (the native audio already has a play button on the sentence card above). (4) Tightened layout — dropped the flex spacer that pushed the recording card far below the sentence card; they now sit close together. Build clean, 39 JS tests green.
+
+Blocked: nothing. Resume relies on the already-run users.progress migration (owner confirmed run). Verify on the phone: do the starter pack to ~#5, exit, reopen — it resumes at #5; your recorded playback is clearly audible; only one play button in the review card; smaller gap between cards.
+
+Next: workshop follow-ups — journey timelines, Grammar Stage 2 (SKK1 notes), puhekieli verification, native listening clips, mnemonics.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
