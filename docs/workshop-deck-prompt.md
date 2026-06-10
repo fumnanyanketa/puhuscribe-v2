@@ -1,18 +1,19 @@
 # Workshop demo deck — paste-ready Claude Design prompt
 
 Paste everything in the block below into Claude Design. It produces a short,
-on-brand 5-slide demo deck that matches the PuhuScribe app exactly (Sprout logo,
+on-brand 6-slide demo deck that matches the PuhuScribe app exactly (Sprout logo,
 violet/teal register colors, snow-white, Poppins/Switzer, the bilingual pattern).
 
 After it generates:
-- Drop **marketing/workshop/install-qr.png** onto slide 5 (the white QR area).
-- Optional: drop real app screenshots from `puhuscribe-screens.zip` on slides 3–4
-  (best picks: `03-onboarding-two-registers`, `09-sprint-word-card`,
-  `14-review-recall-graded`, `07-home-hub`, `15-sentencebank-list`).
+- Drop **marketing/workshop/install-qr.png** onto slide 6 (the white QR area).
+- Optional: drop real app screenshots from `puhuscribe-screens.zip` — slide 3 the
+  register card (`03-onboarding-two-registers`), slide 4 the Sentence Bank
+  (`15-sentencebank-list`, `18-sentencebank-detail`), slide 5 the sprint/review
+  (`09-sprint-word-card`, `14-review-recall-graded`, `07-home-hub`).
 
 ---
 
-Design a **5-slide demo presentation** (16:9, for projecting at a live workshop)
+Design a **6-slide demo presentation** (16:9, for projecting at a live workshop)
 for **PuhuScribe**, a Finnish-learning app for adult immigrants in Finland. The
 goal is to demo what the app does and recruit the room as our first beta testers.
 Keep it short, confident, premium, and warm, with lots of whitespace.
@@ -73,20 +74,33 @@ in a teal-tinted band: a teal dot + label "PUHEKIELI" and **"Mun nimi on Maria."
 "Mun nimi" in the blue highlight. Caption: "Same meaning, taught twice. The highlight marks
 what changes." Side note: "Real IPA pronunciation + honest grammar help."
 
-**4 — How it works.** Headline: "About 30 minutes a day." Four compact cards, each an
+**4 — The big idea: Language Islands (our science-backed difference).** This is the
+heart of the pitch, give it room. Small eyebrow: "Backed by language science." Headline:
+"You don't memorize Finnish. You build it from your own life." Body: "Research on how
+people actually become fluent points to *language islands* — a personal set of real
+sentences about your own life that you can say automatically, without translating in your
+head. PuhuScribe makes that the core loop: you write what *you* need to say (at the
+doctor, at Kela, at work, with your kids), we turn it into correct, simple Finnish —
+written and spoken — and you drill it until it is automatic. These sentences become your
+anchors in real conversations." Visual: a small two-step flow — a handwritten-style note
+"I have an appointment at Kela" turning into a register card **"Minulla on aika Kelassa."**
+/ **"Mul on aika Kelassa."** with a small speaker + a "practise" pill. Tagline at the
+bottom: "Not generic phrases. Your Finnish, for your life."
+
+**5 — How it works.** Headline: "About 30 minutes a day." Four compact cards, each an
 icon tile + a Finnish title with a muted English line beneath: (1) **Sanastosprintti /
 Day One Sprint** — the 150 most common words in your first session (show a pronounced
 word, e.g. **hyvä** with IPA **/ˈhyʋæ/** meaning "good"). (2) **Päivän kertaus / Daily
 review** — type each word from memory, brought back right before you would forget. (3)
-**Oma lausepankki / Your sentence bank** — build sentences from your real life (the
-doctor, Kela, work, the café). (4) **Neljä taitoa / All four YKI skills** — speaking,
-listening, reading, writing.
+**Omat lauseet / Your language islands** — the sentences from your own life, drilled until
+automatic. (4) **Neljä taitoa / All four YKI skills** — speaking, listening, reading,
+writing.
 
-**5 — Call to action.** Big headline: "Tule testaajaksi" with "Become a tester" beneath
+**6 — Call to action.** Big headline: "Tule testaajaksi" with "Become a tester" beneath
 in muted gray. A prominent white rounded square placeholder (about 280x280) centered or
 to the right, labeled "Scan to open" — this is where the QR code goes. Three
 reassurances as a row of pills: "Free during beta", "No app store", "Add to home
 screen". Small footer: "puhuscribe-v2.vercel.app · Your feedback shapes what we build
 next."
 
-Make slide 5 feel like an invitation, not a hard sell.
+Make the final slide feel like an invitation, not a hard sell.

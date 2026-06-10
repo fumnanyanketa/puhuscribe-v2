@@ -1,6 +1,7 @@
--- PuhuScribe — Language Islands: the first 50 useful real-life sentences for
--- a newcomer in Finland. Kirjakieli is Voikko word-validated; puhekieli (spoken)
--- still needs a Finnish-speaker verification pass (see docs/island-sentences.md).
+-- PuhuScribe — Language Islands starter pack: useful real-life SENTENCES for a
+-- newcomer in Finland (no bare single words — those live in the Day One sprint).
+-- Kirjakieli is Voikko word-validated; puhekieli (spoken) still needs a
+-- Finnish-speaker verification pass (see docs/island-sentences.md).
 -- Idempotent: re-running replaces the 'arki' set. Run once in the Supabase SQL editor.
 
 INSERT INTO topics (slug, name_fi, name_en, yki_category, sort_order)
@@ -10,15 +11,9 @@ ON CONFLICT (slug) DO NOTHING;
 DELETE FROM sentences WHERE topic_id = (SELECT id FROM topics WHERE slug = 'arki');
 
 INSERT INTO sentences (kirjakieli, puhekieli, translation_en, level, topic_id) VALUES
-  ('Hei!', 'Moi!', 'Hi!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Hyvää huomenta.', 'Huomenta.', 'Good morning.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
-  ('Kiitos.', 'Kiitos.', 'Thank you.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Kiitos paljon.', 'Kiitos paljon.', 'Thank you very much.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Ole hyvä.', 'Ole hyvä.', 'You''re welcome.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
-  ('Anteeksi.', 'Anteeks.', 'Excuse me.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
-  ('Kyllä.', 'Joo.', 'Yes.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
-  ('Ei.', 'Ei.', 'No.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
-  ('Nähdään!', 'Nähdään!', 'See you!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Mukavaa päivänjatkoa!', 'Mukavaa päivänjatkoa!', 'Have a nice day!', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Minun nimeni on Maria.', 'Mun nimi on Maria.', 'My name is Maria.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),
   ('Hauska tutustua.', 'Hauska tutustua.', 'Nice to meet you.', 'A1', (SELECT id FROM topics WHERE slug = 'arki')),

@@ -140,7 +140,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
               {bi('Aloita tästä', 'Start here')}
             </span>
             <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>Aloituspaketti</span>
-            <span className="ps-caption">{addingStarter ? bi('Lisätään…', 'Adding') : '50 ready-made everyday sentences for newcomers'}</span>
+            <span className="ps-caption">{addingStarter ? bi('Lisätään…', 'Adding') : 'Real everyday sentences, ready to practise'}</span>
           </span>
           {!addingStarter && <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="plus" size={20} /></span>}
         </button>
