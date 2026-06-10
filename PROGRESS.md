@@ -461,6 +461,16 @@ Next: workshop follow-ups — journey timelines, Grammar Stage 2 (SKK1 notes), p
 
 ---
 
+## Session: 2026-06-10 (Home: kill the stale "50-word first sprint")
+
+Shipped: Owner saw the Home hero offering a "0 / 50 sanaa" first sprint though the app only has the 150-word sprint. Root cause: a removed set-size picker (old 50/100/150) had saved `sprint.size=50` into `users.progress` for early testers, and both Home and Day One read that saved size before the 150 default. Exported `SPRINT_CAP` (150) from DayOne and made both screens treat it as canonical — the saved value is now used only for the resume idx, so stale records self-heal to 150 on the next save (no destructive "Reset progress" needed). Worked on a feature branch first to avoid colliding with the parallel instance (Sentence Bank), then rebased onto its latest main and verified the combined tree before fast-forwarding main. Build clean, 39 JS tests green.
+
+Blocked: nothing. Owner confirmed the live Home hero now reads 0 / 150 after a hard refresh. Touched only Home.tsx + DayOne.tsx (no overlap with the parallel Sentence Bank work).
+
+Next: owner's next home-page correction.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
