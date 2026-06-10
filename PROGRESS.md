@@ -451,6 +451,16 @@ Next: workshop follow-ups — journey timelines, Grammar Stage 2 (SKK1 notes), p
 
 ---
 
+## Session: 2026-06-10 (Sentence Bank row reflects Listen & repeat progress)
+
+Shipped: The starter pack row read 0/104 because its bar only counted `learned` (recall cards graduated to 'review'), which shadowing never touches — so the learner's "Listen & repeat" progress was invisible. The row now shows `done = min(count, max(learned, progress.shadow[setId]))`, so after shadowing to sentence 5 it reads 5/104. Completing a set records its full count (shows 104/104; resume still restarts fresh because clampStart caps at the end), and Speak no longer overwrites a saved position on mount (firstReportRef) — only when the learner advances. IslandList reads the server-synced progress.shadow via useProgress. Build clean, 39 JS tests green.
+
+Blocked: nothing. Verify: shadow the starter pack to ~#5, exit — the row shows 5/104; finish it — shows 104/104.
+
+Next: workshop follow-ups — journey timelines, Grammar Stage 2 (SKK1 notes), puhekieli verification, native listening clips, mnemonics.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
