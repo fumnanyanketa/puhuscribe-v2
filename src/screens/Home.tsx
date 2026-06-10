@@ -9,6 +9,7 @@ import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { fetchHomeData, HomeData } from '../lib/data/home'
+import { SPRINT_CAP } from './DayOne'
 import { journeyState } from '../lib/journey'
 import { studyStreak, todayStudyMinutes, DAILY_GOAL_MIN } from '../lib/studyTime'
 
@@ -84,7 +85,9 @@ function HomeSprint({ go, sprint }: {
   go: (s: AppScreen) => void; sprint: { size: number; idx: number } | null
 }) {
   const { bilingual } = useLang()
-  const size = sprint?.size ?? 150
+  // Only one sprint length now — show the canonical 150, never a stale `size`
+  // (e.g. 50) saved by the removed set-size picker. Saved idx still resumes.
+  const size = SPRINT_CAP
   const idx = Math.min(sprint?.idx ?? 0, size)
   const pct = Math.round((idx / size) * 100)
   const started = idx > 0

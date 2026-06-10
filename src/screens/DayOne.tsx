@@ -21,7 +21,7 @@ import { useStudyClock } from '../lib/studyTime'
  * auto-resumes; Home carries the resume card for returning users.
  * ------------------------------------------------------------------------- */
 
-const SPRINT_CAP = 150
+export const SPRINT_CAP = 150
 
 export function DayOne({ go }: { go: (s: AppScreen) => void }) {
   const { data: words, loading, error } = useAsync<SprintWord[]>(() => fetchSprintWords(SPRINT_CAP), [])
@@ -35,7 +35,10 @@ export function DayOne({ go }: { go: (s: AppScreen) => void }) {
 
 function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => void }) {
   const { progress, saveSprint } = useProgress()
-  const size = Math.min(progress.sprint?.size ?? SPRINT_CAP, words.length)
+  // There is only one sprint length now (SPRINT_CAP). Ignore any stale `size`
+  // left by the old set-size picker (e.g. 50) — only the saved idx is used for
+  // resume below, so an old record self-heals to 150 on the next save.
+  const size = Math.min(SPRINT_CAP, words.length)
 
   // Once the sprint exists (started anywhere, even at word 0) we go straight
   // to the runner; the intro is a one-time takeover for brand-new users.
