@@ -8,6 +8,10 @@ name: Deploy TTS Worker
 # service requires it, VOIKKO_SHARED_SECRET. These are set in a separate step that
 # only runs when they exist, so an unset value never breaks the deploy. Until
 # VOIKKO_SERVICE_URL is set, island sentences are saved as unverified drafts.
+# Optional (for emailed beta feedback via Resend): RESEND_API_KEY and
+# FEEDBACK_EMAIL_TO (where to send), plus optional FEEDBACK_EMAIL_FROM. Set in
+# their own step that only runs when RESEND_API_KEY exists; until then the
+# /feedback route is a no-op and feedback still lands in Supabase.
 on:
   workflow_dispatch: {}
   push:
@@ -22,6 +26,9 @@ jobs:
     env:
       VOIKKO_SERVICE_URL: ${{ secrets.VOIKKO_SERVICE_URL }}
       VOIKKO_SHARED_SECRET: ${{ secrets.VOIKKO_SHARED_SECRET }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      FEEDBACK_EMAIL_TO: ${{ secrets.FEEDBACK_EMAIL_TO }}
+      FEEDBACK_EMAIL_FROM: ${{ secrets.FEEDBACK_EMAIL_FROM }}
     steps:
       - uses: actions/checkout@v4
       - name: Deploy Worker
@@ -50,4 +57,21 @@ jobs:
           echo "$VOIKKO_SERVICE_URL" | npx --yes wrangler@3.90.0 secret put VOIKKO_SERVICE_URL
           if [ -n "$VOIKKO_SHARED_SECRET" ]; then
             echo "$VOIKKO_SHARED_SECRET" | npx --yes wrangler@3.90.0 secret put VOIKKO_SHARED_SECRET
+          fi
+
+      # Optional: only runs once Resend is set up. Set RESEND_API_KEY (Resend key)
+      # and FEEDBACK_EMAIL_TO (your inbox) as repo secrets, then re-run this
+      # workflow. FEEDBACK_EMAIL_FROM is optional (defaults to onboarding@resend.dev,
+      # which Resend lets you send to your own verified address without a domain).
+      - name: Set feedback email secrets
+        if: ${{ env.RESEND_API_KEY != '' }}
+        working-directory: workers/tts
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "$RESEND_API_KEY" | npx --yes wrangler@3.90.0 secret put RESEND_API_KEY
+          echo "$FEEDBACK_EMAIL_TO" | npx --yes wrangler@3.90.0 secret put FEEDBACK_EMAIL_TO
+          if [ -n "$FEEDBACK_EMAIL_FROM" ]; then
+            echo "$FEEDBACK_EMAIL_FROM" | npx --yes wrangler@3.90.0 secret put FEEDBACK_EMAIL_FROM
           fi

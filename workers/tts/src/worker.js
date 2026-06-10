@@ -207,6 +207,52 @@ async function islandQuestions(request, env) {
   }
 }
 
+// POST /feedback — email a beta tester's note to the owner (in addition to the
+// row the app stores in Supabase). Uses Resend. configured:false when the
+// secrets are missing, so the app's send still succeeds silently and the note
+// is never lost (it is already saved to Supabase + a local backup).
+const MOODS = { 1: '😕 Needs work', 2: '🙂 Okay', 3: '😍 Love it' }
+
+async function feedback(request, env) {
+  if (request.method !== 'POST') return json({ ok: false }, 405)
+  let message = '', rating = null, screen = '', userId = '', userAgent = ''
+  try {
+    const b = await request.json()
+    message = String(b.message || '').trim().slice(0, 2000)
+    rating = (b.rating === 1 || b.rating === 2 || b.rating === 3) ? b.rating : null
+    screen = String(b.screen || '').trim().slice(0, 60)
+    userId = String(b.userId || '').trim().slice(0, 80)
+    userAgent = String(b.userAgent || '').trim().slice(0, 300)
+  } catch { /* ignore malformed body */ }
+  if (!message) return json({ ok: false }, 400)
+  if (!env.RESEND_API_KEY || !env.FEEDBACK_EMAIL_TO) return json({ ok: false, configured: false }, 503)
+
+  const mood = rating ? MOODS[rating] : '(no mood)'
+  const from = env.FEEDBACK_EMAIL_FROM || 'PuhuScribe <onboarding@resend.dev>'
+  const subject = rating ? `PuhuScribe feedback (${MOODS[rating]})` : 'PuhuScribe feedback'
+  const body = [
+    `Mood: ${mood}`,
+    screen ? `Screen: ${screen}` : null,
+    '',
+    message,
+    '',
+    userId ? `User: ${userId}` : 'User: (signed out)',
+    userAgent ? `Device: ${userAgent}` : null,
+    `At: ${new Date().toISOString()}`,
+  ].filter((l) => l !== null).join('\n')
+
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: [env.FEEDBACK_EMAIL_TO], subject, text: body }),
+  })
+  if (!r.ok) {
+    const detail = await r.text().catch(() => '')
+    return json({ ok: false, configured: true, detail: detail.slice(0, 200) }, 502)
+  }
+  return json({ ok: true, configured: true })
+}
+
 export default {
   async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS })
@@ -215,6 +261,7 @@ export default {
     if (url.pathname === '/correct') return correct(request, env)
     if (url.pathname === '/island/translate') return islandTranslate(request, env)
     if (url.pathname === '/island/questions') return islandQuestions(request, env)
+    if (url.pathname === '/feedback') return feedback(request, env)
 
     let text = url.searchParams.get('text') || ''
     if (request.method === 'POST') {
