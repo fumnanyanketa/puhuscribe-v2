@@ -84,19 +84,6 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
 
         {/* The dashboard: overall progress + the two banks you are growing */}
         <ProgressDash js={js} bank={d.bank} sentBank={d.sentBank} onOpen={() => go('progress')} />
-
-        {/* Quick actions */}
-        <Eyebrow fi="PIKAVALINNAT" en="Jump back in" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 14 }} />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <QuickCard icon="book" tone="var(--written)" toneBg="var(--written-bg)"
-            fi="Sanasto" en="Vocabulary" badge={`${DAILY_WORDS} uutta`} onClick={() => go('learn')} />
-          <QuickCard icon="review" tone="var(--spoken)" toneBg="var(--spoken-bg)"
-            fi="Kertaus" en="Review" badge={`${d.vocabDue + d.sentDue} vuorossa`} onClick={() => go('daily')} />
-          <QuickCard icon="lines" tone="var(--flag)" toneBg="var(--flag-bg)"
-            fi="Omat lauseet" en="Sentences" badge={`${d.sets} ${d.sets === 1 ? 'setti' : 'settiä'}`} onClick={() => go('islands')} />
-          <QuickCard icon="mic" tone="#C2603F" toneBg="rgba(194,96,63,.12)"
-            fi="Harjoittele" en="Practice" badge="4 taitoa" onClick={() => go('practice')} />
-        </div>
       </ScreenScroll>
       {nav}
     </>
@@ -280,21 +267,3 @@ function PlanRow({ icon, tone, toneBg, fi, en, n, unit }: {
   )
 }
 
-function QuickCard({ icon, tone, toneBg, fi, en, badge, onClick }: {
-  icon: string; tone: string; toneBg: string; fi: string; en: string; badge: string; onClick: () => void
-}) {
-  const { bilingual } = useLang()
-  return (
-    <button className="ps-card ps-press" onClick={onClick} style={{ padding: 16, borderRadius: 'var(--r-lg)',
-      cursor: 'pointer', textAlign: 'left', border: 'none', width: '100%' }}>
-      <IconTile icon={icon} color={tone} bg={toneBg} size={42} r={13} />
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.3, color: 'var(--ink)', marginTop: 12 }}>{fi}</div>
-      {bilingual && (
-        <div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontSize: 11, color: 'var(--ink-3)' }}>{en}</div>
-      )}
-      <div style={{ marginTop: 10, display: 'inline-flex', padding: '4px 10px', borderRadius: 999, background: toneBg }}>
-        <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11.5, color: tone }}>{badge}</span>
-      </div>
-    </button>
-  )
-}
