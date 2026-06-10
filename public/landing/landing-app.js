@@ -168,8 +168,8 @@ function TwoFinnishes() {
         e('p', { className: 'ps-body-l', style: { color: 'var(--ink-2)', marginTop: 20, maxWidth: 460 } },
           'Textbooks drill ', e('b', { style: { color: 'var(--written)' } }, 'kirjakieli'),
           '. Real life runs on ', e('b', { style: { color: 'var(--spoken)' } }, 'puhekieli'),
-          '. PuhuScribe shows you both at once and flags the exact words that morph between them, in ',
-          e('span', { className: 'ps-hot' }, 'azure'), ', so the leap from classroom to conversation stops being a guess.'),
+          '. PuhuScribe shows you both at once and highlights the exact words that ',
+          e('span', { className: 'ps-hot' }, 'change'), ' between them, so the leap from classroom to conversation stops being a guess.'),
         e('div', { style: { display: 'flex', gap: 22, marginTop: 28, flexWrap: 'wrap' } },
           [['written', 'Kirjakieli', 'written / book Finnish'], ['spoken', 'Puhekieli', 'spoken / street Finnish']].map(([k, a, b]) =>
             e('div', { key: k, style: { display: 'flex', alignItems: 'center', gap: 10 } },

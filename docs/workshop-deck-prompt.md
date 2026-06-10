@@ -42,8 +42,9 @@ Keep it short, confident, premium, and warm, with lots of whitespace.
 - **Colors:** background snow white with a faint vertical gradient (#FFFFFF to #F1F0F6).
   Ink #1B1A20, secondary ink #56525E, muted ink #8B8798. Accents: **violet #6B46C1**
   (the written language, "kirjakieli"), **teal #1F7C8E** (the spoken language,
-  "puhekieli"), **azure #2F5AD6** used only to highlight the words that change between
-  the two. Soft pastel cards allowed: lavender #D6D0E8, mint #CCDFD3, steel-blue #C4D2E6.
+  "puhekieli"), and a **blue highlight #2F5AD6** used only to mark the words that change
+  between the two (do not call this color out by name in any visible text). Soft pastel
+  cards allowed: lavender #D6D0E8, mint #CCDFD3, steel-blue #C4D2E6.
 - **Type:** Poppins for display/headings (700/600, tight letter-spacing, big and
   geometric); Switzer (or Inter) for body at weight 500.
 - **Bilingual pattern (signature):** when you pair Finnish with English, the Finnish is
@@ -67,9 +68,9 @@ conversations or the YKI exam.
 **3 — The wedge: two Finnishes, taught together.** Headline: "Both Finnishes, from day
 one." Centerpiece is a **register card**: a white rounded card with a vertical dashed
 connector down the left. Top: a small violet dot + label "KIRJAKIELI" and the sentence
-**"Minun nimeni on Maria."** with the words "Minun nimeni" highlighted in azure. Bottom,
+**"Minun nimeni on Maria."** with the words "Minun nimeni" in the blue highlight. Bottom,
 in a teal-tinted band: a teal dot + label "PUHEKIELI" and **"Mun nimi on Maria."** with
-"Mun nimi" highlighted in azure. Caption: "Same meaning, taught twice. The azure marks
+"Mun nimi" in the blue highlight. Caption: "Same meaning, taught twice. The highlight marks
 what changes." Side note: "Real IPA pronunciation + honest grammar help."
 
 **4 — How it works.** Headline: "About 30 minutes a day." Four compact cards, each an
