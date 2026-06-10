@@ -91,6 +91,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
   userId: string; onNew: () => void; onOpen: (id: string) => void; onShadow: (id: string) => void
 }) {
   const { bi, bilingual } = useLang()
+  const { progress } = useProgress()
   const [reload, setReload] = useState(0)
   const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId, reload])
   const { data: seedCount } = useAsync<number>(() => fetchStarterSeedCount(), [reload])
@@ -221,6 +222,10 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
             {islands.map((isl, idx) => {
               const starter = isStarterIsland(isl)
               const t = starter ? TONES[0] : TONES[idx % TONES.length]
+              // Progress = the furthest the learner has reached, whether by
+              // "Listen & repeat" (shadow position) or active-recall mastery
+              // (graduated cards) — so the starter pack reflects shadowing too.
+              const done = Math.min(isl.count, Math.max(isl.learned, progress.shadow?.[isl.id] ?? 0))
               return (
                 <button key={isl.id} className="ps-card ps-press"
                   onClick={() => (starter ? onShadow(isl.id) : onOpen(isl.id))}
@@ -243,10 +248,10 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
                     </span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 9 }}>
                       <span style={{ flex: 1 }}>
-                        <Bar value={isl.count > 0 ? (isl.learned / isl.count) * 100 : 0} color={t.tone} track="var(--glass-deep)" h={6} />
+                        <Bar value={isl.count > 0 ? (done / isl.count) * 100 : 0} color={t.tone} track="var(--glass-deep)" h={6} />
                       </span>
                       <span className="ps-num" style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12.5, color: 'var(--ink-3)', flexShrink: 0 }}>
-                        {isl.learned}/{isl.count}
+                        {done}/{isl.count}
                       </span>
                     </span>
                   </span>

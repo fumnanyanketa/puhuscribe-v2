@@ -88,9 +88,12 @@ function SpeakPractice({ phrases, onBack, title, startIndex, onIndex }: {
   const gainSetupRef = useRef(false)
 
   // Report position changes so the caller can persist resume (latest callback
-  // via a ref, so re-renders don't re-fire the effect).
+  // via a ref, so re-renders don't re-fire the effect). Skip the first report so
+  // opening a set never overwrites a saved position (e.g. a completed set's full
+  // count) before the learner actually moves.
   const onIndexRef = useRef(onIndex)
   onIndexRef.current = onIndex
+  const firstReportRef = useRef(true)
 
   const p = phrases[i]
 
@@ -183,7 +186,9 @@ function SpeakPractice({ phrases, onBack, title, startIndex, onIndex }: {
     if (i < phrases.length - 1) setI(i + 1)
     else {
       bumpPracticeCount('speak')
-      onIndexRef.current?.(0) // finished — clear saved position so it starts fresh next time
+      // Whole set done — record the full count so the list shows it complete;
+      // resume still restarts fresh because clampStart caps at the end.
+      onIndexRef.current?.(phrases.length)
       setDone(true)
     }
   }
@@ -205,7 +210,10 @@ function SpeakPractice({ phrases, onBack, title, startIndex, onIndex }: {
   useEffect(() => { playNative() }, [i]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Report how far the learner got so the caller persists resume (server-backed).
-  useEffect(() => { onIndexRef.current?.(i) }, [i])
+  useEffect(() => {
+    if (firstReportRef.current) { firstReportRef.current = false; return }
+    onIndexRef.current?.(i)
+  }, [i])
 
   if (done) {
     return (
