@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrandMark } from './primitives'
 import { I } from './icons'
+import { FeedbackButton } from './FeedbackButton'
 
 /* ---------- Wordmark ---------- */
 export function PuhuMark({ size = 20, light = false }: { size?: number; light?: boolean }) {
@@ -56,6 +57,8 @@ export type NavTab = typeof NAV[number]['id']
 
 export function BottomNav({ active, onNav }: { active: NavTab; onNav: (s: AppScreen) => void }) {
   return (
+    <>
+    <FeedbackButton screen={active} />
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 40,
       paddingBottom: 18, paddingLeft: 18, paddingRight: 18, pointerEvents: 'none' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -77,5 +80,6 @@ export function BottomNav({ active, onNav }: { active: NavTab; onNav: (s: AppScr
         })}
       </div>
     </div>
+    </>
   )
 }

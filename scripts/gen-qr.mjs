@@ -12,7 +12,7 @@ const dir = 'marketing/workshop';
 const opts = {
   errorCorrectionLevel: 'H',
   margin: 4,
-  color: { dark: '#1B4965', light: '#FFFFFF' },
+  color: { dark: '#6B46C1', light: '#FFFFFF' },
 };
 
 await QRCode.toFile(`${dir}/install-qr.png`, URL, { ...opts, type: 'png', width: 1200 });
