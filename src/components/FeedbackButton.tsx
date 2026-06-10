@@ -53,12 +53,17 @@ export function FeedbackButton({ screen }: { screen?: string }) {
       {/* Floating launcher — sits just above the nav, right side */}
       <button onClick={() => setOpen(true)} aria-label="Send feedback" className="ps-press" style={{
         position: 'absolute', right: 16, bottom: 94, zIndex: 41, cursor: 'pointer',
-        display: 'flex', alignItems: 'center', gap: 8, padding: '10px 15px 10px 13px',
+        display: 'flex', alignItems: 'center', gap: 8, padding: '9px 15px 9px 13px',
         borderRadius: 999, border: 'none', background: 'var(--written)', color: '#fff',
         boxShadow: '0 10px 24px -8px rgba(107,70,193,.55)',
       }}>
         <I name="chat" size={18} sw={2} />
-        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13.5 }}>Palaute</span>
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.04 }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13.5 }}>Palaute</span>
+          {bilingual && (
+            <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 10, color: 'rgba(255,255,255,.72)' }}>Feedback</span>
+          )}
+        </span>
       </button>
 
       {open && (
