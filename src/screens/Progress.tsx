@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Bar, Ring, Toggle, Btn } from '../components/ui'
 import { I } from '../components/icons'
-import { Eyebrow, Gloss, HubHeader, StatTile } from '../components/kit'
+import { Eyebrow, HubHeader, StatTile } from '../components/kit'
+import { Journey } from '../components/Journey'
 import { ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
@@ -11,19 +12,11 @@ import { useProgress } from '../lib/data/progress'
 import { resetUserLearning } from '../lib/data/cards'
 import { fetchProgressStats, ProgressStats } from '../lib/data/stats'
 import { fetchReviewOverview } from '../lib/data/review'
-import { levelProgress } from '../lib/data/content'
+import { journeyState, STAGE1_WORDS, STAGE1_SENTENCES } from '../lib/journey'
 import { getPracticeCounts, PRACTICE_GOAL } from '../lib/practiceStats'
 import { YKI, YkiSkill } from '../lib/yki'
 
 const BODY_BOTTOM = 96
-
-const STAGE: { at: number; fi: string; en: string }[] = [
-  { at: 0, fi: 'Ensimmäiset sanat', en: 'First words' },
-  { at: 1, fi: 'Kasvata sanavarastoa', en: 'Grow your word bank' },
-  { at: 50, fi: 'Puhu rohkeasti', en: 'Speak with confidence' },
-  { at: 300, fi: 'Arjen sujuvuus', en: 'Everyday fluency' },
-  { at: 1500, fi: 'Työelämän suomi', en: 'Professional Finnish' },
-]
 
 type Loaded = { stats: ProgressStats; sentBank: number }
 
@@ -63,9 +56,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
   if (error) return <><StatePane tone="error" title="Couldn't load progress" detail={error} bottom={BODY_BOTTOM + 14} />{nav}</>
   const { stats, sentBank } = data!
 
-  const lp = levelProgress(stats.totalCards)
-  let stage = STAGE[0]
-  for (const st of STAGE) if (stats.totalCards >= st.at) stage = st
+  const js = journeyState(stats.totalCards, sentBank)
   const counts = getPracticeCounts()
   const maxWeek = Math.max(1, ...stats.week.map((d) => d.count))
   const skills: YkiSkill[] = ['read', 'listen', 'speak', 'write']
@@ -85,26 +76,34 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
         </span>
       </div>
 
-      {/* Current level ring + journey stage */}
+      {/* Where you are now: the current stage, not a misleading CEFR badge */}
       <div className="ps-card" style={{ marginTop: 20, padding: 22, borderRadius: 'var(--r-xl)',
         display: 'flex', alignItems: 'center', gap: 20 }}>
-        <Ring value={lp.pct} max={100} size={108} stroke={11} color="var(--written)" track="var(--glass-deep)">
+        <Ring value={js.overallPct} max={100} size={106} stroke={10} color="var(--written)" track="var(--glass-deep)">
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 21.6,
-              letterSpacing: '-0.03em', color: 'var(--ink)', lineHeight: 1 }}>{lp.level}</div>
-            <div className="ps-num" style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11.5, color: 'var(--ink-3)', marginTop: 2 }}>{lp.pct}%</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26,
+              letterSpacing: '-0.03em', color: 'var(--ink)', lineHeight: 1 }}>
+              {js.overallPct}<span style={{ fontSize: 14, color: 'var(--ink-3)' }}>%</span>
+            </div>
+            <div className="ps-label" style={{ color: 'var(--ink-3)', marginTop: 3, fontSize: 9 }}>VALMIS</div>
           </div>
         </Ring>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16.3, color: 'var(--ink)' }}>{stage.fi}</div>
-          <Gloss>{stage.en}</Gloss>
+          <span className="ps-label" style={{ color: 'var(--written)' }}>VAIHE {js.current} / {4}</span>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--ink)', marginTop: 4 }}>Perusta</div>
+          {bilingual && <div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontSize: 13, color: 'var(--ink-3)' }}>Foundation</div>}
           <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13.5, lineHeight: 1.4,
             color: 'var(--ink-2)', margin: '8px 0 0' }}>
-            {lp.next
-              ? <>{lp.toNext} sanaa seuraavaan tasoon {bilingual && <span style={{ color: 'var(--ink-3)' }}>to {lp.next}</span>}</>
-              : <>YKI B2 {bilingual && <span style={{ color: 'var(--ink-3)' }}>professional level</span>}</>}
+            Rakennat pohjaa: {STAGE1_WORDS.toLocaleString()} sanaa ja {STAGE1_SENTENCES.toLocaleString()} lausetta.
+            {bilingual && <span style={{ color: 'var(--ink-3)' }}> Building your base.</span>}
           </p>
         </div>
+      </div>
+
+      {/* The whole journey: Launchpad to North Star (YKI B2) */}
+      <div className="ps-glass" style={{ marginTop: 16, padding: 18, borderRadius: 'var(--r-xl)' }}>
+        <Eyebrow fi="MATKASI" en="Your journey" color="var(--ink-3)" style={{ marginBottom: 16 }} />
+        <Journey words={stats.totalCards} sentences={sentBank} />
       </div>
 
       {/* Stat tiles — all real */}

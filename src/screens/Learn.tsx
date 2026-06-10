@@ -7,7 +7,7 @@ import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
-import { fetchNextWords, levelForBank, SprintWord } from '../lib/data/content'
+import { fetchNextWords, SprintWord } from '../lib/data/content'
 import { fetchReviewOverview } from '../lib/data/review'
 import { SprintIntro, SprintRunner } from './DayOne'
 
@@ -19,7 +19,7 @@ import { SprintIntro, SprintRunner } from './DayOne'
 
 const BODY_BOTTOM = 96
 const DAILY_N = 15
-const BANK_GOAL = 1000
+const BANK_GOAL = 2000
 
 interface LearnData {
   bank: number
@@ -100,7 +100,6 @@ function DailyVocabHub({ d, onStart }: { d: LearnData; onStart: () => void }) {
   const n = d.next.length
   const preview = d.next.slice(0, 6)
   const rest = n - preview.length
-  const level = levelForBank(d.bank)
   const pct = Math.min(100, Math.round((d.bank / BANK_GOAL) * 100))
 
   return (
@@ -118,12 +117,12 @@ function DailyVocabHub({ d, onStart }: { d: LearnData; onStart: () => void }) {
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 11px',
             borderRadius: 999, background: 'var(--written-bg)' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--written)' }}>Taso {level}</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--written)' }}>Vaihe 1</span>
           </span>
         </div>
         <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13.5, color: 'var(--ink-2)', margin: '4px 0 14px' }}>
           sanaa opittu{' '}
-          {bilingual && <span style={{ color: 'var(--ink-3)' }}>words learned · goal in about 6 weeks</span>}
+          {bilingual && <span style={{ color: 'var(--ink-3)' }}>words learned · toward 2,000</span>}
         </div>
         <Bar value={pct} color="var(--written)" track="var(--glass-deep)" h={9} />
       </div>

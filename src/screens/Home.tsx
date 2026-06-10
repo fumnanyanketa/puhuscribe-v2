@@ -9,7 +9,7 @@ import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { fetchHomeData, HomeData } from '../lib/data/home'
-import { levelProgress } from '../lib/data/content'
+import { journeyState } from '../lib/journey'
 
 const BODY_BOTTOM = 96
 const DAILY_WORDS = 15
@@ -153,7 +153,7 @@ function HomeSprint({ d, go, sprint }: {
    ===================================================================== */
 function HomeHub({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
   const { bilingual } = useLang()
-  const lp = levelProgress(d.bank)
+  const js = journeyState(d.bank, d.sentBank)
 
   return (
     <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 60 }}>
@@ -174,25 +174,23 @@ function HomeHub({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
         </div>
       </div>
 
-      {/* Level snapshot → Progress */}
+      {/* Journey snapshot → Progress (the stage, not a misleading CEFR badge) */}
       <button className="ps-card ps-press" onClick={() => go('progress')} style={{ marginTop: 16, padding: 16,
         borderRadius: 'var(--r-xl)', display: 'flex', alignItems: 'center', gap: 16, width: '100%',
         cursor: 'pointer', textAlign: 'left', border: 'none' }}>
-        <Ring value={lp.pct} max={100} size={64} stroke={8} color="var(--written)" track="var(--glass-deep)">
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>{lp.level}</span>
+        <Ring value={js.overallPct} max={100} size={64} stroke={8} color="var(--written)" track="var(--glass-deep)">
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: 'var(--ink)' }}>{js.current}</span>
         </Ring>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14.9, color: 'var(--ink)' }}>
-            Taso {lp.level} · {lp.pct}%
+            Vaihe {js.current} · Perusta
           </div>
           <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13, color: 'var(--ink-2)', marginTop: 2 }}>
-            {lp.next
-              ? <>{lp.toNext} sanaa tasoon {lp.next}{bilingual && <span style={{ color: 'var(--ink-3)' }}> to {lp.next}</span>}</>
-              : <>YKI B2 {bilingual && <span style={{ color: 'var(--ink-3)' }}>professional level</span>}</>}
+            {js.overallPct}% valmis{bilingual && <span style={{ color: 'var(--ink-3)' }}> — Foundation</span>}
           </div>
         </div>
         <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ink-3)' }}>
-          <span className="ps-label" style={{ color: 'var(--ink-3)' }}>EDISTYMINEN</span>
+          <span className="ps-label" style={{ color: 'var(--ink-3)' }}>MATKA</span>
           <I name="arrow" size={18} sw={2} />
         </span>
       </button>

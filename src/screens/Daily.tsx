@@ -13,8 +13,8 @@ import { fetchDueIslandRecall } from '../lib/data/islands'
 import { fetchReviewOverview, ReviewOverview, ReviewItem } from '../lib/data/review'
 
 const SESSION_SIZE = 12
-const VOCAB_GOAL = 1000
-const SENT_GOAL = 1000
+const VOCAB_GOAL = 2000
+const SENT_GOAL = 2000
 const BODY_BOTTOM = 96
 
 type View = 'hub' | 'vocab' | 'sentences'

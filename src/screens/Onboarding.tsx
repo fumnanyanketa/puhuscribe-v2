@@ -142,7 +142,7 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
             </p>
           </div>
           <div className="ps-card" style={{ marginTop: 20, padding: 18, borderRadius: 'var(--r-xl)' }}>
-            <Journey bankSize={0} />
+            <Journey words={0} sentences={0} />
           </div>
         </>
       ),
