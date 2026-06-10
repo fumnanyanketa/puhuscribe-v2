@@ -10,7 +10,7 @@ import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { fetchHomeData, HomeData } from '../lib/data/home'
 import { SPRINT_CAP } from './DayOne'
-import { journeyState } from '../lib/journey'
+import { journeyState, JourneyState, STAGE1_WORDS, STAGE1_SENTENCES } from '../lib/journey'
 import { studyStreak, todayStudyMinutes, DAILY_GOAL_MIN } from '../lib/studyTime'
 
 const BODY_BOTTOM = 96
@@ -68,20 +68,45 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
   const d = data!
 
   const sprintDone = Boolean(progress.sprint?.completed)
+  const sprintStarted = Boolean(progress.sprint && (progress.sprint.idx ?? 0) > 0 && !sprintDone)
+  const js = journeyState(d.bank, d.sentBank)
+
   return (
     <>
-      {sprintDone
-        ? <HomeHub d={d} go={go} />
-        : <HomeSprint go={go} sprint={progress.sprint ?? null} />}
+      <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 60 }}>
+        <TopRow streak={studyStreak()} />
+        <Greeting {...(sprintStarted ? { fi: 'Tervetuloa takaisin!', en: 'Welcome back!' } : greeting())} />
+
+        {/* What's next: resume/start the first sprint, or the daily plan */}
+        {sprintDone
+          ? <TodayPlan d={d} go={go} />
+          : <SprintHero go={go} sprint={progress.sprint ?? null} />}
+
+        {/* The dashboard: overall progress + the two banks you are growing */}
+        <ProgressDash js={js} bank={d.bank} sentBank={d.sentBank} onOpen={() => go('progress')} />
+
+        {/* Quick actions */}
+        <Eyebrow fi="PIKAVALINNAT" en="Jump back in" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 14 }} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <QuickCard icon="book" tone="var(--written)" toneBg="var(--written-bg)"
+            fi="Sanasto" en="Vocabulary" badge={`${DAILY_WORDS} uutta`} onClick={() => go('learn')} />
+          <QuickCard icon="review" tone="var(--spoken)" toneBg="var(--spoken-bg)"
+            fi="Kertaus" en="Review" badge={`${d.vocabDue + d.sentDue} vuorossa`} onClick={() => go('daily')} />
+          <QuickCard icon="lines" tone="var(--flag)" toneBg="var(--flag-bg)"
+            fi="Omat lauseet" en="Sentences" badge={`${d.sets} ${d.sets === 1 ? 'setti' : 'settiä'}`} onClick={() => go('islands')} />
+          <QuickCard icon="mic" tone="#C2603F" toneBg="rgba(194,96,63,.12)"
+            fi="Harjoittele" en="Practice" badge="4 taitoa" onClick={() => go('practice')} />
+        </div>
+      </ScreenScroll>
       {nav}
     </>
   )
 }
 
 /* =====================================================================
-   STATE 1 · FIRST SPRINT NOT YET COMPLETE — lead with resume, minimal else
+   Resume / start the first sprint (shown until it is completed)
    ===================================================================== */
-function HomeSprint({ go, sprint }: {
+function SprintHero({ go, sprint }: {
   go: (s: AppScreen) => void; sprint: { size: number; idx: number } | null
 }) {
   const { bilingual } = useLang()
@@ -94,11 +119,7 @@ function HomeSprint({ go, sprint }: {
   const left = size - idx
 
   return (
-    <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 60 }}>
-      <TopRow streak={studyStreak()} />
-      <Greeting {...(started ? { fi: 'Tervetuloa takaisin!', en: 'Welcome back!' } : greeting())} />
-
-      {/* Resume hero */}
+    <>
       <div style={{ marginTop: 16, borderRadius: 'var(--r-xl)', overflow: 'hidden',
         background: 'linear-gradient(155deg, var(--orb-violet), var(--orb-deep))',
         boxShadow: '0 22px 44px -20px rgba(56,53,131,.6)', color: '#fff', padding: 20, position: 'relative' }}>
@@ -138,92 +159,103 @@ function HomeSprint({ go, sprint }: {
       <CTA style={{ marginTop: 14 }} icon="sparkle" variant="ink" onClick={() => go('dayone')}
         fi={started ? 'Jatka sprinttiä' : 'Aloita sprintti'}
         en={started ? `Continue sprint · ${left} left` : 'Start the sprint'} />
-
-      {/* Goal note */}
-      <div className="ps-card" style={{ marginTop: 14, padding: '13px 16px', borderRadius: 'var(--r-lg)',
-        display: 'flex', alignItems: 'center', gap: 11 }}>
-        <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="star" size={20} sw={1.9} /></span>
-        <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.35 }}>
-          Tavoite: {size} yleisintä sanaa{' '}
-          {bilingual && <span style={{ fontWeight: 500, color: 'var(--ink-3)' }}>the {size} most common words</span>}
-        </div>
-      </div>
-    </ScreenScroll>
+    </>
   )
 }
 
 /* =====================================================================
-   STATE 2 · SPRINT COMPLETE — the normal daily hub
+   Today's plan card (once the first sprint is done)
    ===================================================================== */
-function HomeHub({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
+function TodayPlan({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
   const { bilingual } = useLang()
-  const js = journeyState(d.bank, d.sentBank)
   const todayMin = todayStudyMinutes()
 
   return (
-    <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 60 }}>
-      <TopRow streak={studyStreak()} />
-      <Greeting {...greeting()} />
-
-      {/* Today's plan */}
-      <div className="ps-card" style={{ marginTop: 20, padding: 20, borderRadius: 'var(--r-xl)' }}>
-        <Eyebrow fi="PÄIVÄN SUUNNITELMA" en="Today's plan" color="var(--written)" style={{ marginBottom: 16 }} />
-        <PlanRow icon="sparkle" tone="var(--written)" toneBg="var(--written-bg)"
-          fi="Uudet sanat" en="New words" n={DAILY_WORDS} unit="sanaa" />
-        <hr className="ps-rule" style={{ margin: '14px 0' }} />
-        <PlanRow icon="review" tone="var(--spoken)" toneBg="var(--spoken-bg)"
-          fi="Kertaus" en="Reviews due" n={d.vocabDue + d.sentDue} unit="vuorossa" />
-        <div style={{ marginTop: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span className="ps-label" style={{ color: 'var(--ink-3)' }}>
-              TÄNÄÄN OPISKELTU{bilingual && <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 9.5, marginLeft: 6, textTransform: 'none', letterSpacing: 0 }}>studied today</span>}
-            </span>
-            <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: todayMin >= DAILY_GOAL_MIN ? 'var(--spoken)' : 'var(--ink-2)' }}>
-              {todayMin} / {DAILY_GOAL_MIN} min
-            </span>
-          </div>
-          <Bar value={Math.min(100, (todayMin / DAILY_GOAL_MIN) * 100)} color={todayMin >= DAILY_GOAL_MIN ? 'var(--spoken)' : 'var(--written)'} track="var(--glass-deep)" h={7} />
+    <div className="ps-card" style={{ marginTop: 20, padding: 20, borderRadius: 'var(--r-xl)' }}>
+      <Eyebrow fi="PÄIVÄN SUUNNITELMA" en="Today's plan" color="var(--written)" style={{ marginBottom: 16 }} />
+      <PlanRow icon="sparkle" tone="var(--written)" toneBg="var(--written-bg)"
+        fi="Uudet sanat" en="New words" n={DAILY_WORDS} unit="sanaa" />
+      <hr className="ps-rule" style={{ margin: '14px 0' }} />
+      <PlanRow icon="review" tone="var(--spoken)" toneBg="var(--spoken-bg)"
+        fi="Kertaus" en="Reviews due" n={d.vocabDue + d.sentDue} unit="vuorossa" />
+      <div style={{ marginTop: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+          <span className="ps-label" style={{ color: 'var(--ink-3)' }}>
+            TÄNÄÄN OPISKELTU{bilingual && <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 9.5, marginLeft: 6, textTransform: 'none', letterSpacing: 0 }}>studied today</span>}
+          </span>
+          <span className="ps-num" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: todayMin >= DAILY_GOAL_MIN ? 'var(--spoken)' : 'var(--ink-2)' }}>
+            {todayMin} / {DAILY_GOAL_MIN} min
+          </span>
         </div>
-        <div style={{ marginTop: 18 }}>
-          <CTA fi="Aloita päivä" en="Start today · ~15 min" iconRight="arrow" variant="ink"
-            style={{ minHeight: 58 }} onClick={() => go('daily')} />
-        </div>
+        <Bar value={Math.min(100, (todayMin / DAILY_GOAL_MIN) * 100)} color={todayMin >= DAILY_GOAL_MIN ? 'var(--spoken)' : 'var(--written)'} track="var(--glass-deep)" h={7} />
       </div>
+      <div style={{ marginTop: 18 }}>
+        <CTA fi="Aloita päivä" en="Start today · ~15 min" iconRight="arrow" variant="ink"
+          style={{ minHeight: 58 }} onClick={() => go('daily')} />
+      </div>
+    </div>
+  )
+}
 
-      {/* Journey snapshot → Progress (the stage, not a misleading CEFR badge) */}
-      <button className="ps-card ps-press" onClick={() => go('progress')} style={{ marginTop: 16, padding: 16,
-        borderRadius: 'var(--r-xl)', display: 'flex', alignItems: 'center', gap: 16, width: '100%',
-        cursor: 'pointer', textAlign: 'left', border: 'none' }}>
-        <Ring value={js.overallPct} max={100} size={64} stroke={8} color="var(--written)" track="var(--glass-deep)">
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: 'var(--ink)' }}>{js.current}</span>
+/* =====================================================================
+   Progress dashboard — the headline % and the two banks (tap → Progress
+   for the full journey map, which stays on its own page)
+   ===================================================================== */
+function ProgressDash({ js, bank, sentBank, onOpen }: {
+  js: JourneyState; bank: number; sentBank: number; onOpen: () => void
+}) {
+  const { bilingual } = useLang()
+  return (
+    <button className="ps-card ps-press" onClick={onOpen} style={{ marginTop: 16, padding: 18,
+      borderRadius: 'var(--r-xl)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <Ring value={js.overallPct} max={100} size={72} stroke={9} color="var(--written)" track="var(--glass-deep)">
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--ink)', lineHeight: 1 }}>
+              {js.overallPct}<span style={{ fontSize: 10, color: 'var(--ink-3)' }}>%</span>
+            </div>
+            <div className="ps-label" style={{ fontSize: 8, color: 'var(--ink-3)', marginTop: 2 }}>VALMIS</div>
+          </div>
         </Ring>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14.9, color: 'var(--ink)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
             Vaihe {js.current} · Perusta
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13, color: 'var(--ink-2)', marginTop: 2 }}>
-            {js.overallPct}% valmis{bilingual && <span style={{ color: 'var(--ink-3)' }}> — Foundation</span>}
+          <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 12.5, color: 'var(--ink-2)', marginTop: 1 }}>
+            {js.overallPct}% valmis{bilingual && <span style={{ color: 'var(--ink-3)' }}> · Foundation</span>}
           </div>
         </div>
         <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ink-3)' }}>
           <span className="ps-label" style={{ color: 'var(--ink-3)' }}>MATKA</span>
           <I name="arrow" size={18} sw={2} />
         </span>
-      </button>
-
-      {/* Quick actions */}
-      <Eyebrow fi="PIKAVALINNAT" en="Jump back in" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 14 }} />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <QuickCard icon="book" tone="var(--written)" toneBg="var(--written-bg)"
-          fi="Sanasto" en="Vocabulary" badge={`${DAILY_WORDS} uutta`} onClick={() => go('learn')} />
-        <QuickCard icon="review" tone="var(--spoken)" toneBg="var(--spoken-bg)"
-          fi="Kertaus" en="Review" badge={`${d.vocabDue + d.sentDue} vuorossa`} onClick={() => go('daily')} />
-        <QuickCard icon="lines" tone="var(--flag)" toneBg="var(--flag-bg)"
-          fi="Omat lauseet" en="Sentences" badge={`${d.sets} ${d.sets === 1 ? 'setti' : 'settiä'}`} onClick={() => go('islands')} />
-        <QuickCard icon="mic" tone="#C2603F" toneBg="rgba(194,96,63,.12)"
-          fi="Harjoittele" en="Practice" badge="4 taitoa" onClick={() => go('practice')} />
       </div>
-    </ScreenScroll>
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <BankBar fi="Sanasto" en="Vocabulary" value={bank} goal={STAGE1_WORDS} color="var(--written)" />
+        <BankBar fi="Lauseet" en="Sentences" value={sentBank} goal={STAGE1_SENTENCES} color="var(--spoken)" />
+      </div>
+    </button>
+  )
+}
+
+function BankBar({ fi, en, value, goal, color }: {
+  fi: string; en: string; value: number; goal: number; color: string
+}) {
+  const { bilingual } = useLang()
+  const pct = Math.min(100, Math.round((value / goal) * 100))
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 5 }}>
+        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--ink)' }}>
+          {fi}
+          {bilingual && <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 11, color: 'var(--ink-3)', marginLeft: 6 }}>{en}</span>}
+        </span>
+        <span className="ps-num" style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, color: 'var(--ink-3)' }}>
+          {value.toLocaleString()} / {goal.toLocaleString()}
+        </span>
+      </div>
+      <Bar value={pct} color={color} track="var(--glass-deep)" h={7} />
+    </div>
   )
 }
 

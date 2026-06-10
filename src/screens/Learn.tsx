@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Bar } from '../components/ui'
-import { CTA, Eyebrow, HubHeader } from '../components/kit'
+import { I } from '../components/icons'
+import { CTA, Eyebrow, HubHeader, IconTile } from '../components/kit'
 import { ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
@@ -9,12 +10,14 @@ import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { fetchNextWords, SprintWord } from '../lib/data/content'
 import { fetchReviewOverview } from '../lib/data/review'
-import { SprintIntro, SprintRunner } from './DayOne'
+import { SprintRunner } from './DayOne'
 
 /* ---------------------------------------------------------------------------
- * Learn tab — before the first sprint is done it introduces the sprint;
- * afterwards it is the daily vocabulary bank: the next 15 most useful words
- * the learner has not met, growing the bank toward 1,000 words.
+ * Learn tab = the VOCABULARY BANK. It always shows the bank growing toward
+ * 2,000 words. A brand-new user starts it with the Day One sprint (their first
+ * 150 words); after that it serves the daily 15-word intake. It also points to
+ * the graded skill drills. The sprint is greeted on Home / Day One — it no
+ * longer takes over this tab.
  * ------------------------------------------------------------------------- */
 
 const BODY_BOTTOM = 96
@@ -49,21 +52,6 @@ export function Learn({ go }: { go: (s: AppScreen) => void }) {
 
   const nav = <BottomNav active="learn" onNav={go} />
 
-  // First sprint not done yet: the Learn tab introduces it.
-  if (!sprintDone) {
-    return (
-      <>
-        <SprintIntro embedded total={150}
-          onStart={() => {
-            // Mark the sprint as started so the Day One screen opens the runner.
-            if (!progress.sprint) saveSprint({ size: 150, idx: 0, completed: false })
-            go('dayone')
-          }} />
-        {nav}
-      </>
-    )
-  }
-
   // A daily batch is running.
   if (deck) {
     return (
@@ -87,15 +75,27 @@ export function Learn({ go }: { go: (s: AppScreen) => void }) {
   if (error) return <><StatePane tone="error" title="Couldn't load your words" detail={error} bottom={BODY_BOTTOM + 14} />{nav}</>
   const d = data!
 
+  const startSprint = () => {
+    // Mark the sprint as started so the Day One screen opens the runner.
+    if (!progress.sprint) saveSprint({ size: 150, idx: 0, completed: false })
+    go('dayone')
+  }
+
   return (
     <>
-      <DailyVocabHub d={d} onStart={() => d.next.length > 0 && setDeck(d.next)} />
+      <VocabBankHub d={d} sprintDone={sprintDone}
+        onStartSprint={startSprint}
+        onStartDaily={() => d.next.length > 0 && setDeck(d.next)}
+        onGraded={() => go('practice')} />
       {nav}
     </>
   )
 }
 
-function DailyVocabHub({ d, onStart }: { d: LearnData; onStart: () => void }) {
+function VocabBankHub({ d, sprintDone, onStartSprint, onStartDaily, onGraded }: {
+  d: LearnData; sprintDone: boolean
+  onStartSprint: () => void; onStartDaily: () => void; onGraded: () => void
+}) {
   const { bilingual } = useLang()
   const n = d.next.length
   const preview = d.next.slice(0, 6)
@@ -104,16 +104,16 @@ function DailyVocabHub({ d, onStart }: { d: LearnData; onStart: () => void }) {
 
   return (
     <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 62 }}>
-      <HubHeader eyebrowFi="PÄIVÄN SANAT" eyebrowEn="Today's words"
-        title={n > 0 ? `${n} uutta sanaa` : 'Kaikki opittu!'} />
+      <HubHeader eyebrowFi="SANASTO" eyebrowEn="Vocabulary" title="Sanapankki"
+        sub="Your growing bank of Finnish words, built toward 2,000." />
 
-      {/* Progress toward 1000 */}
+      {/* Bank progress toward 2,000 */}
       <div className="ps-card" style={{ marginTop: 16, padding: 18, borderRadius: 'var(--r-xl)' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <span className="ps-num">
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 21.6,
               letterSpacing: '-0.03em', color: 'var(--ink)' }}>{d.bank}</span>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink-3)' }}> / {BANK_GOAL}</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink-3)' }}> / {BANK_GOAL.toLocaleString()}</span>
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 11px',
             borderRadius: 999, background: 'var(--written-bg)' }}>
@@ -121,14 +121,34 @@ function DailyVocabHub({ d, onStart }: { d: LearnData; onStart: () => void }) {
           </span>
         </div>
         <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13.5, color: 'var(--ink-2)', margin: '4px 0 14px' }}>
-          sanaa opittu{' '}
-          {bilingual && <span style={{ color: 'var(--ink-3)' }}>words learned · toward 2,000</span>}
+          sanaa pankissa{' '}
+          {bilingual && <span style={{ color: 'var(--ink-3)' }}>words in your bank · toward 2,000</span>}
         </div>
         <Bar value={pct} color="var(--written)" track="var(--glass-deep)" h={9} />
       </div>
 
-      {/* Today's set preview */}
-      {n > 0 && (
+      {/* Next action: the first sprint, or today's words */}
+      {!sprintDone ? (
+        <button onClick={onStartSprint} className="ps-press ps-card" style={{
+          marginTop: 14, width: '100%', padding: 16, cursor: 'pointer',
+          textAlign: 'left', display: 'flex', alignItems: 'center', gap: 13,
+          border: '1.5px solid var(--written-line)', borderRadius: 'var(--r-lg)',
+        }}>
+          <IconTile icon="sparkle" size={44} r={12} />
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span className="ps-label" style={{ display: 'block', color: 'var(--written)', fontSize: 10, marginBottom: 2 }}>
+              {bilingual ? 'Aloita tästä · Start here' : 'Aloita tästä'}
+            </span>
+            <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>
+              Aloita ensimmäinen sprintti
+            </span>
+            <span className="ps-caption">
+              {bilingual ? 'Your first 150 words, in waves' : 'Ensimmäiset 150 sanaa, aalloittain'}
+            </span>
+          </span>
+          <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="arrow" size={20} sw={2} /></span>
+        </button>
+      ) : n > 0 ? (
         <>
           <Eyebrow fi="TÄNÄÄN VUOROSSA" en="Today's set" color="var(--ink-3)" style={{ marginTop: 18, marginBottom: 12 }} />
           <div className="ps-card" style={{ padding: 18, borderRadius: 'var(--r-lg)' }}>
@@ -147,17 +167,34 @@ function DailyVocabHub({ d, onStart }: { d: LearnData; onStart: () => void }) {
               )}
             </div>
           </div>
+          <div style={{ marginTop: 14 }}>
+            <CTA fi="Aloita" en={`Start · ${n} words`} iconRight="arrow" variant="ink" onClick={onStartDaily} />
+          </div>
         </>
-      )}
-      {n === 0 && (
+      ) : (
         <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 18 }}>
-          Olet tavannut kaikki sanat.{' '}
-          {bilingual && <span style={{ color: 'var(--ink-3)' }}>You have met every word in the bank. Reviews keep them fresh.</span>}
+          Olet tavannut kaikki sanat tältä erää.{' '}
+          {bilingual && <span style={{ color: 'var(--ink-3)' }}>You have met every word for now. Reviews keep them fresh.</span>}
         </p>
       )}
 
-      <div style={{ flex: 1, minHeight: 18 }} />
-      {n > 0 && <CTA fi="Aloita" en={`Start · ${n} words`} iconRight="arrow" variant="ink" onClick={onStart} />}
+      {/* Graded skill drills (the "tests" — listening, reading, writing, level-matched) */}
+      <Eyebrow fi="TASOHARJOITTELU" en="Graded practice" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 12 }} />
+      <button onClick={onGraded} className="ps-press ps-card" style={{
+        width: '100%', padding: 16, cursor: 'pointer', textAlign: 'left',
+        display: 'flex', alignItems: 'center', gap: 13, borderRadius: 'var(--r-lg)', border: 'none',
+      }}>
+        <IconTile icon="check" size={44} r={12} color="var(--spoken)" bg="var(--spoken-bg)" />
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
+            Testaa taitosi
+          </span>
+          <span className="ps-caption">
+            {bilingual ? 'Graded listening, reading and writing, matched to your level' : 'Kuuntelu, lukeminen ja kirjoittaminen tasosi mukaan'}
+          </span>
+        </span>
+        <span style={{ color: 'var(--ink-3)', flexShrink: 0 }}><I name="arrow" size={20} sw={2} /></span>
+      </button>
     </ScreenScroll>
   )
 }
