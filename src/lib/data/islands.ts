@@ -173,6 +173,19 @@ export function isStarterIsland(i: { topicSlug?: string; title?: string }): bool
   return i.topicSlug === 'starter' || i.title === 'Everyday basics'
 }
 
+/** How many sentences the current starter seed (the 'arki' set) holds — used to
+ *  tell whether a learner's starter copy is behind the latest content. Cheap
+ *  head count, no rows returned. */
+export async function fetchStarterSeedCount(): Promise<number> {
+  const { data: topic } = await supabase.from('topics').select('id').eq('slug', 'arki').maybeSingle()
+  if (topic?.id == null) return 0
+  const { count } = await supabase
+    .from('sentences')
+    .select('id', { count: 'exact', head: true })
+    .eq('topic_id', topic.id)
+  return count ?? 0
+}
+
 /**
  * Refresh the starter pack to the latest seed in ONE step: delete every existing
  * starter copy (a created copy never auto-updates when the source sentences

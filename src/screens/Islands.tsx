@@ -13,6 +13,7 @@ import {
   Island, IslandSentence,
   fetchIslands, createIsland, addIslandSentence, fetchIslandLines, deleteIsland, fetchIslandRecall,
   deleteIslandSentence, updateIslandSentence, createStarterIsland, refreshStarterIsland, isStarterIsland,
+  fetchStarterSeedCount,
 } from '../lib/data/islands'
 import { translateSentence, fetchFollowupQuestions, Translation } from '../lib/islandsApi'
 import { toRegisterTokens } from '../lib/data/content'
@@ -91,6 +92,7 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
   const { bi, bilingual } = useLang()
   const [reload, setReload] = useState(0)
   const { data: islands, loading, error } = useAsync<Island[]>(() => fetchIslands(userId), [userId, reload])
+  const { data: seedCount } = useAsync<number>(() => fetchStarterSeedCount(), [reload])
   const [addingStarter, setAddingStarter] = useState(false)
   const [starterErr, setStarterErr] = useState('')
   void reload
@@ -98,6 +100,9 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
   const starterIsland = (islands ?? []).find(isStarterIsland)
   const hasStarter = !!starterIsland
   const starterCount = starterIsland?.count ?? 0
+  // Only offer a refresh when the learner's copy is actually behind the latest
+  // seed — a new user gets the full set, so they never see this.
+  const starterBehind = hasStarter && (seedCount ?? 0) > starterCount
   const totalSentences = (islands ?? []).reduce((a, i) => a + i.count, 0)
   const totalLearned = (islands ?? []).reduce((a, i) => a + i.learned, 0)
 
@@ -165,9 +170,10 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
         </button>
       )}
 
-      {/* Already have the starter pack — offer a one-tap refresh to the latest set.
-          A created copy doesn't auto-update, so this is how 50 becomes 104. */}
-      {islands && hasStarter && !loading && (
+      {/* An update is available — the learner's starter copy is behind the latest
+          seed. A created copy never auto-updates, so offer a one-tap refresh.
+          New users get the full set, so this never shows for them. */}
+      {islands && starterBehind && !loading && (
         <button onClick={() => void refreshStarter()} disabled={addingStarter} className="ps-press ps-card" style={{
           marginTop: 14, width: '100%', padding: 16, cursor: addingStarter ? 'default' : 'pointer',
           textAlign: 'left', display: 'flex', alignItems: 'center', gap: 13, opacity: addingStarter ? 0.6 : 1,
@@ -179,12 +185,12 @@ function IslandList({ userId, onNew, onOpen, onShadow }: {
               {bi('Aloituspaketti', 'Starter pack')}
             </span>
             <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16 }}>
-              {bi('Päivitä aloituspaketti', 'Refresh starter pack')}
+              {bi('Päivitys saatavilla', 'Update available')}
             </span>
             <span className="ps-caption">
               {addingStarter
-                ? bi('Päivitetään…', 'Refreshing')
-                : `Replace your copy (${starterCount}) with the latest sentences`}
+                ? bi('Päivitetään…', 'Updating')
+                : `Update your copy (${starterCount}) to the latest (${seedCount})`}
             </span>
           </span>
           {!addingStarter && <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="refresh" size={20} /></span>}
