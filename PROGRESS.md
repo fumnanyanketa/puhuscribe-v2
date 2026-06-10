@@ -491,6 +491,16 @@ Next: owner's next correction.
 
 ---
 
+## Session: 2026-06-10 (Feedback emailed to the owner — no more checking Supabase by hand)
+
+Shipped: Beta feedback now comes to you. New Worker POST /feedback route emails each note via Resend (mood + message + screen + user + device); the app pings it fire-and-forget (keepalive) after the existing Supabase insert, so the row still persists and the local backup still holds it. Graceful: if RESEND_API_KEY/FEEDBACK_EMAIL_TO aren't set the route is a no-op (503 configured:false) and nothing breaks. Deploy workflow sets the email secrets in an optional step (only when RESEND_API_KEY exists), mirroring the Voikko pattern. Worker syntax-checked, build clean, 39 JS tests green.
+
+Blocked: OWNER ACTION to turn email on — (1) create a free Resend account, verify your sending email, copy an API key; (2) add GitHub repo secrets RESEND_API_KEY and FEEDBACK_EMAIL_TO (your inbox; use the SAME address you verified with Resend, since the default sender onboarding@resend.dev only delivers to your own verified address — a custom domain via FEEDBACK_EMAIL_FROM lifts that later); (3) re-run "Deploy TTS Worker". Until then feedback still lands in Supabase + local backup.
+
+Next: owner sets up Resend; then consider a daily digest option and an in-app admin list if wanted.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
