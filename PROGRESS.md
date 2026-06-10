@@ -471,6 +471,16 @@ Next: owner's next home-page correction.
 
 ---
 
+## Session: 2026-06-10 (Home = dashboard; Learn tab = the vocabulary bank)
+
+Shipped: Two structural corrections so the app reads like the planned dashboard + bank, not a sprint-gated shell. (1) HOME now shows the dashboard for everyone, not only after the first sprint: a new ProgressDash card brought the Progress page's headline "% valmis" ring + the two banks you grow (Vocabulary -> 2,000, Sentences -> 1,000, via journeyState) onto Home, tappable through to Progress; the journey STAGE MAP stays on Progress (owner's call). "What's next" stays adaptive (first-sprint hero for new users, daily plan once done); quick actions kept. (2) LEARN tab is now the Vocabulary Bank ("Sanapankki") at all times — bank growing toward 2,000, no more full-screen Day One sprint takeover. New user gets a clear "Start your first sprint" card (-> Day One); returning gets the daily 15-word intake; added a "Graded practice" card linking to the level-matched listening/reading/writing drills in the Practice tab (answering "where are the graded tests?"). Integrated the parallel instance's SPRINT_CAP fix via rebase. Build clean, 39 JS tests green.
+
+Blocked: nothing. Graded tests = the Listen/Read/Write drills in the Practice tab (now also linked from the vocab bank). Verify on phone: Home shows %/banks for a new user; Learn tab is the bank, not the sprint intro.
+
+Next: owner review — possibly tie graded tests into the vocab progression as checkpoints; tune the dashboard.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
