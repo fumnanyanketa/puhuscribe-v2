@@ -137,12 +137,12 @@ export async function updateIslandSentence(
 }
 
 /**
- * Create the "Starter pack" island from the 50 Voikko-validated everyday (arki)
+ * Create the "Starter pack" island from ALL the Voikko-validated everyday (arki)
  * sentences — a ready-made first island for total beginners that flows through
  * the same shadow/recall/FSRS engines as any personal island. Batched inserts.
  */
 export async function createStarterIsland(userId: string): Promise<string> {
-  const sents = await fetchIslandSentences(50)
+  const sents = await fetchIslandSentences(250) // grab the whole arki set, not just the first 50
   if (sents.length === 0) throw new Error('Starter sentences are not loaded yet.')
 
   const islandId = await createIsland(userId, 'Everyday basics', 'starter')

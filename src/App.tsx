@@ -26,20 +26,39 @@ function landingScreen(progress: UserProgress): AppScreen {
   return 'home'
 }
 
+// Screens worth restoring on a browser refresh (onboarding is never restored).
+const SCREEN_KEY = 'ps_screen'
+const RESTORABLE: AppScreen[] = ['home', 'learn', 'daily', 'islands', 'practice', 'progress', 'dayone', 'listen', 'read', 'write']
+
 export default function App() {
   const { user, loading } = useAuth()
   const { progress, ready } = useProgress()
   const [screen, setScreen] = useState<AppScreen | null>(null)
-  const go = (s: AppScreen) => setScreen(s)
 
-  // Pick the landing screen once, after progress resolves.
+  // Navigate + remember the screen, so a browser refresh returns here instead
+  // of bouncing back to Home.
+  const go = (s: AppScreen) => {
+    setScreen(s)
+    try { localStorage.setItem(SCREEN_KEY, s) } catch { /* storage unavailable */ }
+  }
+
+  // Pick the landing screen once, after progress resolves: restore the last
+  // screen if there is one, otherwise route by progress.
   useEffect(() => {
-    if (user && ready && screen === null) setScreen(landingScreen(progress))
+    if (!(user && ready && screen === null)) return
+    const seen = progress.onboarded || Boolean(progress.sprint)
+    let saved: string | null = null
+    try { saved = localStorage.getItem(SCREEN_KEY) } catch { /* ignore */ }
+    if (seen && saved && RESTORABLE.includes(saved as AppScreen)) setScreen(saved as AppScreen)
+    else setScreen(landingScreen(progress))
   }, [user, ready, screen, progress])
 
   // Reset the landing decision on sign-out so the next user routes fresh.
   useEffect(() => {
-    if (!user && screen !== null) setScreen(null)
+    if (!user && screen !== null) {
+      setScreen(null)
+      try { localStorage.removeItem(SCREEN_KEY) } catch { /* ignore */ }
+    }
   }, [user, screen])
 
   // Auth gate: resolve the session first, then require sign-in.
