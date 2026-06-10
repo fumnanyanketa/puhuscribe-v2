@@ -61,7 +61,7 @@ export function FeedbackButton({ screen }: { screen?: string }) {
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.04 }}>
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13.5 }}>Palaute</span>
           {bilingual && (
-            <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 10, color: 'rgba(255,255,255,.72)' }}>Feedback</span>
+            <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 10, color: 'rgba(255,255,255,.72)' }}>Feedback</span>
           )}
         </span>
       </button>
