@@ -431,6 +431,16 @@ Next: confirm 104 renders after refresh; then workshop follow-ups (journey timel
 
 ---
 
+## Session: 2026-06-10 (Starter pack: hide refresh unless a copy is behind)
+
+Shipped: Owner confirmed the refresh worked (now 104) but rightly flagged the refresh card is meaningless to a new user (they get the full set on add) and lingered even when their copy was already current. Gated it: new fetchStarterSeedCount() (cheap head count of the 'arki' set) + starterBehind = starterCount < seedCount; the card now renders ONLY when a copy is genuinely behind, reframed as "Päivitys saatavilla / Update available — update your copy (N) to the latest (M)". New and current users never see it. Build clean, 39 JS tests green.
+
+Blocked: nothing. The card self-hides for the owner now (104 == 104) and won't appear for new users; it only returns if the seed grows and an existing copy falls behind.
+
+Next: workshop follow-ups — journey timelines, Grammar Stage 2 (SKK1 notes), puhekieli verification, native listening clips, mnemonics; trim starter pack to exactly 100 if wanted.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
