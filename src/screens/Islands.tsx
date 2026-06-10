@@ -8,6 +8,7 @@ import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
+import { useProgress } from '../lib/data/progress'
 import { ISLAND_TOPICS, IslandTopic } from '../lib/islandTopics'
 import {
   Island, IslandSentence,
@@ -783,12 +784,17 @@ function IslandDetail({ userId, islandId, onBack, onShadow, onRecall, onDeleted 
 /* Shadow — reuse the Speak screen with this set's sentences                   */
 /* -------------------------------------------------------------------------- */
 function ShadowView({ userId, islandId, onBack }: { userId: string; islandId: string; onBack: () => void }) {
+  const { progress, saveShadow } = useProgress()
   const { data: lines, loading, error } = useAsync<IslandSentence[]>(
     () => fetchIslandLines(userId, islandId), [userId, islandId])
   if (loading) return <StatePane title="Ladataan…" bottom={26} />
   if (error) return <StatePane tone="error" title="Couldn't load" detail={error} bottom={26} />
-  // Resume each set where the learner left off (per user + set).
-  return <Speak phrases={lines ?? []} onBack={onBack} resumeKey={`puhuscribe:shadow:${userId}:${islandId}`} />
+  // Resume each set where the learner left off. Position is saved in the
+  // server-synced progress record (same system as the Day One sprint), so it
+  // survives a PWA that drops localStorage and follows the learner across devices.
+  return <Speak phrases={lines ?? []} onBack={onBack}
+    startIndex={progress.shadow?.[islandId] ?? 0}
+    onIndex={(i) => saveShadow(islandId, i)} />
 }
 
 /* -------------------------------------------------------------------------- */

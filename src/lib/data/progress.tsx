@@ -12,7 +12,9 @@ import { useAuth } from '../auth/useAuth'
  */
 
 export type SprintProgress = { size: number; idx: number; completed?: boolean }
-export type UserProgress = { onboarded?: boolean; sprint?: SprintProgress }
+// shadow: per-set "listen & repeat" position (set id -> furthest sentence index),
+// so the Sentence Bank starter pack and any set resume where the learner stopped.
+export type UserProgress = { onboarded?: boolean; sprint?: SprintProgress; shadow?: Record<string, number> }
 
 const lsKey = (userId: string) => `puhuscribe:progress:${userId}`
 const legacySprintKey = (userId: string) => `puhuscribe:dayone:${userId}`
@@ -70,6 +72,11 @@ function mergeProgress(a: UserProgress, b: UserProgress): UserProgress {
   if (a.onboarded || b.onboarded) merged.onboarded = true
   const sprint = pickSprint(a.sprint, b.sprint)
   if (sprint) merged.sprint = sprint
+  // Shadow positions: local (a) wins per-set (it's the most recent on this
+  // device, and reflects completion resets); the DB (b) fills in any sets the
+  // local cache is missing (e.g. after a PWA localStorage purge), which is what
+  // makes resume reliable on devices that drop localStorage.
+  if (a.shadow || b.shadow) merged.shadow = { ...(b.shadow ?? {}), ...(a.shadow ?? {}) }
   return merged
 }
 
@@ -78,11 +85,12 @@ interface ProgressCtx {
   ready: boolean // true once we know enough to route (DB resolved, or local fallback)
   markOnboarded: () => void
   saveSprint: (sprint: SprintProgress) => void
+  saveShadow: (setId: string, idx: number) => void
   resetProgress: () => void
 }
 
 const Ctx = createContext<ProgressCtx>({
-  progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {}, resetProgress: () => {},
+  progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {}, saveShadow: () => {}, resetProgress: () => {},
 })
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
@@ -131,13 +139,21 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const saveSprint = useCallback((sprint: SprintProgress) => update({ sprint }), [update])
 
+  // Remember a set's "listen & repeat" position (0 clears it, e.g. on completion).
+  const saveShadow = useCallback((setId: string, idx: number) => {
+    const shadow = { ...(progressRef.current.shadow ?? {}) }
+    if (idx > 0) shadow[setId] = idx
+    else delete shadow[setId]
+    update({ shadow })
+  }, [update])
+
   // Clear onboarding + sprint position (used by the "reset progress" action).
   const resetProgress = useCallback(() => {
     setProgress({})
     if (userId) void saveProgress(userId, {})
   }, [userId])
 
-  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, resetProgress }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, saveShadow, resetProgress }}>{children}</Ctx.Provider>
 }
 
 export const useProgress = () => useContext(Ctx)

@@ -28,25 +28,24 @@ function pickMime(): string | undefined {
   return undefined
 }
 
-export function Speak({ onBack, phrases, title, resumeKey }: {
-  onBack: () => void; phrases?: ShadowLine[]; title?: string; resumeKey?: string
+export function Speak({ onBack, phrases, title, startIndex, onIndex }: {
+  onBack: () => void; phrases?: ShadowLine[]; title?: string
+  startIndex?: number; onIndex?: (i: number) => void
 }) {
   // When sentences are passed in (a personal set), practice those; otherwise
   // fall back to fetching the curated "first useful sentences".
   if (phrases) {
     if (phrases.length === 0) return <StatePane title="No sentences yet" detail="Add a sentence to this set first." bottom={110} />
-    return <SpeakPractice phrases={phrases} onBack={onBack} title={title} resumeKey={resumeKey} />
+    return <SpeakPractice phrases={phrases} onBack={onBack} title={title} startIndex={startIndex} onIndex={onIndex} />
   }
   return <SpeakFetch onBack={onBack} />
 }
 
-// Per-set shadow position, persisted to localStorage so a set (e.g. the starter
-// pack) resumes where the learner left off instead of restarting at sentence 1.
-function readShadowPos(key: string, len: number): number {
-  try {
-    const n = parseInt(localStorage.getItem(key) ?? '', 10)
-    return Number.isFinite(n) && n > 0 && n < len ? n : 0
-  } catch { return 0 }
+// Resume at the furthest sentence the learner reached (caller persists it), but
+// never past the end of the current set.
+function clampStart(start: number | undefined, len: number): number {
+  const n = start ?? 0
+  return Number.isFinite(n) && n > 0 && n < len ? n : 0
 }
 
 function SpeakFetch({ onBack }: { onBack: () => void }) {
@@ -63,12 +62,13 @@ function SpeakFetch({ onBack }: { onBack: () => void }) {
   return <SpeakPractice phrases={phrases} onBack={onBack} />
 }
 
-function SpeakPractice({ phrases, onBack, title, resumeKey }: {
-  phrases: ShadowLine[]; onBack: () => void; title?: string; resumeKey?: string
+function SpeakPractice({ phrases, onBack, title, startIndex, onIndex }: {
+  phrases: ShadowLine[]; onBack: () => void; title?: string
+  startIndex?: number; onIndex?: (i: number) => void
 }) {
   const { bilingual } = useLang()
   useStudyClock()
-  const [i, setI] = useState(() => (resumeKey ? readShadowPos(resumeKey, phrases.length) : 0))
+  const [i, setI] = useState(() => clampStart(startIndex, phrases.length))
   const [st, setSt] = useState<RecState>('idle')
   const [sec, setSec] = useState(0)
   const [playingNative, setPlayingNative] = useState(false)
@@ -82,6 +82,15 @@ function SpeakPractice({ phrases, onBack, title, resumeKey }: {
   const streamRef = useRef<MediaStream | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const myAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Boost the (often quiet) mic playback above the element's max via Web Audio.
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const gainSetupRef = useRef(false)
+
+  // Report position changes so the caller can persist resume (latest callback
+  // via a ref, so re-renders don't re-fire the effect).
+  const onIndexRef = useRef(onIndex)
+  onIndexRef.current = onIndex
 
   const p = phrases[i]
 
@@ -136,10 +145,32 @@ function SpeakPractice({ phrases, onBack, title, resumeKey }: {
     else void startRecording()
   }
 
+  // Route the recording through a Web Audio gain node so it plays back loud
+  // (mic recordings are quiet, and an <audio> element can't go above 1.0). Set
+  // up once; a compressor after the gain keeps the boost from clipping harshly.
+  const ensureLoudPlayback = (el: HTMLAudioElement) => {
+    if (gainSetupRef.current) { void audioCtxRef.current?.resume().catch(() => {}); return }
+    try {
+      const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!Ctx) return
+      const ctx = new Ctx()
+      const src = ctx.createMediaElementSource(el)
+      const gain = ctx.createGain()
+      gain.gain.value = 3.2
+      const comp = ctx.createDynamicsCompressor() // acts as a limiter on the boosted signal
+      src.connect(gain); gain.connect(comp); comp.connect(ctx.destination)
+      audioCtxRef.current = ctx
+      gainSetupRef.current = true
+      void ctx.resume().catch(() => {})
+    } catch { /* Web Audio unavailable — fall back to plain (quieter) playback */ }
+  }
+
   const playMine = () => {
     const el = myAudioRef.current
     if (!el || !recUrl) return
     setRecErr('')
+    ensureLoudPlayback(el)
+    el.volume = 1
     try { el.pause(); el.currentTime = 0 } catch { /* not seekable yet */ }
     setPlayingMine(true)
     void el.play().catch(() => { setPlayingMine(false); setRecErr('Could not play the recording on this device.') })
@@ -152,8 +183,7 @@ function SpeakPractice({ phrases, onBack, title, resumeKey }: {
     if (i < phrases.length - 1) setI(i + 1)
     else {
       bumpPracticeCount('speak')
-      // Finished — clear the saved position so the set starts fresh next time.
-      if (resumeKey) { try { localStorage.removeItem(resumeKey) } catch { /* ignore */ } }
+      onIndexRef.current?.(0) // finished — clear saved position so it starts fresh next time
       setDone(true)
     }
   }
@@ -164,20 +194,18 @@ function SpeakPractice({ phrases, onBack, title, resumeKey }: {
     return () => URL.revokeObjectURL(recUrl)
   }, [recUrl])
 
-  // Stop the mic + timer on unmount.
+  // Stop the mic + timer + audio context on unmount.
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current)
     streamRef.current?.getTracks().forEach((t) => t.stop())
+    void audioCtxRef.current?.close().catch(() => {})
   }, [])
 
   // Auto-play the native audio on each new phrase (and on first mount).
   useEffect(() => { playNative() }, [i]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Remember how far the learner got, per set, so exiting midway resumes here.
-  useEffect(() => {
-    if (!resumeKey) return
-    try { localStorage.setItem(resumeKey, String(i)) } catch { /* storage unavailable */ }
-  }, [i, resumeKey])
+  // Report how far the learner got so the caller persists resume (server-backed).
+  useEffect(() => { onIndexRef.current?.(i) }, [i])
 
   if (done) {
     return (
@@ -215,7 +243,7 @@ function SpeakPractice({ phrases, onBack, title, resumeKey }: {
           onPlay={() => playNative()} playing={playingNative ? 'kirja' : null} compact />
       </div>
 
-      <div style={{ flex: 1, minHeight: 8 }} />
+      <div style={{ height: 18 }} />
 
       {/* Always-mounted player for the learner's own recording. */}
       <audio ref={myAudioRef} src={recUrl ?? undefined} onEnded={() => setPlayingMine(false)} />
@@ -240,15 +268,6 @@ function SpeakPractice({ phrases, onBack, title, resumeKey }: {
               fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
             }}>
               <I name="play" size={20} /> Kuuntele oma puheesi
-            </button>
-
-            <button onClick={playNative} className="ps-press" style={{
-              marginTop: 10, width: '100%', padding: '14px 16px', borderRadius: 'var(--r-md)', cursor: 'pointer',
-              background: '#fff', color: 'var(--ink)', border: '1px solid var(--glass-line)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15,
-            }}>
-              <I name="volume" size={20} /> Kuuntele malli
             </button>
           </div>
 
