@@ -411,6 +411,16 @@ Next: workshop is today (first testers). Follow-ups if wanted: realistic timelin
 
 ---
 
+## Session: 2026-06-10 (Starter pack fixes: reset action + resume position)
+
+Shipped: Three workshop-found starter-pack bugs. (B) "Reset starter pack" action in the Sentence Bank list (mirrors the Progress reset pattern) — the starter row routed straight to shadow practice so it could never be deleted/re-added; reset deletes the starter set (deleteIsland, cards cascade) so the "Add starter pack" button reappears and re-adding pulls the full set. (A) That also resolves "still shows 50, not 104": a created copy doesn't auto-update when the source sentences change, so the owner resets + re-adds to refresh to 104 (createStarterIsland already fetches up to 250; seed confirmed 104 rows; fetchSentences honours the limit). (C) Persist the per-set shadow position to localStorage (resumeKey `puhuscribe:shadow:<uid>:<islandId>` wired through Speak/SpeakPractice from Islands ShadowView) so doing the starter pack (or any set) and exiting midway resumes where you left off instead of restarting at sentence 1; cleared on completion. Build clean, 39 JS tests green.
+
+Blocked: Container had no node_modules (fresh clone) — ran `npm install` (pins TypeScript 5.7.3; a stray global tsc 6.0.2 had falsely flagged the tsconfig baseUrl as deprecated). No code/config change needed; Vercel installs deps itself. Owner action unchanged: after this deploys, tap "Reset starter pack" then re-add it to refresh the copy to 104.
+
+Next: workshop follow-ups — realistic journey timelines; Grammar = Stage 2 from SKK1 notes; puhekieli human-verification; native listening clips; mnemonics; whatever the first testers surface.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
