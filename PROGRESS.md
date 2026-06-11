@@ -511,6 +511,16 @@ Next: owner runs the migration + verifies the dashboard; workshop feedback follo
 
 ---
 
+## Session: 2026-06-11 (Workshop follow-ups: 10-min streak, native-speaker review list, guest auth)
+
+Shipped three workshop-driven items. (1) STREAK 30 -> 10 min/day (studyTime.ts DAILY_GOAL_MIN), a stickier habit + cleaner "10 minutes a day" positioning; the real-study clock is unchanged (counts genuine on-screen seconds on study screens, flushes every 15s + on tab-hide, caps each tick at 120s so a backgrounded tab can't cheat; >= 10 min in a local day counts the day). Updated onboarding copy and dropped the conflicting "first 30 minutes" sprint line. (2) docs/native-speaker-review.md — a ready-to-show list of all 104 Starter Pack sentences (English | kirjakieli | puhekieli) for a Finnish native speaker to mark up, focused on the unvalidated puhekieli column; generated from the live seed and delivered to the owner as a file. (3) GUEST AUTH ("try without account"): Auth gate is now a Welcome with "Start learning" -> supabase.auth.signInAnonymously() (real session; RLS/cards/progress all work), "I already have an account" reveals the email form; new SaveProgressSheet converts a guest in place via updateUser({email,password}) keeping the same user id (no progress lost); guest nudges on Home + Progress; useAuth exposes isAnonymous; bootstrapUser updates email on conflict. Build clean, 39 JS tests green.
+
+Blocked: OWNER ACTIONS — (a) enable "Allow anonymous sign-ins" in Supabase Auth settings, or "Start learning" falls back to the account form; (b) still run 20260611000001_owner_insights.sql for the insights dashboard. Email-confirmation is already off (owner). The 30-min streak history won't retro-change, but new days count at 10 min.
+
+Next: the "what's your first language?" onboarding question (store in users.progress, tally in owner_insights) to gather demand evidence — agreed, not yet built. Then Grammar Stage 2 content so finishers don't stall.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
