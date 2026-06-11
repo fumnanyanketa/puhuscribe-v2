@@ -137,7 +137,7 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
               letterSpacing: '-0.03em', color: 'var(--ink)', margin: 0 }}>From your first words to YKI.</h1>
             <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.9, lineHeight: 1.5,
               color: 'var(--ink-2)', margin: '14px 0 0', textWrap: 'pretty' }}>
-              About 30 minutes a day. B1 for citizenship, B2 for work, over months not weeks.
+              Just 10 minutes a day. B1 for citizenship, B2 for work, over months not weeks.
               You will always see where you are.
             </p>
           </div>

@@ -105,8 +105,8 @@ export function SprintIntro({ total, onStart, onClose, embedded = false }: {
           letterSpacing: '-0.035em', color: 'var(--ink)', margin: 0 }}>Ensimmäiset {total} sanaa</h1>
         <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.9, lineHeight: 1.5,
           color: 'var(--ink-2)', margin: '14px 0 0', textWrap: 'pretty' }}>
-          The first 30 minutes take you through the {total} most common Finnish words, enough to start
-          recognising the language around you.
+          The Day One sprint walks you through the {total} most common Finnish words, enough to start
+          recognising the language around you. Do it in one go or a few short sittings; it saves as you go.
         </p>
       </div>
 

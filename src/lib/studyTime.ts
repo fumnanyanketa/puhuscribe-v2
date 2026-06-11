@@ -2,14 +2,15 @@ import { useEffect, useRef } from 'react'
 
 /* ---------------------------------------------------------------------------
  * Daily study-time tracking. A streak is earned ONLY by genuinely studying for
- * at least 30 minutes in a day — the deliberate anti-gamification stance vs.
- * Duolingo's one-tap streaks. Time accrues while the learner is actually on a
- * study screen (sprint, recall, speak, listen, read, write). Stored per device
- * in localStorage (a cross-device version would need a DB column later).
+ * at least 10 minutes in a day — a sustainable, sticky daily habit (and still
+ * the deliberate anti-gamification stance vs. Duolingo's one-tap streaks). Time
+ * accrues while the learner is actually on a study screen (sprint, recall,
+ * speak, listen, read, write). Stored per device in localStorage (a cross-device
+ * version would need a DB column later).
  * ------------------------------------------------------------------------- */
 
 const KEY = 'ps_study_seconds' // { 'YYYY-MM-DD': seconds }
-export const DAILY_GOAL_MIN = 30
+export const DAILY_GOAL_MIN = 10
 
 function load(): Record<string, number> {
   try { return JSON.parse(localStorage.getItem(KEY) || '{}') as Record<string, number> } catch { return {} }
@@ -38,7 +39,7 @@ export function metTodayGoal(): boolean {
   return (load()[dayKey()] || 0) >= DAILY_GOAL_MIN * 60
 }
 
-/** Consecutive days (ending today, or yesterday if today isn't met yet) with >= 30 min studied. */
+/** Consecutive days (ending today, or yesterday if today isn't met yet) with >= the daily goal studied. */
 export function studyStreak(): number {
   const m = load()
   const goal = DAILY_GOAL_MIN * 60
