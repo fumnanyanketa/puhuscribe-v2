@@ -10,6 +10,7 @@ import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 import { useProgress } from '../lib/data/progress'
 import { resetUserLearning } from '../lib/data/cards'
+import { isOwner } from '../lib/data/insights'
 import { fetchProgressStats, ProgressStats } from '../lib/data/stats'
 import { fetchReviewOverview } from '../lib/data/review'
 import { journeyState, STAGE1_WORDS, STAGE1_SENTENCES } from '../lib/journey'
@@ -194,6 +195,23 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
           </div>
         )}
       </div>
+
+      {/* Owner-only: the beta cohort dashboard. The DB function is the real gate;
+          this just hides the button from testers. */}
+      {isOwner(user?.email) && (
+        <button className="ps-card ps-press" onClick={() => go('insights')} style={{ marginTop: 16,
+          padding: '15px 18px', borderRadius: 'var(--r-lg)', width: '100%', textAlign: 'left',
+          border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ color: 'var(--written)' }}><I name="chart" size={20} sw={1.9} /></span>
+          <span style={{ flex: 1 }}>
+            <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--ink)' }}>
+              Owner insights
+            </span>
+            <span className="ps-caption">Testers, activity, latest feedback</span>
+          </span>
+          <span style={{ color: 'var(--ink-3)' }}><I name="arrow" size={18} sw={2} /></span>
+        </button>
+      )}
 
       {/* Account / sign out */}
       <div style={{ marginTop: 18, marginBottom: 8, textAlign: 'center' }}>
