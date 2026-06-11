@@ -501,6 +501,16 @@ Next: owner sets up Resend; then consider a daily digest option and an in-app ad
 
 ---
 
+## Session: 2026-06-11 (Owner insights dashboard — see the beta cohort in-app)
+
+Shipped: Post-workshop priority: the owner couldn't see whether testers come back (RLS locks per-user tables to their own user). Built the owner-only Insights view: migration 20260611000001 adds owner_insights(), a SECURITY DEFINER function that aggregates server-side (totals: testers/active 1d/7d/reviews 7d/feedback; per-tester words+sentences+reviews7+last-active; latest 30 feedback notes with mood) and REFUSES any caller whose JWT email isn't in owner_emails() — EXECUTE revoked from public/anon, no service key in the client. App side: src/lib/data/insights.ts (typed rpc + isOwner UI gate + ago()), src/screens/Insights.tsx (tiles, tester list by recency, feedback list), "Owner insights" card on Progress visible only to the owner email, new 'insights' sub-screen. Build clean, 39 JS tests green.
+
+Blocked: OWNER ACTION — run supabase/migrations/20260611000001_owner_insights.sql once in the Supabase SQL editor (until then the screen shows a clear "run the migration" error). NOTE: the function gates on email aiprotocolslab@gmail.com (owner_emails() in the migration + OWNER_EMAILS in insights.ts); if the app login email differs, edit both and re-run. Container can't reach Supabase, so verify in the browser.
+
+Next: owner runs the migration + verifies the dashboard; workshop feedback follow-ups discussed in chat (account-creation friction needs an explicit auth decision; languages beyond English; puhekieli verification volunteer; business model articulation).
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
