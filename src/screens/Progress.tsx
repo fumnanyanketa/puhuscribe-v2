@@ -4,6 +4,7 @@ import { I } from '../components/icons'
 import { Eyebrow, HubHeader, StatTile } from '../components/kit'
 import { Journey } from '../components/Journey'
 import { ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
+import { SaveProgressSheet } from '../components/SaveProgress'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
@@ -23,9 +24,10 @@ const BODY_BOTTOM = 96
 type Loaded = { stats: ProgressStats; sentBank: number }
 
 export function Progress({ go }: { go: (s: AppScreen) => void }) {
-  const { user, signOut } = useAuth()
+  const { user, isAnonymous, signOut } = useAuth()
   const { bi, bilingual, setBilingual } = useLang()
   const { resetProgress } = useProgress()
+  const [saveOpen, setSaveOpen] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [resetBusy, setResetBusy] = useState(false)
   const [resetErr, setResetErr] = useState('')
@@ -213,18 +215,35 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
         </button>
       )}
 
-      {/* Account / sign out */}
-      <div style={{ marginTop: 18, marginBottom: 8, textAlign: 'center' }}>
-        {user?.email && <div className="ps-caption" style={{ marginBottom: 8 }}>{user.email}</div>}
-        <button onClick={() => void signOut()} className="ps-press" style={{
-          background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
-          fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13,
-        }}>
-          {bi('Kirjaudu ulos', 'Sign out')}
+      {/* Account: a guest sees "save your progress" (signing out would orphan
+          their account); a real account sees their email + sign out. */}
+      {isAnonymous ? (
+        <button className="ps-card ps-press" onClick={() => setSaveOpen(true)} style={{ marginTop: 18,
+          padding: '15px 18px', borderRadius: 'var(--r-lg)', width: '100%', textAlign: 'left',
+          border: '1.5px solid var(--written-line)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ color: 'var(--written)' }}><I name="star" size={20} sw={1.9} /></span>
+          <span style={{ flex: 1 }}>
+            <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--ink)' }}>
+              {bi('Tallenna edistymisesi', 'Save your progress')}
+            </span>
+            <span className="ps-caption">Learning as a guest. Add an email to keep it on any device.</span>
+          </span>
+          <span style={{ color: 'var(--ink-3)' }}><I name="arrow" size={18} sw={2} /></span>
         </button>
-      </div>
+      ) : (
+        <div style={{ marginTop: 18, marginBottom: 8, textAlign: 'center' }}>
+          {user?.email && <div className="ps-caption" style={{ marginBottom: 8 }}>{user.email}</div>}
+          <button onClick={() => void signOut()} className="ps-press" style={{
+            background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)',
+            fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13,
+          }}>
+            {bi('Kirjaudu ulos', 'Sign out')}
+          </button>
+        </div>
+      )}
     </ScreenScroll>
     {nav}
+    <SaveProgressSheet open={saveOpen} onClose={() => setSaveOpen(false)} />
     </>
   )
 }

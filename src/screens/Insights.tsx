@@ -48,8 +48,8 @@ export function Insights({ go }: { go: (s: AppScreen) => void }) {
           <div key={t.email + t.joined} className="ps-card" style={{ padding: '14px 16px', borderRadius: 'var(--r-lg)' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
-                color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {t.email}
+                color: t.email ? 'var(--ink)' : 'var(--ink-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {t.email || '(guest)'}
               </span>
               <span className="ps-num" style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12,
                 color: t.lastActive ? 'var(--spoken)' : 'var(--ink-3)', flexShrink: 0 }}>
@@ -81,7 +81,7 @@ export function Insights({ go }: { go: (s: AppScreen) => void }) {
                   {f.message}
                 </div>
                 <div className="ps-caption" style={{ marginTop: 6 }}>
-                  {[f.email ?? 'signed out', f.screen, ago(f.at) + ' ago'].filter(Boolean).join(' · ')}
+                  {[f.email || 'guest', f.screen, ago(f.at) + ' ago'].filter(Boolean).join(' · ')}
                 </div>
               </div>
             </div>

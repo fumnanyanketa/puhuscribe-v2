@@ -6,11 +6,12 @@ interface AuthCtx {
   user: User | null
   session: Session | null
   loading: boolean
+  isAnonymous: boolean // a "try without account" guest (no email yet)
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthCtx>({
-  user: null, session: null, loading: true, signOut: async () => {},
+  user: null, session: null, loading: true, isAnonymous: false, signOut: async () => {},
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -35,6 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: session?.user ?? null,
       session,
       loading,
+      isAnonymous: Boolean(session?.user?.is_anonymous),
       signOut: () => supabase.auth.signOut().then(() => {}),
     }}>
       {children}
@@ -45,7 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export const useAuth = () => useContext(AuthContext)
 
 async function bootstrapUser(user: User): Promise<void> {
+  // Upsert and UPDATE the email on conflict, so when a guest converts to a real
+  // account (updateUser sets their email, same id) the users row picks it up.
   await supabase
     .from('users')
-    .upsert({ id: user.id, email: user.email ?? '' }, { onConflict: 'id', ignoreDuplicates: true })
+    .upsert({ id: user.id, email: user.email ?? '' }, { onConflict: 'id' })
 }

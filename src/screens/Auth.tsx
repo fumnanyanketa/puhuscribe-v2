@@ -1,6 +1,7 @@
 import { useState, FormEvent, CSSProperties } from 'react'
 import { BrandMark } from '../components/primitives'
 import { CTA } from '../components/kit'
+import { I } from '../components/icons'
 import { PuhuMark } from '../components/Shell'
 import { supabase } from '../lib/supabase/client'
 import { useLang } from '../lib/lang/useLang'
@@ -28,6 +29,7 @@ function FieldLabel({ fi, en }: { fi: string; en: string }) {
 
 export function Auth() {
   const { bilingual } = useLang()
+  const [view, setView] = useState<'welcome' | 'form'>('welcome')
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,6 +37,28 @@ export function Auth() {
   const [loading, setLoading] = useState(false)
   const [signedUp, setSignedUp] = useState(false)
   const [showPw, setShowPw] = useState(false)
+  const [guestBusy, setGuestBusy] = useState(false)
+
+  // Start as a guest: an anonymous session so the learner can begin immediately.
+  // Their progress is real and tied to this account; they convert it to an email
+  // account later (keeping everything) from the "Save your progress" prompt.
+  const startGuest = async () => {
+    setError(''); setGuestBusy(true)
+    try {
+      const { error: err } = await supabase.auth.signInAnonymously()
+      if (err) {
+        // Most likely: anonymous sign-ins aren't enabled on the project yet.
+        setError('Could not start a guest session. Create a quick account to begin.')
+        setView('form'); setMode('signup')
+      }
+      // Success: onAuthStateChange fires and the app leaves this gate.
+    } catch {
+      setError('Could not start a guest session. Create a quick account to begin.')
+      setView('form'); setMode('signup')
+    } finally {
+      setGuestBusy(false)
+    }
+  }
 
   const submit = async (e?: FormEvent) => {
     e?.preventDefault()
@@ -75,10 +99,57 @@ export function Auth() {
     )
   }
 
+  /* ---- Welcome: start immediately, no account needed ---- */
+  if (view === 'welcome') {
+    return (
+      <div className="ps-noscroll" style={{ position: 'absolute', inset: 0, overflowY: 'auto',
+        display: 'flex', flexDirection: 'column', padding: '56px 26px 30px' }}>
+        <PuhuMark size={21} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: 8 }}>
+          <BrandMark size={96} />
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28,
+            letterSpacing: '-0.035em', lineHeight: 1.02, color: 'var(--ink)', margin: '18px 0 0' }}>
+            Ymmärrä kirjat. Puhu katukieltä.
+          </h1>
+          {bilingual && (
+            <p style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 14.5, color: 'var(--ink-3)', margin: '6px 0 0' }}>
+              Understand the books. Speak the street.
+            </p>
+          )}
+          <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.9, lineHeight: 1.5,
+            color: 'var(--ink-2)', margin: '16px 0 0', maxWidth: 320 }}>
+            Start learning Finnish right now. No account needed; you can save your progress later.
+          </p>
+        </div>
+
+        {error && (
+          <div className="ps-body" style={{ marginBottom: 12, padding: '12px 16px', borderRadius: 'var(--r-md)',
+            background: 'var(--flag-bg)', color: 'var(--flag)' }}>{error}</div>
+        )}
+
+        <CTA variant="ink" icon="sparkle" disabled={guestBusy} onClick={() => void startGuest()}
+          fi={guestBusy ? 'Hetki…' : 'Aloita oppiminen'} en={guestBusy ? 'One moment' : 'Start learning'} />
+        <button onClick={() => { setView('form'); setMode('signin'); setError('') }} className="ps-press"
+          style={{ marginTop: 14, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0',
+            fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14.5, color: 'var(--ink-2)' }}>
+          Minulla on jo tili{bilingual && <span style={{ fontWeight: 500, color: 'var(--ink-3)' }}> · I already have an account</span>}
+        </button>
+      </div>
+    )
+  }
+
+  /* ---- Email form (returning users, or create an account up front) ---- */
   return (
     <div className="ps-noscroll" style={{ position: 'absolute', inset: 0, overflowY: 'auto',
       display: 'flex', flexDirection: 'column', padding: '56px 26px 30px' }}>
-      <PuhuMark size={21} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button onClick={() => { setView('welcome'); setError('') }} aria-label="Back" className="ps-press" style={{
+          width: 38, height: 38, borderRadius: '50%', border: 'none', cursor: 'pointer', flexShrink: 0,
+          background: 'var(--glass-deep)', color: 'var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <I name="arrow" size={18} sw={2} style={{ transform: 'rotate(180deg)' }} />
+        </button>
+        <PuhuMark size={21} />
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', paddingTop: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>

@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { I } from '../components/icons'
 import { BrandMark } from '../components/primitives'
 import { Bar, Ring } from '../components/ui'
 import { Eyebrow, CTA, IconTile } from '../components/kit'
 import { PuhuMark, ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
+import { SaveProgressSheet } from '../components/SaveProgress'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
@@ -55,11 +57,12 @@ function greeting(): { fi: string; en: string } {
 }
 
 export function Home({ go }: { go: (s: AppScreen) => void }) {
-  const { user } = useAuth()
+  const { user, isAnonymous } = useAuth()
   const { progress } = useProgress()
   const { bi } = useLang()
   const userId = user?.id ?? ''
   const { data, loading, error } = useAsync<HomeData>(() => fetchHomeData(userId), [userId])
+  const [saveOpen, setSaveOpen] = useState(false)
 
   const nav = <BottomNav active="home" onNav={go} />
 
@@ -77,6 +80,22 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
         <TopRow streak={studyStreak()} />
         <Greeting {...(sprintStarted ? { fi: 'Tervetuloa takaisin!', en: 'Welcome back!' } : greeting())} />
 
+        {/* Guest: gentle nudge to save progress (keeps everything, no data loss) */}
+        {isAnonymous && (
+          <button onClick={() => setSaveOpen(true)} className="ps-press" style={{ marginTop: 14, width: '100%',
+            display: 'flex', alignItems: 'center', gap: 11, padding: '12px 14px', borderRadius: 'var(--r-lg)',
+            border: '1px solid var(--written-line)', background: 'var(--written-bg)', cursor: 'pointer', textAlign: 'left' }}>
+            <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="star" size={18} sw={1.9} /></span>
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13.5, color: 'var(--ink)' }}>
+                Tallenna edistymisesi
+              </span>
+              <span className="ps-caption">You're learning as a guest. Add an email to keep it on any device.</span>
+            </span>
+            <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="arrow" size={18} sw={2} /></span>
+          </button>
+        )}
+
         {/* What's next: resume/start the first sprint, or the daily plan */}
         {sprintDone
           ? <TodayPlan d={d} go={go} />
@@ -86,6 +105,7 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
         <ProgressDash js={js} bank={d.bank} sentBank={d.sentBank} onOpen={() => go('progress')} />
       </ScreenScroll>
       {nav}
+      <SaveProgressSheet open={saveOpen} onClose={() => setSaveOpen(false)} />
     </>
   )
 }
