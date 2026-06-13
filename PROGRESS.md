@@ -521,6 +521,16 @@ Next: the "what's your first language?" onboarding question (store in users.prog
 
 ---
 
+## Session: 2026-06-13 (First-language onboarding question + language tally in insights)
+
+Shipped: New final onboarding step "What is your first language?" — a tappable picker of the larger Finland immigrant-language groups (English, Russian, Estonian, Arabic, Ukrainian, Somali, Persian, Other), optional (Skip works). Stored on progress.firstLanguage (users.progress jsonb, synced; no storage migration); progress.tsx gained setFirstLanguage + merge handling. Migration 20260611000002 CREATE OR REPLACEs owner_insights() to add a "languages" breakdown (each first language + tester count; "Not set" for unanswered); the Insights screen renders it as bars, guarded with (languages ?? []) so it stays hidden until the migration runs. Owner confirmed 20260611000001 already run + insights dashboard working. Build clean, 39 JS tests green.
+
+Blocked: OWNER ACTION — run supabase/migrations/20260611000002_insights_languages.sql once for the language breakdown. Also still: enable "Allow anonymous sign-ins" in Supabase Auth for the guest "Start learning" flow.
+
+Next: Grammar Stage 2 content (SKK1 notes) so sprint-finishers don't hit a locked wall; then native listening clips / mnemonics as feedback dictates.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
