@@ -1,3 +1,4 @@
+import { Bar } from '../components/ui'
 import { ExBar, CenterLabel, Eyebrow, StatTile } from '../components/kit'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
@@ -37,6 +38,29 @@ export function Insights({ go }: { go: (s: AppScreen) => void }) {
         <StatTile n={d.totals.reviews7} fi="reviews" en="last 7 days" tone="var(--flag)" />
         <StatTile n={d.totals.feedback} fi="feedback" en="notes total" tone="#C2603F" />
       </div>
+
+      {/* First languages — demand evidence for which UI languages to add next */}
+      {(d.languages ?? []).length > 0 && (
+        <>
+          <Eyebrow fi="FIRST LANGUAGES" en="what testers speak" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 12 }} />
+          <div className="ps-card" style={{ padding: '14px 16px', borderRadius: 'var(--r-lg)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {(d.languages ?? []).map((l) => {
+              const top = Math.max(1, ...(d.languages ?? []).map((x) => x.n))
+              return (
+                <div key={l.language} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ width: 78, flexShrink: 0, fontFamily: 'var(--font-display)', fontWeight: 700,
+                    fontSize: 13, color: l.language === 'Not set' ? 'var(--ink-3)' : 'var(--ink)' }}>{l.language}</span>
+                  <span style={{ flex: 1 }}>
+                    <Bar value={(l.n / top) * 100} color="var(--written)" track="var(--glass-deep)" h={8} />
+                  </span>
+                  <span className="ps-num" style={{ width: 28, textAlign: 'right', fontFamily: 'var(--font-body)',
+                    fontWeight: 600, fontSize: 12.5, color: 'var(--ink-3)' }}>{l.n}</span>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
 
       {/* Tester list */}
       <Eyebrow fi="TESTERS" en="most recent first" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 12 }} />

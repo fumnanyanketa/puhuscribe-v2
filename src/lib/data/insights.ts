@@ -39,8 +39,14 @@ export interface InsightFeedback {
   at: string
 }
 
+export interface InsightLanguage {
+  language: string
+  n: number
+}
+
 export interface OwnerInsights {
   totals: InsightTotals
+  languages: InsightLanguage[]
   testers: InsightTester[]
   feedback: InsightFeedback[]
 }

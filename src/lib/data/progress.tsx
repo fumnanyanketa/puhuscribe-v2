@@ -14,7 +14,14 @@ import { useAuth } from '../auth/useAuth'
 export type SprintProgress = { size: number; idx: number; completed?: boolean }
 // shadow: per-set "listen & repeat" position (set id -> furthest sentence index),
 // so the Sentence Bank starter pack and any set resume where the learner stopped.
-export type UserProgress = { onboarded?: boolean; sprint?: SprintProgress; shadow?: Record<string, number> }
+// firstLanguage: the learner's native language (onboarding) — demand evidence for
+// which UI languages to add next; aggregated in the owner insights dashboard.
+export type UserProgress = {
+  onboarded?: boolean
+  sprint?: SprintProgress
+  shadow?: Record<string, number>
+  firstLanguage?: string
+}
 
 const lsKey = (userId: string) => `puhuscribe:progress:${userId}`
 const legacySprintKey = (userId: string) => `puhuscribe:dayone:${userId}`
@@ -77,6 +84,8 @@ function mergeProgress(a: UserProgress, b: UserProgress): UserProgress {
   // local cache is missing (e.g. after a PWA localStorage purge), which is what
   // makes resume reliable on devices that drop localStorage.
   if (a.shadow || b.shadow) merged.shadow = { ...(b.shadow ?? {}), ...(a.shadow ?? {}) }
+  const firstLanguage = a.firstLanguage ?? b.firstLanguage
+  if (firstLanguage) merged.firstLanguage = firstLanguage
   return merged
 }
 
@@ -86,11 +95,13 @@ interface ProgressCtx {
   markOnboarded: () => void
   saveSprint: (sprint: SprintProgress) => void
   saveShadow: (setId: string, idx: number) => void
+  setFirstLanguage: (lang: string) => void
   resetProgress: () => void
 }
 
 const Ctx = createContext<ProgressCtx>({
-  progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {}, saveShadow: () => {}, resetProgress: () => {},
+  progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {}, saveShadow: () => {},
+  setFirstLanguage: () => {}, resetProgress: () => {},
 })
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
@@ -147,13 +158,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     update({ shadow })
   }, [update])
 
+  const setFirstLanguage = useCallback((lang: string) => {
+    const v = lang.trim()
+    if (v) update({ firstLanguage: v })
+  }, [update])
+
   // Clear onboarding + sprint position (used by the "reset progress" action).
   const resetProgress = useCallback(() => {
     setProgress({})
     if (userId) void saveProgress(userId, {})
   }, [userId])
 
-  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, saveShadow, resetProgress }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, saveShadow, setFirstLanguage, resetProgress }}>{children}</Ctx.Provider>
 }
 
 export const useProgress = () => useContext(Ctx)
