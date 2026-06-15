@@ -602,11 +602,11 @@ DONE by the owner (no longer outstanding):
 - AI writing feedback: `ANTHROPIC_API_KEY` added as a GitHub repo secret + the "Deploy TTS Worker" Action re-run, so Write uses live Claude Haiku `/correct`.
 - Azure Speech key rotated.
 - Owner insights migration `20260611000001_owner_insights.sql` run — the in-app Owner Insights dashboard works.
+- `20260611000002_insights_languages.sql` run (confirmed 2026-06-15: the "First languages" section renders in Owner Insights, showing "Not set · 9"). The 9 existing testers all onboarded BEFORE the first-language question shipped (2026-06-13), so they read "Not set"; the breakdown fills in as NEW testers answer in onboarding.
 - **Anonymous sign-ins ENABLED** in Supabase Auth (2026-06-15) — the guest "Start learning" flow works (no longer falls back to the account form).
 - **Native-speaker review of the content DONE** (2026-06-15) — the owner had a Finnish native speaker review the content (the 104 starter-pack sentences / puhekieli). Treat the reviewed content as verified. OPEN QUESTION: if the reviewer marked corrections, they still need to be applied to the seeds (puhekieli) / grammar examples / rank titles — owner to send the marked-up list if so.
 
 STILL PENDING (owner):
-- `supabase/migrations/20260611000002_insights_languages.sql` — owner UNSURE if run. Idempotent (CREATE OR REPLACE); safe to re-run. Check: the "First languages" section appears in Owner Insights only once it's run.
 - **Email feedback (Resend) — owner WANTS it, NOT set up yet.** The Worker `/feedback` route + the deploy workflow's optional secrets step are already built. To turn on: (1) create a free Resend account + verify a sending email, copy an API key; (2) add repo secrets `RESEND_API_KEY` and `FEEDBACK_EMAIL_TO` (your inbox; use the SAME address verified with Resend, since the default onboarding@resend.dev sender only delivers to your own verified address); (3) re-run "Deploy TTS Worker". Until then feedback still lands in Supabase + Owner Insights.
 
 NOT needed (deliberately dropped): deploying the `services/voikko/` runtime service. Island sentences no longer carry a "draft" label.
