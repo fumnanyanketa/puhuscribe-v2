@@ -595,16 +595,20 @@ Next: M3 streak week-strip; make Grammar lessons active; owner pending — enabl
 
 ---
 
-## Owner actions — status (updated 2026-06-09)
+## Owner actions — status (updated 2026-06-15)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
-- Supabase SQL run: `users.progress` jsonb column (cross-device resume), `GRANT DELETE ON cards` (reset), and the `supabase/seeds/05_island_sentences.sql` seed (the 50 real "arki" sentences → Listen/Write/Speak are live, not the fallback). Earlier migrations (content_fixes, IPA, grants, user_progress, grant_card_delete) also run.
-- AI writing feedback: `ANTHROPIC_API_KEY` added as a GitHub repo secret + the "Deploy TTS Worker" Action re-run, so Write now uses live Claude Haiku `/correct` (no longer the self-check fallback).
+- Supabase SQL run: `users.progress` jsonb column (cross-device resume), `GRANT DELETE ON cards` (reset), and the `supabase/seeds/05_island_sentences.sql` seed (now the 104 "arki" sentences → Listen/Write/Speak are live). Earlier migrations (content_fixes, IPA, grants, user_progress, grant_card_delete) also run.
+- AI writing feedback: `ANTHROPIC_API_KEY` added as a GitHub repo secret + the "Deploy TTS Worker" Action re-run, so Write uses live Claude Haiku `/correct`.
 - Azure Speech key rotated.
+- Owner insights migration `20260611000001_owner_insights.sql` run — the in-app Owner Insights dashboard works.
+- **Anonymous sign-ins ENABLED** in Supabase Auth (2026-06-15) — the guest "Start learning" flow works (no longer falls back to the account form).
+- **Native-speaker review of the content DONE** (2026-06-15) — the owner had a Finnish native speaker review the content (the 104 starter-pack sentences / puhekieli). Treat the reviewed content as verified. OPEN QUESTION: if the reviewer marked corrections, they still need to be applied to the seeds (puhekieli) / grammar examples / rank titles — owner to send the marked-up list if so.
 
-STILL PENDING:
-- Finnish-speaker verification pass on the puhekieli column (`docs/island-sentences.md` + `docs/generated_puhekieli_REVIEW.tsv`). Kirjakieli is Voikko-validated; puhekieli has no machine validator, so it stays text-only until a Finnish speaker eyeballs it. Then puhekieli audio can be enabled.
+STILL PENDING (owner):
+- `supabase/migrations/20260611000002_insights_languages.sql` — owner UNSURE if run. Idempotent (CREATE OR REPLACE); safe to re-run. Check: the "First languages" section appears in Owner Insights only once it's run.
+- **Email feedback (Resend) — owner WANTS it, NOT set up yet.** The Worker `/feedback` route + the deploy workflow's optional secrets step are already built. To turn on: (1) create a free Resend account + verify a sending email, copy an API key; (2) add repo secrets `RESEND_API_KEY` and `FEEDBACK_EMAIL_TO` (your inbox; use the SAME address verified with Resend, since the default onboarding@resend.dev sender only delivers to your own verified address); (3) re-run "Deploy TTS Worker". Until then feedback still lands in Supabase + Owner Insights.
 
-NOT needed (deliberately dropped): deploying the `services/voikko/` runtime service. Island sentences no longer carry a "draft" label — we trust the beginner-tuned Sonnet translation for personal content. The service code stays dormant in the repo only as a future option.
+NOT needed (deliberately dropped): deploying the `services/voikko/` runtime service. Island sentences no longer carry a "draft" label.
 
 Notes: VITE_TTS_WORKER_URL set in Vercel (TTS works). Read docs/pedagogy-pressure-test.md for the four-skills rationale + what's still missing (real native listening clips, reading mode, mnemonics).
