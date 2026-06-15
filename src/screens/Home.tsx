@@ -101,6 +101,23 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
           ? <TodayPlan d={d} go={go} />
           : <SprintHero go={go} sprint={progress.sprint ?? null} />}
 
+        {/* Sprint started but not finished: the spaced-repetition loop can begin
+            now on the words already met — no need to wait for the whole sprint. */}
+        {sprintStarted && (
+          <button onClick={() => go('daily')} className="ps-card ps-press" style={{ marginTop: 14, padding: 16,
+            borderRadius: 'var(--r-lg)', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 13 }}>
+            <IconTile icon="review" size={44} r={12} color="var(--spoken)" bg="var(--spoken-bg)" />
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
+                Päivän kertaus
+              </span>
+              <span className="ps-caption">Review the words you've already met. Finish your sprint to add more.</span>
+            </span>
+            <span style={{ color: 'var(--ink-3)', flexShrink: 0 }}><I name="arrow" size={20} sw={2} /></span>
+          </button>
+        )}
+
         {/* The dashboard: overall progress + the two banks you are growing */}
         <ProgressDash js={js} bank={d.bank} sentBank={d.sentBank} onOpen={() => go('progress')} />
       </ScreenScroll>

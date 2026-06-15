@@ -58,7 +58,7 @@ function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => 
       <SprintRunner
         deck={words.slice(0, size)}
         startIdx={startIdx}
-        labelFor={(wave) => ({ fi: `DAY ONE · WAVE ${wave} / 8` })}
+        labelFor={() => ({ fi: 'PÄIVÄ YKSI', en: 'Day one' })}
         onAdvance={(idx) => saveSprint({ size, idx, completed: idx >= size })}
         onExit={() => go('home')}
         done={{
@@ -194,10 +194,11 @@ export function SprintRunner({ deck, startIdx, labelFor, onAdvance, onExit, done
   const [mastered, setMastered] = useState(Math.max(0, Math.min(startIdx, total)))
   const [finished, setFinished] = useState(false)
   const [playing, setPlaying] = useState(false)
+  // A quick encouragement screen every 25 words (a natural break + progress).
+  const [milestone, setMilestone] = useState<number | null>(null)
 
   const w = deck[idx]
-  const wave = Math.min(8, Math.floor((mastered / total) * 8) + 1)
-  const label = labelFor(wave)
+  const label = labelFor(mastered)
 
   const play = () => {
     setPlaying(true)
@@ -223,17 +224,30 @@ export function SprintRunner({ deck, startIdx, labelFor, onAdvance, onExit, done
 
   const next = () => {
     if (user) void recordWordEncounter(user.id, w.id, picked === w.en)
+    const newMastered = Math.min(total, mastered + 1)
+    setMastered(newMastered)
     const nx = idx + 1
-    setMastered((m) => Math.min(total, m + 1))
     if (nx >= total) {
       onAdvance(total)
       setFinished(true)
       return
     }
     onAdvance(nx)
+    // Every 25 words, pause on an encouragement screen before the next card.
+    // (The card/idx only advances when they tap "Keep going", so the next
+    // word's audio doesn't fire behind the milestone screen.)
+    if (newMastered % 25 === 0) { setMilestone(newMastered); return }
     setPicked(null)
     setPhase('card')
     setIdx(nx)
+  }
+
+  // Dismiss the encouragement screen and move on to the next word's card.
+  const continueFromMilestone = () => {
+    setMilestone(null)
+    setPicked(null)
+    setPhase('card')
+    setIdx((i) => Math.min(i + 1, total - 1))
   }
 
   if (finished) {
@@ -252,6 +266,36 @@ export function SprintRunner({ deck, startIdx, labelFor, onAdvance, onExit, done
             {done.onSecondary && (
               <CTA fi={done.secondaryFi ?? ''} en={done.secondaryEn} variant="light" onClick={done.onSecondary} />
             )}
+          </div>
+        </div>
+      </ScreenScroll>
+    )
+  }
+
+  if (milestone !== null) {
+    const pct = Math.round((milestone / total) * 100)
+    const left = total - milestone
+    return (
+      <ScreenScroll bottom={26}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          alignItems: 'center', textAlign: 'center', gap: 22 }}>
+          <BrandMark size={120} />
+          <div>
+            <StackLabel fi="HIENOA!" en="Great work" color="var(--written)" style={{ marginBottom: 10 }} />
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 30,
+              letterSpacing: '-0.03em', color: 'var(--ink)', margin: 0 }}>
+              {milestone} / {total} <span style={{ fontSize: 18, color: 'var(--ink-3)' }}>sanaa</span>
+            </h2>
+            <p className="ps-body" style={{ color: 'var(--ink-2)', marginTop: 10, maxWidth: 300 }}>
+              You're {pct}% through the sprint. {left} words to go. Keep going!
+            </p>
+          </div>
+          <div style={{ width: '100%', maxWidth: 320 }}>
+            <Bar value={pct} color="var(--written)" track="var(--glass-deep)" h={10} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 320 }}>
+            <CTA fi="Jatka" en="Keep going" iconRight="arrow" variant="ink" onClick={continueFromMilestone} />
+            <CTA fi="Pidä tauko" en="Take a break (resume later)" variant="light" onClick={onExit} />
           </div>
         </div>
       </ScreenScroll>
