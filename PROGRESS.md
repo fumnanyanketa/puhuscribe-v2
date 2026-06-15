@@ -575,6 +575,16 @@ Next (motivation polish, if wanted): the 10-min streak week-strip / "X min to ke
 
 ---
 
+## Session: 2026-06-15 (Fix sentence progress = practiced, not just-added; feedback button overlap)
+
+Shipped two owner-flagged fixes on the Home dashboard. (1) Sentence progress no longer inflates from the starter pack: adding it copies 104 sentences into the bank, which was being counted as 104/1000 before any practice. New ReviewOverview.sentDone = island_recall cards with reps>0 (recalled at least once); the journey % (journeyState), the Home dashboard "Lauseet" bar, the Progress journey + sentences stat tile, and the Daily sentence track now use sentDone. Raw bank size stays only as inventory (Sentence Bank tab). Words were already correct (seeded per word actually met in the sprint). (2) The floating Palaute/Feedback button was covering the last dashboard card — bumped Home bottom clearance 96 -> 150 so the Vocabulary/Sentences rows clear it. Build clean, 44 JS tests.
+
+Blocked: nothing. Definition note: "sentence done" = practiced via recall (reps>0); shadow-only (Listen & repeat) progress is tracked per-set separately and is not yet folded into this figure — flag if the owner wants shadow to count too.
+
+Next: motivation polish (M3 streak week-strip), make Grammar lessons active; owner pending — enable anon sign-ins, run 20260611000002.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
