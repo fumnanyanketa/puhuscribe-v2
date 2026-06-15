@@ -561,6 +561,20 @@ Next: build the progressive-motivation layer (owner to prioritise); also pending
 
 ---
 
+## Session: 2026-06-15 (Progressive-motivation system: ranks + milestones + celebrations + journey spine)
+
+Owner approved building the five mockup concepts as ONE system (showed rendered mockups in chat first). Shipped in two parts.
+
+Part 1 — the engine + placement: src/lib/milestones.ts (word-count milestones with rank titles: 50 Ensiaskeleet … 2000 Perusta valmis; rankState/ladder/newlyReached; 5 unit tests, 44 total). Celebration.tsx (the pop when a word milestone is crossed — rank-up + confetti, over Home). Milestones.tsx (MilestoneLadder done/current/locked with a live bar to the next rung; RankSummary compact line). Home: the dashboard card now shows current rank + "X to next"; crossing a new milestone fires the Celebration once (progress.celebrated tracks the highest celebrated, synced jsonb, merge keeps max; markCelebrated). Progress: a "Merkkipaalut / Milestones" ladder beneath the journey stage map.
+
+Part 2 — cohesion: the Journey's current stage now carries an inline "do this next" button (Journey takes optional `action`; Progress computes Start/Continue sprint -> Day One, or Daily review when done). The map is now the spine, not a static chart.
+
+Blocked: nothing. Rank titles are common Finnish words — add to the native-speaker review list. Celebrations fire on the next Home load after crossing a milestone (Home remounts per nav, so it's reliable on returning from a session).
+
+Next (motivation polish, if wanted): the 10-min streak week-strip / "X min to keep your streak" on Home (M3 deeper); a unified next-step helper to also drive Home's hero. Still pending: make Grammar lessons active (drills + FSRS); enable anon sign-ins; run 20260611000002 (language tally).
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
