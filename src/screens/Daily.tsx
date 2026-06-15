@@ -70,7 +70,7 @@ function Hub({ userId, go, onVocab, onSentences }: {
       <ReviewCard
         icon="sprout" tone="var(--spoken)" toneBg="var(--spoken-bg)"
         title="Omat lauseet" en="Your sentences"
-        bank={o.sentBank} goal={SENT_GOAL} unitFi="lausetta" unitEn="sentences" due={o.sentDue}
+        bank={o.sentDone} goal={SENT_GOAL} unitFi="lausetta" unitEn="sentences" due={o.sentDue}
         empty={o.sentBank === 0}
         emptyFi="Lisää lauseita" emptyEn="Add sentences" onEmpty={() => go('islands')}
         onReview={onSentences}

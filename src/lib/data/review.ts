@@ -17,7 +17,8 @@ export type ReviewItem =
 export interface ReviewOverview {
   vocabBank: number   // words the learner has met (word_production cards)
   vocabDue: number    // word reviews due now
-  sentBank: number    // personal island sentences authored
+  sentBank: number    // sentences in the bank (incl. just-added starter pack copies)
+  sentDone: number    // sentences actually practiced (island_recall reps > 0) — real progress
   sentDue: number     // island sentence reviews due now (incl. brand-new)
 }
 
@@ -25,11 +26,15 @@ export async function fetchReviewOverview(userId: string): Promise<ReviewOvervie
   const now = new Date().toISOString()
   const head = { count: 'exact' as const, head: true }
 
-  const [vBank, vDue, sBank, sDue] = await Promise.all([
+  const [vBank, vDue, sBank, sDone, sDue] = await Promise.all([
     supabase.from('cards').select('*', head).eq('user_id', userId).eq('card_type', 'word_production'),
     supabase.from('cards').select('*', head).eq('user_id', userId).eq('card_type', 'word_production')
       .in('state', ['review', 'learning', 'relearning']).lte('due', now),
     supabase.from('user_island_sentences').select('*', head).eq('user_id', userId),
+    // "Done" = actually practiced at least once (recalled), NOT just copied in
+    // (a freshly-added starter pack sits at reps 0 and must not inflate progress).
+    supabase.from('cards').select('*', head).eq('user_id', userId).eq('card_type', 'island_recall')
+      .not('island_sentence_id', 'is', null).gt('reps', 0),
     supabase.from('cards').select('*', head).eq('user_id', userId).eq('card_type', 'island_recall')
       .not('island_sentence_id', 'is', null).lte('due', now),
   ])
@@ -38,6 +43,7 @@ export async function fetchReviewOverview(userId: string): Promise<ReviewOvervie
     vocabBank: vBank.count ?? 0,
     vocabDue: vDue.count ?? 0,
     sentBank: sBank.count ?? 0,
+    sentDone: sDone.count ?? 0,
     sentDue: sDue.count ?? 0,
   }
 }

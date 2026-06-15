@@ -7,7 +7,8 @@ export interface HomeData {
   bank: number       // words met (word_production cards)
   vocabDue: number   // word reviews due now
   sentDue: number    // sentence reviews due now
-  sentBank: number   // personal sentences authored
+  sentBank: number   // sentences in the bank (incl. just-added starter pack)
+  sentDone: number   // sentences actually practiced — the real progress figure
   sets: number       // sentence sets
   streak: number     // consecutive review days
 }
@@ -23,6 +24,7 @@ export async function fetchHomeData(userId: string): Promise<HomeData> {
     vocabDue: overview.vocabDue,
     sentDue: overview.sentDue,
     sentBank: overview.sentBank,
+    sentDone: overview.sentDone,
     sets: setsRes.count ?? 0,
     streak: stats.streakDays,
   }

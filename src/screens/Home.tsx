@@ -18,7 +18,9 @@ import { journeyState, JourneyState, STAGE1_WORDS, STAGE1_SENTENCES } from '../l
 import { newlyReached } from '../lib/milestones'
 import { studyStreak, todayStudyMinutes, DAILY_GOAL_MIN } from '../lib/studyTime'
 
-const BODY_BOTTOM = 96
+// Extra bottom clearance so the floating "Palaute / Feedback" button (which sits
+// ~94px up on the right) never covers the last dashboard card.
+const BODY_BOTTOM = 150
 const DAILY_WORDS = 15
 
 /* Wordmark + streak chip */
@@ -75,7 +77,9 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
 
   const sprintDone = Boolean(progress.sprint?.completed)
   const sprintStarted = Boolean(progress.sprint && (progress.sprint.idx ?? 0) > 0 && !sprintDone)
-  const js = journeyState(d.bank, d.sentBank)
+  // Sentence progress reflects sentences actually PRACTICED (d.sentDone), not the
+  // raw bank — so adding the starter pack doesn't inflate the figure.
+  const js = journeyState(d.bank, d.sentDone)
   // A word milestone just crossed but not yet celebrated → show the pop.
   const celebrate = newlyReached(d.bank, progress.celebrated ?? 0)
 
@@ -124,7 +128,7 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
         )}
 
         {/* The dashboard: overall progress + the two banks you are growing */}
-        <ProgressDash js={js} bank={d.bank} sentBank={d.sentBank} onOpen={() => go('progress')} />
+        <ProgressDash js={js} bank={d.bank} sentDone={d.sentDone} onOpen={() => go('progress')} />
       </ScreenScroll>
       {nav}
       <SaveProgressSheet open={saveOpen} onClose={() => setSaveOpen(false)} />
@@ -231,8 +235,8 @@ function TodayPlan({ d, go }: { d: HomeData; go: (s: AppScreen) => void }) {
    Progress dashboard — the headline % and the two banks (tap → Progress
    for the full journey map, which stays on its own page)
    ===================================================================== */
-function ProgressDash({ js, bank, sentBank, onOpen }: {
-  js: JourneyState; bank: number; sentBank: number; onOpen: () => void
+function ProgressDash({ js, bank, sentDone, onOpen }: {
+  js: JourneyState; bank: number; sentDone: number; onOpen: () => void
 }) {
   const { bilingual } = useLang()
   return (
@@ -263,7 +267,7 @@ function ProgressDash({ js, bank, sentBank, onOpen }: {
       </div>
       <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
         <BankBar fi="Sanasto" en="Vocabulary" value={bank} goal={STAGE1_WORDS} color="var(--written)" />
-        <BankBar fi="Lauseet" en="Sentences" value={sentBank} goal={STAGE1_SENTENCES} color="var(--spoken)" />
+        <BankBar fi="Lauseet" en="Sentences" value={sentDone} goal={STAGE1_SENTENCES} color="var(--spoken)" />
       </div>
     </button>
   )
