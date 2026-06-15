@@ -77,9 +77,12 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
 
   const sprintDone = Boolean(progress.sprint?.completed)
   const sprintStarted = Boolean(progress.sprint && (progress.sprint.idx ?? 0) > 0 && !sprintDone)
-  // Sentence progress reflects sentences actually PRACTICED (d.sentDone), not the
-  // raw bank — so adding the starter pack doesn't inflate the figure.
-  const js = journeyState(d.bank, d.sentDone)
+  // Sentence progress = sentences actually PRACTISED, by recall (d.sentDone) OR by
+  // "listen & repeat" (sum of shadow positions). Capped at the bank so a stale
+  // entry can't overshoot. Adding the starter pack alone stays 0 until you do it.
+  const shadowDone = Object.values(progress.shadow ?? {}).reduce((a, b) => a + (Number(b) || 0), 0)
+  const sentProgress = Math.min(d.sentBank, Math.max(d.sentDone, shadowDone))
+  const js = journeyState(d.bank, sentProgress)
   // A word milestone just crossed but not yet celebrated → show the pop.
   const celebrate = newlyReached(d.bank, progress.celebrated ?? 0)
 
@@ -128,7 +131,7 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
         )}
 
         {/* The dashboard: overall progress + the two banks you are growing */}
-        <ProgressDash js={js} bank={d.bank} sentDone={d.sentDone} onOpen={() => go('progress')} />
+        <ProgressDash js={js} bank={d.bank} sentDone={sentProgress} onOpen={() => go('progress')} />
       </ScreenScroll>
       {nav}
       <SaveProgressSheet open={saveOpen} onClose={() => setSaveOpen(false)} />
@@ -252,22 +255,27 @@ function ProgressDash({ js, bank, sentDone, onOpen }: {
           </div>
         </Ring>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--ink)' }}>
             Vaihe {js.current} · Perusta
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 12.5, color: 'var(--ink-2)', marginTop: 1 }}>
-            {js.overallPct}% valmis{bilingual && <span style={{ color: 'var(--ink-3)' }}> · Foundation</span>}
-          </div>
-          <div style={{ marginTop: 5 }}><RankSummary words={bank} /></div>
+          {bilingual && (
+            <div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 12.5, color: 'var(--ink-3)', marginTop: 1 }}>
+              Foundation
+            </div>
+          )}
         </div>
         <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ink-3)' }}>
           <span className="ps-label" style={{ color: 'var(--ink-3)' }}>MATKA</span>
           <I name="arrow" size={18} sw={2} />
         </span>
       </div>
-      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
         <BankBar fi="Sanasto" en="Vocabulary" value={bank} goal={STAGE1_WORDS} color="var(--written)" />
         <BankBar fi="Lauseet" en="Sentences" value={sentDone} goal={STAGE1_SENTENCES} color="var(--spoken)" />
+      </div>
+      {/* Rank / next badge — one tidy full-width line, not crammed by the ring */}
+      <div style={{ marginTop: 14, paddingTop: 13, borderTop: '1px solid var(--glass-line)' }}>
+        <RankSummary words={bank} />
       </div>
     </button>
   )

@@ -9,27 +9,23 @@ import { ladder, rankState } from '../lib/milestones'
  * on the Home dashboard.
  * ------------------------------------------------------------------------- */
 
-/** Compact "Level N · Rank · X to next" line for the Home dashboard. */
+/** Compact one-line rank/next-milestone summary for the Home dashboard footer. */
 export function RankSummary({ words }: { words: number }) {
-  const { bi } = useLang()
+  const { bilingual } = useLang()
   const s = rankState(words)
-  if (!s.rank) {
-    // Before the first milestone: point at it.
-    return (
-      <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12.5, color: 'var(--ink-3)' }}>
-        {s.toNext} {bi('sanaa ensimmäiseen merkkipaaluun', 'words to your first milestone')}
-      </div>
-    )
-  }
+  const emoji = s.rank ? s.rank.emoji : '🎯'
+  const fi = s.rank ? s.rank.fi : 'Ensimmäinen merkkipaalu'
+  const en = s.rank ? s.rank.en : 'first milestone'
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-      <span>{s.rank.emoji}</span>
-      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--ink)' }}>
-        {bi(s.rank.fi, s.rank.en)}
-      </span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
+      <span style={{ fontSize: 14, flexShrink: 0 }}>{emoji}</span>
+      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12.5, color: 'var(--ink)', whiteSpace: 'nowrap' }}>{fi}</span>
+      {bilingual && (
+        <span style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 11, color: 'var(--ink-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{en}</span>
+      )}
       {s.next && (
-        <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, color: 'var(--ink-3)' }}>
-          · {s.toNext} {bi('seuraavaan', 'to next')}
+        <span className="ps-num" style={{ marginLeft: 'auto', flexShrink: 0, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11.5, color: 'var(--written)', whiteSpace: 'nowrap' }}>
+          {s.toNext} →
         </span>
       )}
     </div>

@@ -59,10 +59,13 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
 
   if (loading) return <><StatePane title={bi('Ladataan…', 'Loading')} bottom={BODY_BOTTOM + 14} />{nav}</>
   if (error) return <><StatePane tone="error" title="Couldn't load progress" detail={error} bottom={BODY_BOTTOM + 14} />{nav}</>
-  const { stats, sentDone } = data!
+  const { stats, sentBank, sentDone } = data!
 
-  // Sentence progress = sentences actually practiced, not just copied in.
-  const js = journeyState(stats.totalCards, sentDone)
+  // Sentence progress = sentences actually practised (recall) or shadowed
+  // ("listen & repeat"), capped at the bank — never just-copied starter sentences.
+  const shadowDone = Object.values(progress.shadow ?? {}).reduce((a, b) => a + (Number(b) || 0), 0)
+  const sentProgress = Math.min(sentBank, Math.max(sentDone, shadowDone))
+  const js = journeyState(stats.totalCards, sentProgress)
   // The journey's inline "do this next" on the current stage.
   const sDone = Boolean(progress.sprint?.completed)
   const sStarted = Boolean(progress.sprint && (progress.sprint.idx ?? 0) > 0 && !sDone)
@@ -118,7 +121,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
       {/* The whole journey: Launchpad to North Star (YKI B2) */}
       <div className="ps-glass" style={{ marginTop: 16, padding: 18, borderRadius: 'var(--r-xl)' }}>
         <Eyebrow fi="MATKASI" en="Your journey" color="var(--ink-3)" style={{ marginBottom: 16 }} />
-        <Journey words={stats.totalCards} sentences={sentDone} action={journeyAction} />
+        <Journey words={stats.totalCards} sentences={sentProgress} action={journeyAction} />
       </div>
 
       {/* The milestone ladder — the granular climb beneath the stages */}
@@ -130,7 +133,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
       {/* Stat tiles — all real */}
       <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
         <StatTile n={stats.totalCards} fi="sanaa" en="words" tone="var(--written)" />
-        <StatTile n={sentDone} fi="lausetta" en="sentences" tone="var(--spoken)" />
+        <StatTile n={sentProgress} fi="lausetta" en="sentences" tone="var(--spoken)" />
         <StatTile n={streak} fi="päivää" en="day streak" tone="var(--flag)" />
       </div>
 

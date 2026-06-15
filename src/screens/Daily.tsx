@@ -8,6 +8,7 @@ import { RecallRunner } from '../components/RecallRunner'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
+import { useProgress } from '../lib/data/progress'
 import { fetchVocabSession } from '../lib/data/cards'
 import { fetchDueIslandRecall } from '../lib/data/islands'
 import { fetchReviewOverview, ReviewOverview, ReviewItem } from '../lib/data/review'
@@ -43,11 +44,15 @@ function Hub({ userId, go, onVocab, onSentences }: {
   userId: string; go: (s: AppScreen) => void; onVocab: () => void; onSentences: () => void
 }) {
   const { bi } = useLang()
+  const { progress } = useProgress()
   const { data, loading, error } = useAsync<ReviewOverview>(() => fetchReviewOverview(userId), [userId])
 
   if (loading) return <StatePane title={bi('Ladataan…', 'Loading')} bottom={BODY_BOTTOM + 14} />
   if (error) return <StatePane tone="error" title="Couldn't load your review" detail={error} bottom={BODY_BOTTOM + 14} />
   const o = data!
+  // Sentence progress counts recall + "listen & repeat" (shadow), capped at the bank.
+  const shadowDone = Object.values(progress.shadow ?? {}).reduce((a, b) => a + (Number(b) || 0), 0)
+  const sentProgress = Math.min(o.sentBank, Math.max(o.sentDone, shadowDone))
 
   return (
     <ScreenScroll bottom={BODY_BOTTOM} style={{ paddingTop: 62 }}>
@@ -70,7 +75,7 @@ function Hub({ userId, go, onVocab, onSentences }: {
       <ReviewCard
         icon="sprout" tone="var(--spoken)" toneBg="var(--spoken-bg)"
         title="Omat lauseet" en="Your sentences"
-        bank={o.sentDone} goal={SENT_GOAL} unitFi="lausetta" unitEn="sentences" due={o.sentDue}
+        bank={sentProgress} goal={SENT_GOAL} unitFi="lausetta" unitEn="sentences" due={o.sentDue}
         empty={o.sentBank === 0}
         emptyFi="Lisää lauseita" emptyEn="Add sentences" onEmpty={() => go('islands')}
         onReview={onSentences}
