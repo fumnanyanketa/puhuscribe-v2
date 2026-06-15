@@ -585,6 +585,16 @@ Next: motivation polish (M3 streak week-strip), make Grammar lessons active; own
 
 ---
 
+## Session: 2026-06-15 (Sentence progress counts shadow; Home dashboard neatened)
+
+Shipped: (1) Sentence progress now POPULATES from real work of any kind. Recall already counted (rateCard bumps reps), but "Listen & repeat" (shadow) didn't — so a learner doing the starter pack by shadowing stayed at 0. sentProgress = min(sentBank, max(recall sentDone, sum of progress.shadow positions)) — computed the same on Home, Progress, Daily. Adding the starter pack alone is still 0 (no inflation); doing it (shadow OR recall) moves the number. (2) Neatened the cramped ProgressDash: dropped the redundant "0% valmis" text (the ring shows %), and moved the rank line out of the narrow middle column (it wrapped to 3 lines) to a tidy full-width footer under a divider; RankSummary rewritten as a single line with "N →" pushed right. Build clean, 44 JS tests.
+
+Blocked: nothing. Shadow total sums progress.shadow values (per-set furthest index, completion = set size); capped at sentBank to absorb stale entries. Verify: shadow the starter pack a few sentences → Home "Lauseet" + % move; the dashboard card reads cleaner.
+
+Next: M3 streak week-strip; make Grammar lessons active; owner pending — enable anon sign-ins, run 20260611000002.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
