@@ -14,6 +14,7 @@ import { Read } from './screens/Read'
 import { Write } from './screens/Write'
 import { Progress } from './screens/Progress'
 import { Insights } from './screens/Insights'
+import { Grammar } from './screens/Grammar'
 import { Auth } from './screens/Auth'
 import { useAuth } from './lib/auth/useAuth'
 import { useProgress, UserProgress } from './lib/data/progress'
@@ -29,7 +30,7 @@ function landingScreen(progress: UserProgress): AppScreen {
 
 // Screens worth restoring on a browser refresh (onboarding is never restored).
 const SCREEN_KEY = 'ps_screen'
-const RESTORABLE: AppScreen[] = ['home', 'learn', 'daily', 'islands', 'practice', 'progress', 'dayone', 'listen', 'read', 'write', 'insights']
+const RESTORABLE: AppScreen[] = ['home', 'learn', 'daily', 'islands', 'practice', 'progress', 'dayone', 'listen', 'read', 'write', 'insights', 'grammar']
 
 export default function App() {
   const { user, loading } = useAuth()
@@ -88,6 +89,7 @@ export default function App() {
     write:      <Write go={go} />,
     progress:   <Progress go={go} />,
     insights:   <Insights go={go} />,
+    grammar:    <Grammar go={go} />,
   }
 
   return <div className="ps-app-frame">{screens[screen]}</div>

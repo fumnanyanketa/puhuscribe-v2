@@ -86,15 +86,16 @@ export function Learn({ go }: { go: (s: AppScreen) => void }) {
       <VocabBankHub d={d} sprintDone={sprintDone}
         onStartSprint={startSprint}
         onStartDaily={() => d.next.length > 0 && setDeck(d.next)}
-        onGraded={() => go('practice')} />
+        onGraded={() => go('practice')}
+        onGrammar={() => go('grammar')} />
       {nav}
     </>
   )
 }
 
-function VocabBankHub({ d, sprintDone, onStartSprint, onStartDaily, onGraded }: {
+function VocabBankHub({ d, sprintDone, onStartSprint, onStartDaily, onGraded, onGrammar }: {
   d: LearnData; sprintDone: boolean
-  onStartSprint: () => void; onStartDaily: () => void; onGraded: () => void
+  onStartSprint: () => void; onStartDaily: () => void; onGraded: () => void; onGrammar: () => void
 }) {
   const { bilingual } = useLang()
   const n = d.next.length
@@ -191,6 +192,28 @@ function VocabBankHub({ d, sprintDone, onStartSprint, onStartDaily, onGraded }: 
           </span>
           <span className="ps-caption">
             {bilingual ? 'Graded listening, reading and writing, matched to your level' : 'Kuuntelu, lukeminen ja kirjoittaminen tasosi mukaan'}
+          </span>
+        </span>
+        <span style={{ color: 'var(--ink-3)', flexShrink: 0 }}><I name="arrow" size={20} sw={2} /></span>
+      </button>
+
+      {/* Grammar (Stage 2) — unlocks after the Foundation sprint */}
+      <Eyebrow fi="VAIHE 2 · KIELIOPPI" en="Stage 2 · Grammar" color="var(--ink-3)" style={{ marginTop: 24, marginBottom: 12 }} />
+      <button onClick={onGrammar} className="ps-press ps-card" style={{
+        width: '100%', padding: 16, cursor: 'pointer', textAlign: 'left',
+        display: 'flex', alignItems: 'center', gap: 13, borderRadius: 'var(--r-lg)', border: 'none',
+        opacity: sprintDone ? 1 : 0.72,
+      }}>
+        <IconTile icon={sprintDone ? 'book' : 'lock'} size={44} r={12}
+          color={sprintDone ? 'var(--written)' : 'var(--ink-3)'} bg={sprintDone ? 'var(--written-bg)' : 'var(--glass-deep)'} />
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
+            Miten suomi toimii
+          </span>
+          <span className="ps-caption">
+            {sprintDone
+              ? (bilingual ? 'Step-by-step grammar, from the very beginning' : 'Kielioppi askel askeleelta, aivan alusta')
+              : (bilingual ? 'Unlocks after your first sprint' : 'Avautuu ensimmäisen sprintin jälkeen')}
           </span>
         </span>
         <span style={{ color: 'var(--ink-3)', flexShrink: 0 }}><I name="arrow" size={20} sw={2} /></span>
