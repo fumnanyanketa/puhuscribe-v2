@@ -541,6 +541,16 @@ Next: more grammar lessons (consonant gradation kpt, possession "minulla on", tw
 
 ---
 
+## Session: 2026-06-15 (Sprint word auto-plays on open)
+
+Shipped: In the Day One sprint + daily-intake batch (both SprintRunner), the word now reads aloud automatically the moment its card opens (useEffect on the word idx; fires per new card + on mount). The speaker button is now only for replays. Safe autoplay — a prior tap (Start/Continue/Test me) unlocks audio; same pattern as the Speak screen. Build clean, 39 JS tests green.
+
+Blocked: nothing. Owner flagged Grammar Stage 2 is currently read + one check per lesson (too passive) — agreed to upgrade lessons to active graded drills + fold grammar into FSRS Daily review; owner will circle back. Owner pending: enable anonymous sign-ins; run 20260611000002 (language tally).
+
+Next: (when owner returns) make Grammar lessons active (typed/MCQ drills, then FSRS); more grammar lessons; native listening clips / mnemonics.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
