@@ -22,6 +22,7 @@ export type UserProgress = {
   shadow?: Record<string, number>
   firstLanguage?: string
   grammar?: string[] // completed grammar lesson ids (for sequential unlocking)
+  celebrated?: number // highest word milestone already celebrated (avoids repeats)
 }
 
 const lsKey = (userId: string) => `puhuscribe:progress:${userId}`
@@ -90,6 +91,8 @@ function mergeProgress(a: UserProgress, b: UserProgress): UserProgress {
   // Completed grammar lessons: the union of both sources (never lose a completion).
   const grammar = [...new Set([...(a.grammar ?? []), ...(b.grammar ?? [])])]
   if (grammar.length) merged.grammar = grammar
+  const celebrated = Math.max(a.celebrated ?? 0, b.celebrated ?? 0)
+  if (celebrated) merged.celebrated = celebrated
   return merged
 }
 
@@ -101,12 +104,13 @@ interface ProgressCtx {
   saveShadow: (setId: string, idx: number) => void
   setFirstLanguage: (lang: string) => void
   markGrammarDone: (id: string) => void
+  markCelebrated: (n: number) => void
   resetProgress: () => void
 }
 
 const Ctx = createContext<ProgressCtx>({
   progress: {}, ready: false, markOnboarded: () => {}, saveSprint: () => {}, saveShadow: () => {},
-  setFirstLanguage: () => {}, markGrammarDone: () => {}, resetProgress: () => {},
+  setFirstLanguage: () => {}, markGrammarDone: () => {}, markCelebrated: () => {}, resetProgress: () => {},
 })
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
@@ -174,13 +178,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     update({ grammar: [...cur, id] })
   }, [update])
 
+  const markCelebrated = useCallback((n: number) => {
+    if ((progressRef.current.celebrated ?? 0) >= n) return
+    update({ celebrated: n })
+  }, [update])
+
   // Clear onboarding + sprint position (used by the "reset progress" action).
   const resetProgress = useCallback(() => {
     setProgress({})
     if (userId) void saveProgress(userId, {})
   }, [userId])
 
-  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, saveShadow, setFirstLanguage, markGrammarDone, resetProgress }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ progress, ready, markOnboarded, saveSprint, saveShadow, setFirstLanguage, markGrammarDone, markCelebrated, resetProgress }}>{children}</Ctx.Provider>
 }
 
 export const useProgress = () => useContext(Ctx)

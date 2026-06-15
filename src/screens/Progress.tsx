@@ -3,6 +3,7 @@ import { Bar, Ring, Toggle, Btn } from '../components/ui'
 import { I } from '../components/icons'
 import { Eyebrow, HubHeader, StatTile } from '../components/kit'
 import { Journey } from '../components/Journey'
+import { MilestoneLadder } from '../components/Milestones'
 import { ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
 import { SaveProgressSheet } from '../components/SaveProgress'
 import { StatePane } from '../components/StatePane'
@@ -109,6 +110,12 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
       <div className="ps-glass" style={{ marginTop: 16, padding: 18, borderRadius: 'var(--r-xl)' }}>
         <Eyebrow fi="MATKASI" en="Your journey" color="var(--ink-3)" style={{ marginBottom: 16 }} />
         <Journey words={stats.totalCards} sentences={sentBank} />
+      </div>
+
+      {/* The milestone ladder — the granular climb beneath the stages */}
+      <div className="ps-card" style={{ marginTop: 16, padding: 18, borderRadius: 'var(--r-xl)' }}>
+        <Eyebrow fi="MERKKIPAALUT" en="Milestones" color="var(--ink-3)" style={{ marginBottom: 8 }} />
+        <MilestoneLadder words={stats.totalCards} />
       </div>
 
       {/* Stat tiles — all real */}

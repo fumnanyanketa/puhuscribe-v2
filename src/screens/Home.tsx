@@ -5,6 +5,8 @@ import { Bar, Ring } from '../components/ui'
 import { Eyebrow, CTA, IconTile } from '../components/kit'
 import { PuhuMark, ScreenScroll, AppScreen, BottomNav } from '../components/Shell'
 import { SaveProgressSheet } from '../components/SaveProgress'
+import { Celebration } from '../components/Celebration'
+import { RankSummary } from '../components/Milestones'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
 import { useAuth } from '../lib/auth/useAuth'
@@ -13,6 +15,7 @@ import { useProgress } from '../lib/data/progress'
 import { fetchHomeData, HomeData } from '../lib/data/home'
 import { SPRINT_CAP } from './DayOne'
 import { journeyState, JourneyState, STAGE1_WORDS, STAGE1_SENTENCES } from '../lib/journey'
+import { newlyReached } from '../lib/milestones'
 import { studyStreak, todayStudyMinutes, DAILY_GOAL_MIN } from '../lib/studyTime'
 
 const BODY_BOTTOM = 96
@@ -58,7 +61,7 @@ function greeting(): { fi: string; en: string } {
 
 export function Home({ go }: { go: (s: AppScreen) => void }) {
   const { user, isAnonymous } = useAuth()
-  const { progress } = useProgress()
+  const { progress, markCelebrated } = useProgress()
   const { bi } = useLang()
   const userId = user?.id ?? ''
   const { data, loading, error } = useAsync<HomeData>(() => fetchHomeData(userId), [userId])
@@ -73,6 +76,8 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
   const sprintDone = Boolean(progress.sprint?.completed)
   const sprintStarted = Boolean(progress.sprint && (progress.sprint.idx ?? 0) > 0 && !sprintDone)
   const js = journeyState(d.bank, d.sentBank)
+  // A word milestone just crossed but not yet celebrated → show the pop.
+  const celebrate = newlyReached(d.bank, progress.celebrated ?? 0)
 
   return (
     <>
@@ -123,6 +128,7 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
       </ScreenScroll>
       {nav}
       <SaveProgressSheet open={saveOpen} onClose={() => setSaveOpen(false)} />
+      {celebrate && <Celebration milestone={celebrate} onClose={() => markCelebrated(celebrate.words)} />}
     </>
   )
 }
@@ -248,6 +254,7 @@ function ProgressDash({ js, bank, sentBank, onOpen }: {
           <div style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 12.5, color: 'var(--ink-2)', marginTop: 1 }}>
             {js.overallPct}% valmis{bilingual && <span style={{ color: 'var(--ink-3)' }}> · Foundation</span>}
           </div>
+          <div style={{ marginTop: 5 }}><RankSummary words={bank} /></div>
         </div>
         <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--ink-3)' }}>
           <span className="ps-label" style={{ color: 'var(--ink-3)' }}>MATKA</span>
