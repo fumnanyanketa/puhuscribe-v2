@@ -531,6 +531,16 @@ Next: Grammar Stage 2 content (SKK1 notes) so sprint-finishers don't hit a locke
 
 ---
 
+## Session: 2026-06-15 (Grammar Stage 2 — step-by-step curriculum, gated after the sprint)
+
+Shipped: Owner shared the SKK1 class notes via Google Drive; pulled them in (docs/skk1-notes.md, 43 sessions) and built Grammar Stage 2 from them, enriched with standard textbook grammar (notes = reference, not sole source). New src/lib/grammar.ts: 7 progressive lessons A1.1->A2.1 (no articles/gender/future; vowel harmony; olla + pronouns; present tense; questions; partitive part 1; place cases missä/mistä/mihin), each a plain-English "why" + teaching blocks with standard Finnish examples + a quick check. New src/screens/Grammar.tsx: GATED — locked pane with a "go to the sprint" CTA until progress.sprint.completed; then lessons unlock SEQUENTIALLY (finish one opens the next). Progress tracks completed lessons (progress.grammar string[], synced jsonb, merge=union, no storage migration). Entry: "Stage 2 · Grammar" card on the Learn tab (locked teaser before the sprint, active after); wired into App routing; useStudyClock counts it toward the streak. Build clean, 39 JS tests green.
+
+Blocked: nothing required to ship. The Finnish examples are standard A1/A2 but should go through the same native-speaker review pass as the puhekieli (grammar correctness check) — flagged in grammar.ts. No new migration; no owner action.
+
+Next: more grammar lessons (consonant gradation kpt, possession "minulla on", two-stem/nen-words, puhekieli patterns — all in the notes); then native listening clips / mnemonics. Owner pending: enable anonymous sign-ins; run 20260611000002 (language tally).
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
