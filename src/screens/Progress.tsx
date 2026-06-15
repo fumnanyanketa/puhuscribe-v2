@@ -27,7 +27,7 @@ type Loaded = { stats: ProgressStats; sentBank: number }
 export function Progress({ go }: { go: (s: AppScreen) => void }) {
   const { user, isAnonymous, signOut } = useAuth()
   const { bi, bilingual, setBilingual } = useLang()
-  const { resetProgress } = useProgress()
+  const { progress, resetProgress } = useProgress()
   const [saveOpen, setSaveOpen] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [resetBusy, setResetBusy] = useState(false)
@@ -62,6 +62,14 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
   const { stats, sentBank } = data!
 
   const js = journeyState(stats.totalCards, sentBank)
+  // The journey's inline "do this next" on the current stage.
+  const sDone = Boolean(progress.sprint?.completed)
+  const sStarted = Boolean(progress.sprint && (progress.sprint.idx ?? 0) > 0 && !sDone)
+  const journeyAction = sDone
+    ? { fi: 'Päivän kertaus', en: 'Daily review', onClick: () => go('daily') }
+    : sStarted
+      ? { fi: 'Jatka sprinttiä', en: 'Continue your sprint', onClick: () => go('dayone') }
+      : { fi: 'Aloita sprintti', en: 'Start your first sprint', onClick: () => go('dayone') }
   const streak = studyStreak()
   const counts = getPracticeCounts()
   const maxWeek = Math.max(1, ...stats.week.map((d) => d.count))
@@ -109,7 +117,7 @@ export function Progress({ go }: { go: (s: AppScreen) => void }) {
       {/* The whole journey: Launchpad to North Star (YKI B2) */}
       <div className="ps-glass" style={{ marginTop: 16, padding: 18, borderRadius: 'var(--r-xl)' }}>
         <Eyebrow fi="MATKASI" en="Your journey" color="var(--ink-3)" style={{ marginBottom: 16 }} />
-        <Journey words={stats.totalCards} sentences={sentBank} />
+        <Journey words={stats.totalCards} sentences={sentBank} action={journeyAction} />
       </div>
 
       {/* The milestone ladder — the granular climb beneath the stages */}

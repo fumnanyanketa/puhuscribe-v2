@@ -29,7 +29,11 @@ function ReqBar({ fi, en, n, goal, pct, color }: {
   )
 }
 
-export function Journey({ words, sentences }: { words: number; sentences: number }) {
+export function Journey({ words, sentences, action }: {
+  words: number; sentences: number
+  // Optional inline "do this next" on the current stage — makes the map the spine.
+  action?: { fi: string; en: string; onClick: () => void }
+}) {
   const { bilingual } = useLang()
   const st = journeyState(words, sentences)
 
@@ -94,6 +98,18 @@ export function Journey({ words, sentences }: { words: number; sentences: number
                   <ReqBar fi="Sanat" en="Words" n={st.words} goal={s.reqWords} pct={st.wordPct} color="var(--written)" />
                   <ReqBar fi="Lauseet" en="Sentences" n={st.sentences} goal={s.reqSentences} pct={st.sentPct} color="var(--spoken)" />
                 </div>
+              )}
+
+              {/* Inline next action: the journey doesn't just show the path, it
+                  points at the next thing to do. */}
+              {now && action && (
+                <button onClick={action.onClick} className="ps-press" style={{ marginTop: 14, width: '100%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '13px',
+                  borderRadius: 'var(--r-md)', border: 'none', cursor: 'pointer', background: 'var(--ink)', color: '#fff',
+                  fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14.5 }}>
+                  <span>{action.fi}{bilingual && <span style={{ fontWeight: 500, fontStyle: 'italic', fontSize: 12.5, opacity: 0.82, marginLeft: 6 }}>{action.en}</span>}</span>
+                  <I name="arrow" size={18} sw={2} />
+                </button>
               )}
 
               {locked && (
