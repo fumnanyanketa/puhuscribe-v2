@@ -551,6 +551,16 @@ Next: (when owner returns) make Grammar lessons active (typed/MCQ drills, then F
 
 ---
 
+## Session: 2026-06-15 (Sprint continuity + encouragement; Daily Review unlocks once started)
+
+Shipped: Owner's point — people stop the 150-word sprint midway and then never get spaced repetition (it was gated on sprint COMPLETION), and the sprint had no encouragement + a confusing "WAVE n/8" label. (1) Home now shows a "Päivän kertaus / Daily Review" card as soon as the sprint is STARTED (sprintStarted = idx>0 && !completed), so the words already met can be reviewed immediately; the Continue-sprint hero stays as the finish nudge. (The Daily screen already worked for anyone with >=1 met word — only the entry point was gated.) (2) Replaced "DAY ONE · WAVE n/8" with "Päivä yksi / Day one"; every 25 words the SprintRunner shows an encouragement screen (n/total, X% through, N to go, Keep going / Take a break-resume-later) — a natural break that also lets someone stop without losing progress (onAdvance already saved). Milestone advances idx only on "Keep going" so the next word's audio doesn't fire behind it. Build clean, 39 JS tests green.
+
+Blocked: nothing. BIG OPEN THEME the owner raised (agreed, not yet built): progressive motivation / cohesion — the features stand independent; no visible journey pulling people forward day to day (Duolingo's real strength = return motivation). Proposed next: an adaptive always-present "next step" spine on Home + a visible milestone/rank progression (word/sentence/streak milestones with celebrations) woven onto the Journey, so "where am I / what's next / what unlocks" is always clear. Awaiting owner's pick on where to start.
+
+Next: build the progressive-motivation layer (owner to prioritise); also pending — make Grammar lessons active; enable anon sign-ins; run 20260611000002.
+
+---
+
 ## Owner actions — status (updated 2026-06-09)
 DONE by the owner (no longer outstanding):
 - Personal Language Islands migrations (`20260609000001/2/3`) run in Supabase — the tab is live and working.
