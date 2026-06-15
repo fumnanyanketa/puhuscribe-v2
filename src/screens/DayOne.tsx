@@ -205,6 +205,11 @@ export function SprintRunner({ deck, startIdx, labelFor, onAdvance, onExit, done
     setTimeout(() => setPlaying(false), 1000)
   }
 
+  // Auto-play the word the moment its card opens (each new word, and on first
+  // mount). The speaker button is then only for hearing it again. A prior tap
+  // (Start / Continue / Test me) has unlocked audio, so the browser allows this.
+  useEffect(() => { play() }, [idx]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const options = useMemo(() => {
     const pool = deck.filter((x) => x.en !== w.en)
     const picks = new Set<string>()
