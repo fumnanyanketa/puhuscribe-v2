@@ -115,9 +115,14 @@ function FirstPhrases({ onDone, onSkip }: { onDone: () => void; onSkip: () => vo
   // Auto-play each phrase as its card opens (a prior tap unlocked audio).
   useEffect(() => { if (p) play() }, [i, p]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // If the survival set can't load, skip straight to the words (in an effect, so
+  // we never call the parent's setState during render).
+  useEffect(() => {
+    if (!loading && (error || phrases.length === 0)) onSkip()
+  }, [loading, error, phrases.length]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // If the survival set isn't loaded yet, don't block the learner from the sprint.
-  if (loading) return <StatePane title="Ladataan…" />
-  if (error || phrases.length === 0) { onSkip(); return null }
+  if (loading || error || phrases.length === 0) return <StatePane title="Ladataan…" />
 
   // Optional: say the phrases aloud right now (record/playback) — speaking on
   // day one, the framework's "speak before you're ready". No scoring.

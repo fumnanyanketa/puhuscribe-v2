@@ -97,11 +97,9 @@ export function Converse({ go, onBack }: { go?: (s: AppScreen) => void; onBack?:
 
   if (notReady) {
     return (
-      <div className="ps-app-frame">
-        <StatePane tone="error" title={bi('Keskustelu ei ole vielä käytössä', 'Conversation is not switched on yet')}
-          detail="The conversation tutor needs the AI worker configured. Please try again shortly."
-          bottom={26} />
-      </div>
+      <StatePane tone="error" title={bi('Keskustelu ei ole vielä käytössä', 'Conversation is not switched on yet')}
+        detail="The conversation tutor needs the AI worker configured. Please try again shortly."
+        bottom={26} />
     )
   }
 
