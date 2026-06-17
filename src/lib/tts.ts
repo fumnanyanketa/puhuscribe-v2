@@ -89,3 +89,40 @@ export async function converse(
     return empty
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Reading — connected comprehensible input. POST /reading returns a short
+ * level-matched Finnish passage + a Finnish comprehension question (English is
+ * a reveal-on-demand hint). `ok`/`configured` false when unavailable; the UI
+ * falls back to the sentence-based reading drill. Never throws.
+ * ------------------------------------------------------------------------- */
+export interface Reading {
+  ok: boolean; configured: boolean
+  lines: string[]; en: string
+  question: string; options: string[]; answer: number
+}
+
+export async function fetchReading(level: string): Promise<Reading> {
+  const empty: Reading = { ok: false, configured: false, lines: [], en: '', question: '', options: [], answer: 0 }
+  if (!WORKER) return empty
+  try {
+    const resp = await fetch(`${WORKER}/reading`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ level }),
+    })
+    if (!resp.ok) return empty
+    const json = await resp.json()
+    if (!json || json.configured === false || !json.ok) return { ...empty, configured: !!json?.configured }
+    return {
+      ok: true, configured: true,
+      lines: Array.isArray(json.lines) ? json.lines.map(String) : [],
+      en: String(json.en ?? ''),
+      question: String(json.question ?? ''),
+      options: Array.isArray(json.options) ? json.options.map(String) : [],
+      answer: Number.isInteger(json.answer) ? json.answer : 0,
+    }
+  } catch {
+    return empty
+  }
+}

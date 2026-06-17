@@ -280,6 +280,60 @@ async function converse(request, env) {
   }
 }
 
+// POST /reading — Rail 1, connected comprehensible input: a SHORT everyday
+// Finnish passage pitched to the learner's level, with a comprehension question
+// IN FINNISH (English is only a reveal-on-demand hint, not the task). Returns
+// { ok, lines, en, question, options, answer, configured }.
+async function reading(request, env) {
+  if (request.method !== 'POST') return json({ ok: false }, 405)
+  let level = 'A1'
+  try { const b = await request.json(); level = String(b.level || 'A1').slice(0, 4) } catch { /* ignore */ }
+  if (!env.ANTHROPIC_API_KEY) return json({ ok: false, configured: false }, 503)
+
+  const system =
+    `Write a VERY SHORT everyday Finnish reading passage for an adult immigrant at CEFR ${level}. Rules:\n`
+    + '1. 2 to 4 short, simple sentences about ordinary daily life (home, work, the shop, the bus, family, weather). '
+    + 'Pitch it JUST above the level so it stretches slightly but stays understandable. Use ONLY real, standard written Finnish (kirjakieli); never invent words.\n'
+    + '2. Then ONE simple comprehension question ABOUT the passage, written IN FINNISH, with exactly 3 short answer options IN FINNISH (only one correct).\n'
+    + 'Reply with ONLY a JSON object (no markdown) with exactly: '
+    + '"lines" (array of the passage sentences, each a string), '
+    + '"en" (a plain English translation of the whole passage), '
+    + '"question" (the Finnish comprehension question), '
+    + '"options" (array of exactly 3 Finnish strings), '
+    + '"answer" (the 0-based index of the correct option).'
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 500,
+      system,
+      messages: [{ role: 'user', content: `Write one passage and question for level ${level}.` }],
+    }),
+  })
+  if (!r.ok) return json({ ok: false }, 502)
+  try {
+    const data = await r.json()
+    let t = ((data.content && data.content[0] && data.content[0].text) || '').trim()
+    t = t.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim()
+    const out = JSON.parse(t)
+    const lines = Array.isArray(out.lines) ? out.lines.map((l) => String(l).trim()).filter(Boolean).slice(0, 5) : []
+    const options = Array.isArray(out.options) ? out.options.map((o) => String(o).trim()).filter(Boolean).slice(0, 3) : []
+    const answer = Number.isInteger(out.answer) ? out.answer : 0
+    const question = String(out.question || '').trim()
+    const en = String(out.en || '').trim()
+    if (lines.length === 0 || options.length !== 3 || !question) return json({ ok: false, configured: true }, 502)
+    return json({ ok: true, lines, en, question, options, answer: Math.max(0, Math.min(2, answer)), configured: true })
+  } catch {
+    return json({ ok: false, configured: true }, 502)
+  }
+}
+
 // POST /feedback — email a beta tester's note to the owner (in addition to the
 // row the app stores in Supabase). Uses Resend. configured:false when the
 // secrets are missing, so the app's send still succeeds silently and the note
@@ -335,6 +389,7 @@ export default {
     if (url.pathname === '/island/translate') return islandTranslate(request, env)
     if (url.pathname === '/island/questions') return islandQuestions(request, env)
     if (url.pathname === '/converse') return converse(request, env)
+    if (url.pathname === '/reading') return reading(request, env)
     if (url.pathname === '/feedback') return feedback(request, env)
 
     let text = url.searchParams.get('text') || ''
