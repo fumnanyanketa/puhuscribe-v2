@@ -51,7 +51,7 @@ const NAV = [
 
 export type AppScreen =
   | 'onboarding' | 'home' | 'dayone' | 'learn' | 'daily' | 'islands'
-  | 'practice' | 'listen' | 'read' | 'write' | 'progress' | 'insights' | 'grammar'
+  | 'practice' | 'listen' | 'read' | 'write' | 'progress' | 'insights' | 'grammar' | 'converse'
 
 export type NavTab = typeof NAV[number]['id']
 

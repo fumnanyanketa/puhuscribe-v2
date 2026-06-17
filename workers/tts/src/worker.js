@@ -207,6 +207,79 @@ async function islandQuestions(request, env) {
   }
 }
 
+// POST /converse — the FLOW stage: a short, real conversation IN Finnish with a
+// warm AI tutor. The two rails are baked into the prompt: comprehensible input
+// (replies pitched to the learner's level, mostly in Finnish) and a low
+// affective filter (encouraging, errors are fine, corrections never block the
+// chat). Returns { ok, reply, en, suggestions, configured }. configured:false
+// when the secret is missing, so the app shows a graceful message.
+async function converse(request, env) {
+  if (request.method !== 'POST') return json({ ok: false }, 405)
+  let messages = [], level = 'A1', topic = ''
+  try {
+    const b = await request.json()
+    if (Array.isArray(b.messages)) messages = b.messages
+    level = String(b.level || 'A1').slice(0, 4)
+    topic = String(b.topic || '').trim().slice(0, 120)
+  } catch { /* ignore */ }
+  if (!env.ANTHROPIC_API_KEY) return json({ ok: false, configured: false }, 503)
+
+  // Keep only the recent turns (cost + focus), and only the fields we trust.
+  const turns = messages
+    .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+    .slice(-12)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 500) }))
+
+  const system =
+    `You are Puhu, a warm, patient Finnish conversation partner for an adult immigrant in Finland at CEFR ${level}. `
+    + 'You are having a REAL, short spoken-style conversation to help them ACQUIRE Finnish by using it. Rules:\n'
+    + '1. Reply ONLY in simple, natural standard written Finnish (kirjakieli), pitched JUST above their level so it is still understandable. '
+    + 'Keep it to ONE or TWO short sentences, and almost always end with a simple question so the conversation keeps going.\n'
+    + '2. Be encouraging. Mistakes are completely fine. NEVER scold, never give a grammar lecture, never refuse to continue because of an error. '
+    + 'If they make a mistake, you may gently model the correct Finnish in your own reply, but keep talking about the MEANING.\n'
+    + '3. Stay grounded in their real everyday life (home, work, the shop, the tram, family, hobbies).\n'
+    + '4. Use ONLY real, standard Finnish words and real inflections. Never invent words.\n'
+    + (topic ? `The learner wants to talk about: "${topic}".\n` : '')
+    + 'If there are no messages yet, greet them warmly in Finnish and ask one easy opening question.\n'
+    + 'Reply with ONLY a JSON object (no markdown) with exactly these keys: '
+    + '"reply" (your Finnish message), '
+    + '"en" (a plain English translation of your Finnish message, so a stuck beginner can check meaning), '
+    + '"suggestions" (an array of 1 to 3 VERY short, simple Finnish replies the learner could tap to answer you — real beginner Finnish, each a few words).'
+
+  const apiMessages = turns.length > 0 ? turns : [{ role: 'user', content: '(aloita keskustelu)' }]
+
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 350,
+      system,
+      messages: apiMessages,
+    }),
+  })
+  if (!r.ok) return json({ ok: false }, 502)
+  try {
+    const data = await r.json()
+    let t = ((data.content && data.content[0] && data.content[0].text) || '').trim()
+    t = t.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim()
+    const out = JSON.parse(t)
+    const reply = String(out.reply || '').trim()
+    const en = String(out.en || '').trim()
+    const suggestions = Array.isArray(out.suggestions)
+      ? out.suggestions.map((s) => String(s).trim()).filter(Boolean).slice(0, 3)
+      : []
+    if (!reply) return json({ ok: false, configured: true }, 502)
+    return json({ ok: true, reply, en, suggestions, configured: true })
+  } catch {
+    return json({ ok: false, configured: true }, 502)
+  }
+}
+
 // POST /feedback — email a beta tester's note to the owner (in addition to the
 // row the app stores in Supabase). Uses Resend. configured:false when the
 // secrets are missing, so the app's send still succeeds silently and the note
@@ -261,6 +334,7 @@ export default {
     if (url.pathname === '/correct') return correct(request, env)
     if (url.pathname === '/island/translate') return islandTranslate(request, env)
     if (url.pathname === '/island/questions') return islandQuestions(request, env)
+    if (url.pathname === '/converse') return converse(request, env)
     if (url.pathname === '/feedback') return feedback(request, env)
 
     let text = url.searchParams.get('text') || ''

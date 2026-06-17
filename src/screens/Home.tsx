@@ -130,6 +130,24 @@ export function Home({ go }: { go: (s: AppScreen) => void }) {
           </button>
         )}
 
+        {/* Speak from day one (FLOW): a real Finnish chat, available as soon as
+            the learner has met some words — not saved for a far-off stage. */}
+        {(sprintStarted || sprintDone) && (
+          <button onClick={() => go('converse')} className="ps-press" style={{ marginTop: 14, padding: 16,
+            borderRadius: 'var(--r-lg)', width: '100%', textAlign: 'left', cursor: 'pointer', overflow: 'hidden',
+            border: '1px solid var(--spoken-line)', background: 'var(--spoken-bg)',
+            display: 'flex', alignItems: 'center', gap: 13 }}>
+            <IconTile icon="chat" size={44} r={12} color="var(--spoken)" bg="#fff" />
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15.5, color: 'var(--ink)' }}>
+                Keskustele suomeksi
+              </span>
+              <span className="ps-caption">Try a short chat in Finnish. Say what you can, mistakes are fine.</span>
+            </span>
+            <span style={{ color: 'var(--spoken)', flexShrink: 0 }}><I name="arrow" size={20} sw={2} /></span>
+          </button>
+        )}
+
         {/* The dashboard: overall progress + the two banks you are growing */}
         <ProgressDash js={js} bank={d.bank} sentDone={sentProgress} onOpen={() => go('progress')} />
       </ScreenScroll>

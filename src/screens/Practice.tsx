@@ -39,7 +39,31 @@ export function Practice({ go }: { go: (s: AppScreen) => void }) {
       <HubHeader eyebrowFi="PRACTICE" title="Harjoittele"
         sub="The four skills the YKI test measures. Train each one in real situations." />
 
-      <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* Featured: a real conversation in Finnish (the FLOW stage). The most
+          important kind of speaking practice, so it leads the page. */}
+      <button onClick={() => go('converse')} className="ps-press" style={{
+        marginTop: 20, width: '100%', padding: 18, borderRadius: 'var(--r-xl)', cursor: 'pointer',
+        textAlign: 'left', border: 'none', overflow: 'hidden', position: 'relative',
+        background: 'linear-gradient(150deg, var(--spoken), #166372)',
+        boxShadow: '0 18px 36px -16px rgba(31,124,142,.6)', color: '#fff',
+        display: 'flex', alignItems: 'center', gap: 14 }}>
+        <span style={{ width: 48, height: 48, borderRadius: 15, flexShrink: 0,
+          background: 'rgba(255,255,255,.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <I name="chat" size={24} sw={2} />
+        </span>
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17 }}>
+            Keskustele suomeksi
+          </span>
+          <span style={{ display: 'block', fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 13,
+            color: 'rgba(255,255,255,.85)', marginTop: 2 }}>
+            Have a real chat in Finnish with your tutor. Speak first, perfect later.
+          </span>
+        </span>
+        <span style={{ flexShrink: 0 }}><I name="arrow" size={22} sw={2} /></span>
+      </button>
+
+      <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
         {ITEMS.map((it) => {
           const c = YKI[it.skill]
           const done = Math.min(counts[it.skill], PRACTICE_GOAL)

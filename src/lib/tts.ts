@@ -53,3 +53,39 @@ export async function getWritingFeedback(prompt: string, text: string): Promise<
     return { ok: false, configured: false }
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Conversation — the FLOW stage. The same worker exposes POST /converse, which
+ * proxies to Claude for a short, real chat in Finnish, level-matched and gentle.
+ * `configured` is false when the worker / ANTHROPIC secret isn't set, so the UI
+ * can show a graceful "not available yet" message. Never throws.
+ * ------------------------------------------------------------------------- */
+export interface ChatTurn { role: 'user' | 'assistant'; content: string }
+export interface ChatReply { ok: boolean; reply: string; en: string; suggestions: string[]; configured: boolean }
+
+export async function converse(
+  messages: ChatTurn[],
+  opts: { level?: string; topic?: string } = {},
+): Promise<ChatReply> {
+  const empty: ChatReply = { ok: false, reply: '', en: '', suggestions: [], configured: false }
+  if (!WORKER) return empty
+  try {
+    const resp = await fetch(`${WORKER}/converse`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, level: opts.level ?? 'A1', topic: opts.topic ?? '' }),
+    })
+    if (!resp.ok) return empty // 503 = secret not set, 502 = upstream error
+    const json = await resp.json()
+    if (!json || json.configured === false || !json.ok) return { ...empty, configured: !!json?.configured }
+    return {
+      ok: true,
+      reply: String(json.reply ?? ''),
+      en: String(json.en ?? ''),
+      suggestions: Array.isArray(json.suggestions) ? json.suggestions.map(String) : [],
+      configured: true,
+    }
+  } catch {
+    return empty
+  }
+}
