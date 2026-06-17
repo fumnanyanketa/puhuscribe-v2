@@ -3,10 +3,11 @@ import { BrandMark } from '../components/primitives'
 import { Bar, Ring, SpeakerBtn } from '../components/ui'
 import { I } from '../components/icons'
 import { ExBar, CenterLabel, Counter, CTA, Eyebrow, Gloss, IconTile, OptionRow, StackLabel } from '../components/kit'
+import { RegisterCard } from '../components/RegisterCard'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
-import { fetchSprintWords, SprintWord } from '../lib/data/content'
+import { fetchSprintWords, SprintWord, fetchIslandSentences, RegisterSentence } from '../lib/data/content'
 import { recordWordEncounter } from '../lib/data/cards'
 import { useProgress } from '../lib/data/progress'
 import { useAuth } from '../lib/auth/useAuth'
@@ -46,6 +47,14 @@ function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => 
   const inFlight = Boolean(s && !s.completed)
   const startIdx = inFlight ? Math.min(s!.idx, size - 1) : 0
   const [running, setRunning] = useState(inFlight)
+  // Brand-new learners (no sprint record yet) first meet a few whole survival
+  // phrases — so they can SAY something real on day one, before any word drill
+  // or grammar rule (the framework's Stage 1 = words AND chunks). Skippable.
+  const [warmup, setWarmup] = useState(!s && !inFlight)
+
+  if (warmup && !running) {
+    return <FirstPhrases onDone={() => setWarmup(false)} onSkip={() => setWarmup(false)} />
+  }
 
   // Cross-device progress can resolve after mount; enter the runner when an
   // in-flight sprint appears. Never auto-exit (the finished pane stays up).
@@ -77,6 +86,72 @@ function SprintFlow({ words, go }: { words: SprintWord[]; go: (s: AppScreen) => 
       onStart={() => { saveSprint({ size, idx: 0, completed: false }); setRunning(true) }}
       onClose={() => go('home')}
     />
+  )
+}
+
+/* =====================================================================
+   FIRST PHRASES — whole survival chunks the learner meets on day one,
+   before any word drill or grammar rule. Reuses the Voikko-verified 'arki'
+   survival sentences (no invented Finnish). Meet it, hear it, say it.
+   ===================================================================== */
+function FirstPhrases({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) {
+  const { bilingual } = useLang()
+  const { data, loading, error } = useAsync<RegisterSentence[]>(() => fetchIslandSentences(5), [])
+  const [i, setI] = useState(0)
+  const [playing, setPlaying] = useState(false)
+
+  const phrases = data ?? []
+  const p = phrases[i]
+
+  const play = () => {
+    if (!p) return
+    setPlaying(true)
+    speak(p.kirja.map((t) => t.t).join(' '))
+    setTimeout(() => setPlaying(false), 1500)
+  }
+
+  // Auto-play each phrase as its card opens (a prior tap unlocked audio).
+  useEffect(() => { if (p) play() }, [i, p]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // If the survival set isn't loaded yet, don't block the learner from the sprint.
+  if (loading) return <StatePane title="Ladataan…" />
+  if (error || phrases.length === 0) { onSkip(); return null }
+
+  const last = i >= phrases.length - 1
+
+  return (
+    <ScreenScroll bottom={26}>
+      <ExBar nav="close" onNav={onSkip}
+        center={<CenterLabel fi="ENSIMMÄISET LAUSEET" en="First phrases" />}
+        right={<Counter a={i + 1} b={phrases.length} />}>
+        <Bar value={((i + 1) / phrases.length) * 100} color="var(--ink)" track="var(--glass-deep)" h={7} />
+      </ExBar>
+
+      <div style={{ marginTop: 16 }}>
+        <Eyebrow fi="SANO JO TÄNÄÄN" en="Say these from day one" color="var(--spoken)" style={{ marginBottom: 10 }} />
+        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24,
+          letterSpacing: '-0.03em', color: 'var(--ink)', margin: 0 }}>Lauseita, joita voit käyttää heti</h1>
+        <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.5, lineHeight: 1.5,
+          color: 'var(--ink-2)', margin: '10px 0 0', textWrap: 'pretty' }}>
+          Real Finnish you can use today, before any rule. Hear it, then say it out loud.
+        </p>
+      </div>
+
+      <div style={{ marginTop: 18 }}>
+        <RegisterCard key={i} gloss={p.gloss} kirja={p.kirja} puhe={p.puhe}
+          onPlay={() => play()} playing={playing ? 'kirja' : null} />
+      </div>
+
+      <div style={{ flex: 1, minHeight: 18 }} />
+      <CTA fi={last ? 'Aloita sanat' : 'Seuraava'} en={last ? 'Now the words' : 'Next'}
+        iconRight="arrow" variant="ink" onClick={() => (last ? onDone() : setI(i + 1))} />
+      <button className="ps-press" onClick={onSkip} style={{ marginTop: 12, width: '100%',
+        background: 'transparent', border: 'none', cursor: 'pointer', padding: '6px 0' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, color: 'var(--ink-3)' }}>
+          Ohita lauseet{bilingual && <span style={{ fontWeight: 500 }}> · Skip to the words</span>}
+        </span>
+      </button>
+    </ScreenScroll>
   )
 }
 
