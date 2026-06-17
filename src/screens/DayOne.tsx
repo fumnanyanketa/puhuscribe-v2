@@ -4,6 +4,7 @@ import { Bar, Ring, SpeakerBtn } from '../components/ui'
 import { I } from '../components/icons'
 import { ExBar, CenterLabel, Counter, CTA, Eyebrow, Gloss, IconTile, OptionRow, StackLabel } from '../components/kit'
 import { RegisterCard } from '../components/RegisterCard'
+import { Speak } from './Speak'
 import { ScreenScroll, AppScreen } from '../components/Shell'
 import { StatePane } from '../components/StatePane'
 import { useAsync } from '../lib/data/useAsync'
@@ -99,6 +100,7 @@ function FirstPhrases({ onDone, onSkip }: { onDone: () => void; onSkip: () => vo
   const { data, loading, error } = useAsync<RegisterSentence[]>(() => fetchIslandSentences(5), [])
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [speaking, setSpeaking] = useState(false)
 
   const phrases = data ?? []
   const p = phrases[i]
@@ -116,6 +118,12 @@ function FirstPhrases({ onDone, onSkip }: { onDone: () => void; onSkip: () => vo
   // If the survival set isn't loaded yet, don't block the learner from the sprint.
   if (loading) return <StatePane title="Ladataan…" />
   if (error || phrases.length === 0) { onSkip(); return null }
+
+  // Optional: say the phrases aloud right now (record/playback) — speaking on
+  // day one, the framework's "speak before you're ready". No scoring.
+  if (speaking) {
+    return <Speak phrases={phrases} title="Sano ääneen" onBack={() => setSpeaking(false)} />
+  }
 
   const last = i >= phrases.length - 1
 
@@ -143,6 +151,8 @@ function FirstPhrases({ onDone, onSkip }: { onDone: () => void; onSkip: () => vo
       </div>
 
       <div style={{ flex: 1, minHeight: 18 }} />
+      <CTA fi="Sano ääneen" en="Say these aloud" icon="mic" variant="spoken"
+        style={{ marginBottom: 10 }} onClick={() => setSpeaking(true)} />
       <CTA fi={last ? 'Aloita sanat' : 'Seuraava'} en={last ? 'Now the words' : 'Next'}
         iconRight="arrow" variant="ink" onClick={() => (last ? onDone() : setI(i + 1))} />
       <button className="ps-press" onClick={onSkip} style={{ marginTop: 12, width: '100%',
