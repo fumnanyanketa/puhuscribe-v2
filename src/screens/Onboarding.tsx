@@ -13,10 +13,14 @@ import { useProgress } from '../lib/data/progress'
  * the Day One sprint.
  * ------------------------------------------------------------------------- */
 
+// The PuhuScribe framework: a four-step staircase. We name all four steps up
+// front so the learner can see the whole method (WORDS · RULES · REPS · FLOW).
+// Crucially RULES never gates speaking — grammar serves the conversation.
 const METHOD = [
-  { icon: 'sparkle', fi: 'Tapaa sanat', en: 'Meet words', desc: 'Recognise the most useful Finnish words. See it, hear it, tap the meaning.' },
-  { icon: 'review',  fi: 'Kertaa',      en: 'Review',     desc: 'Spaced repetition brings each word back right before you would forget it.' },
-  { icon: 'sprout',  fi: 'Puhu',        en: 'Speak',      desc: 'Say real sentences out loud, for the situations you will actually face.' },
+  { icon: 'sparkle', fi: 'Sanat',     en: 'Words', desc: 'Meet the most useful words and whole phrases, so you can say something real from day one.' },
+  { icon: 'book',    fi: 'Säännöt',   en: 'Rules', desc: 'See why Finnish works the way it does. Grammar helps you speak; it never blocks you.' },
+  { icon: 'review',  fi: 'Kertaus',   en: 'Reps',  desc: 'Smart practice brings each word and phrase back right before you would forget it.' },
+  { icon: 'chat',    fi: 'Sujuvuus',  en: 'Flow',  desc: 'Have real conversations in Finnish. Speak first, perfect later.' },
 ]
 
 // First-language options (the larger immigrant-language groups in Finland) +
@@ -112,12 +116,15 @@ export function Onboarding({ go }: { go: (s: AppScreen) => void }) {
       body: (
         <>
           <div style={{ marginTop: 26 }}>
-            <Eyebrow fi="MITEN" en="How it works" style={{ marginBottom: 12 }} />
+            <Eyebrow fi="NELJÄ ASKELTA" en="Four steps" style={{ marginBottom: 12 }} />
             <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 25.9, lineHeight: 1.0,
-              letterSpacing: '-0.03em', color: 'var(--ink)', margin: 0 }}>A method that sticks.</h1>
+              letterSpacing: '-0.03em', color: 'var(--ink)', margin: 0 }}>
+              Sanat. Säännöt. Kertaus. <span style={{ color: 'var(--spoken)' }}>Sujuvuus.</span>
+            </h1>
             <p style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 14.9, lineHeight: 1.5,
               color: 'var(--ink-2)', margin: '14px 0 0', textWrap: 'pretty' }}>
-              Built on how people actually learn a language, not on what feels busy.
+              The PuhuScribe method, built on how people actually acquire a language: words, rules, reps,
+              and real conversation. Grammar serves your speaking — it never gates it.
             </p>
           </div>
           <div style={{ marginTop: 22, display: 'flex', flexDirection: 'column', gap: 16 }}>
