@@ -16,6 +16,16 @@ These are durable orders from the owner. They override any auto-assigned branch 
 
 ---
 
+## Session: 2026-06-16 (FRAMEWORK.md audit + align the app to the four-step framework)
+
+Shipped: Added FRAMEWORK.md (canonical Krashen-grounded model) and audited the live app against it, then implemented the owner-approved A–E fixes and merged to main (Vercel + Deploy TTS Worker both auto-deploy). (A) The missing FLOW stage: a real Finnish conversation — new Worker /converse route (Claude Haiku, level-matched, both rails in the prompt) + converse() in tts.ts + new Converse screen (tap-to-hear, reveal-English, suggested replies), reachable early from Practice (featured) and Home. (B) Survival phrases on Day One: a skippable first-phrases warmup (Voikko-verified 'arki' sentences) so a new learner can say real Finnish before any word drill or rule. (C) Speak on day one: optional "Say these aloud" record/playback in that warmup. (D) Connected comprehensible input: new Worker /reading route + a "Short story" mode in Read.tsx — a level-matched Finnish passage with the comprehension question IN Finnish, English demoted to a reveal-on-demand hint. (E) Onboarding now sells the four-step staircase WORDS · RULES · REPS · FLOW (added Rules, framed as helper-not-gate; renamed Speak→Flow). Build clean, 44 JS tests, worker.js syntax-checked.
+
+Blocked: Nothing owner-side — ANTHROPIC_API_KEY already set, so /converse + /reading work once the Deploy TTS Worker action finishes. Conversation is text-first (voice-into-chat deferred). Reading "stories" are AI-generated Finnish read once (same trust level as conversation; NOT saved as learnable seed content) — owner can ask to restrict to pre-verified content if preferred. Container can't reach Cloudflare/Supabase, so verify live in the browser (hard refresh for PWA cache).
+
+Next: owner verifies live (fresh Day One → first phrases → say aloud → words; chat from Home/Practice; Practice → Reading → Short story). Possible follow-ups: voice input into conversation; ground the chat in the learner's Sentence Bank topics; fold conversation/reading into the journey + practice counters; native listening clips; mnemonics.
+
+---
+
 ## Session: 2026-06-05
 
 Shipped: Phase 00 research complete (reddit-voice.md, competitor-reviews.md, global-apps.html, finland-apps.html committed and on main). App foundation committed to main (React 19 + Vite 6, custom FSRS-5 engine with 16 passing tests, Supabase schema migrations, YKI topic seed). Build manual v4 written and committed. Phase 01 project docs scaffolded (CLAUDE.md, BRIEF.md, ARCHITECTURE.md, PROGRESS.md, marketing folders).
