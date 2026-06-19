@@ -236,15 +236,19 @@ async function converse(request, env) {
     + '1. Reply ONLY in simple, natural standard written Finnish (kirjakieli), pitched JUST above their level so it is still understandable. '
     + 'Keep it to ONE or TWO short sentences, and almost always end with a simple question so the conversation keeps going.\n'
     + '2. Be encouraging. Mistakes are completely fine. NEVER scold, never give a grammar lecture, never refuse to continue because of an error. '
-    + 'If they make a mistake, you may gently model the correct Finnish in your own reply, but keep talking about the MEANING.\n'
+    + 'Always keep the conversation flowing about the MEANING — a correction must never block the chat.\n'
     + '3. Stay grounded in their real everyday life (home, work, the shop, the tram, family, hobbies).\n'
     + '4. Use ONLY real, standard Finnish words and real inflections. Never invent words.\n'
+    + '5. GENTLE CORRECTION: if the learner\'s most recent message has a MEANINGFUL Finnish mistake (a wrong word, a wrong form/ending, or a clearly wrong structure a teacher would fix), '
+    + 'include a short correction of THEIR message. IGNORE tiny things: typos, missing capital letters, missing final punctuation, and natural spoken (puhekieli) forms. '
+    + 'If their Finnish is fine, or they wrote in English, or it is the very first turn, set correction to null. Do NOT correct more than one thing; pick the most useful.\n'
     + (topic ? `The learner wants to talk about: "${topic}".\n` : '')
     + 'If there are no messages yet, greet them warmly in Finnish and ask one easy opening question.\n'
     + 'Reply with ONLY a JSON object (no markdown) with exactly these keys: '
     + '"reply" (your Finnish message), '
     + '"en" (a plain English translation of your Finnish message, so a stuck beginner can check meaning), '
-    + '"suggestions" (an array of 1 to 3 VERY short, simple Finnish replies the learner could tap to answer you — real beginner Finnish, each a few words).'
+    + '"suggestions" (an array of 1 to 3 VERY short, simple Finnish replies the learner could tap to answer you — real beginner Finnish, each a few words), '
+    + '"correction" (either null, OR an object {"better": "<their last message rewritten in correct, natural Finnish>", "note": "<one short, warm tip in English explaining the fix, max 16 words, no dashes>"}).'
 
   const apiMessages = turns.length > 0 ? turns : [{ role: 'user', content: '(aloita keskustelu)' }]
 
@@ -273,8 +277,15 @@ async function converse(request, env) {
     const suggestions = Array.isArray(out.suggestions)
       ? out.suggestions.map((s) => String(s).trim()).filter(Boolean).slice(0, 3)
       : []
+    // Optional gentle correction of the learner's last message (never blocks).
+    let correction = null
+    if (out.correction && typeof out.correction === 'object') {
+      const better = String(out.correction.better || '').trim()
+      const note = String(out.correction.note || '').trim()
+      if (better) correction = { better, note }
+    }
     if (!reply) return json({ ok: false, configured: true }, 502)
-    return json({ ok: true, reply, en, suggestions, configured: true })
+    return json({ ok: true, reply, en, suggestions, correction, configured: true })
   } catch {
     return json({ ok: false, configured: true }, 502)
   }

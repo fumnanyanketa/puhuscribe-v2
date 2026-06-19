@@ -9,7 +9,7 @@ import { useAuth } from '../lib/auth/useAuth'
 import { useLang } from '../lib/lang/useLang'
 import { fetchProgressStats } from '../lib/data/stats'
 import { levelForBank } from '../lib/data/content'
-import { converse, speak, ChatTurn } from '../lib/tts'
+import { converse, speak, ChatTurn, ChatCorrection } from '../lib/tts'
 import { useStudyClock } from '../lib/studyTime'
 
 /* ---------------------------------------------------------------------------
@@ -27,6 +27,7 @@ interface Bubble {
   role: 'user' | 'assistant'
   fi: string
   en?: string // assistant only: English translation, revealed on demand
+  correction?: ChatCorrection | null // user only: gentle tip on their message
 }
 
 export function Converse({ go, onBack }: { go?: (s: AppScreen) => void; onBack?: () => void }) {
@@ -91,7 +92,12 @@ export function Converse({ go, onBack }: { go?: (s: AppScreen) => void; onBack?:
       setErr(bilingual ? 'Yhteys katkesi. Yritä uudelleen. (Connection hiccup — try again.)' : 'Yhteys katkesi. Yritä uudelleen.')
       return
     }
-    setBubbles([...next, { role: 'assistant', fi: r.reply, en: r.en }])
+    // Attach any gentle correction to the message the learner just sent — it sits
+    // under their bubble (informational, never blocks the conversation).
+    const corrected = r.correction
+      ? next.map((b, idx) => (idx === next.length - 1 ? { ...b, correction: r.correction } : b))
+      : next
+    setBubbles([...corrected, { role: 'assistant', fi: r.reply, en: r.en }])
     setSuggestions(r.suggestions)
   }
 
@@ -132,7 +138,7 @@ export function Converse({ go, onBack }: { go?: (s: AppScreen) => void; onBack?:
             b.role === 'assistant'
               ? <TutorBubble key={i} fi={b.fi} en={b.en} revealed={!!reveal[i]}
                   onReveal={() => setReveal((r) => ({ ...r, [i]: !r[i] }))} />
-              : <UserBubble key={i} fi={b.fi} />
+              : <UserBubble key={i} fi={b.fi} correction={b.correction} />
           ))}
           {busy && <TypingBubble />}
         </div>
@@ -143,14 +149,16 @@ export function Converse({ go, onBack }: { go?: (s: AppScreen) => void; onBack?:
           background: 'var(--flag-bg)', color: 'var(--flag)', fontSize: 13 }}>{err}</div>
       )}
 
-      {/* Suggested replies — scaffolding for a stuck beginner (Rail 2) */}
+      {/* Suggested replies — scaffolding for a stuck beginner (Rail 2). One
+          compact, horizontally-scrolling row so it never crowds the chat. */}
       {suggestions.length > 0 && !busy && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0 0' }}>
+        <div className="ps-noscroll" style={{ display: 'flex', gap: 7, overflowX: 'auto',
+          margin: '8px -22px 0', padding: '2px 22px', WebkitOverflowScrolling: 'touch' }}>
           {suggestions.map((s, k) => (
             <button key={s + k} onClick={() => void send(s)} className="ps-press" style={{
-              padding: '9px 14px', borderRadius: 999, background: '#fff', boxShadow: 'var(--sh-1)',
-              border: '1px solid var(--spoken-line)', cursor: 'pointer',
-              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13.5, color: 'var(--spoken)' }}>
+              flexShrink: 0, padding: '7px 12px', borderRadius: 999, background: 'var(--spoken-bg)',
+              border: '1px solid var(--spoken-line)', cursor: 'pointer', whiteSpace: 'nowrap',
+              fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12.5, color: 'var(--spoken)' }}>
               {s}
             </button>
           ))}
@@ -205,13 +213,32 @@ function TutorBubble({ fi, en, revealed, onReveal }: {
   )
 }
 
-function UserBubble({ fi }: { fi: string }) {
+function UserBubble({ fi, correction }: { fi: string; correction?: ChatCorrection | null }) {
+  const { bi } = useLang()
   return (
-    <div style={{ alignSelf: 'flex-end', maxWidth: '85%' }}>
+    <div style={{ alignSelf: 'flex-end', maxWidth: '88%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
       <div style={{ padding: '12px 15px', borderRadius: '18px 4px 18px 18px', background: 'var(--ink)',
         color: 'var(--on-dark)', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16, lineHeight: 1.3 }}>
         {fi}
       </div>
+      {/* Gentle, optional tip — informational, never blocks the conversation */}
+      {correction && (
+        <div style={{ marginTop: 6, maxWidth: '100%', padding: '10px 12px', borderRadius: '14px',
+          background: 'var(--written-bg)', border: '1px solid var(--written-line)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: 'var(--written)', flexShrink: 0 }}><I name="sparkle" size={14} sw={1.9} /></span>
+            <span className="ps-label" style={{ color: 'var(--written)' }}>{bi('PIENI VINKKI', 'Small tip')}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 7 }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: 'var(--ink)' }}>{correction.better}</span>
+            <SpeakerBtn reg="kirja" size={32} onClick={() => speak(correction.better)} />
+          </div>
+          {correction.note && (
+            <div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontWeight: 500, fontSize: 12.5,
+              color: 'var(--ink-3)', marginTop: 5, lineHeight: 1.35 }}>{correction.note}</div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

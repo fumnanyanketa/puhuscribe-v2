@@ -61,13 +61,17 @@ export async function getWritingFeedback(prompt: string, text: string): Promise<
  * can show a graceful "not available yet" message. Never throws.
  * ------------------------------------------------------------------------- */
 export interface ChatTurn { role: 'user' | 'assistant'; content: string }
-export interface ChatReply { ok: boolean; reply: string; en: string; suggestions: string[]; configured: boolean }
+export interface ChatCorrection { better: string; note: string }
+export interface ChatReply {
+  ok: boolean; reply: string; en: string; suggestions: string[]
+  correction: ChatCorrection | null; configured: boolean
+}
 
 export async function converse(
   messages: ChatTurn[],
   opts: { level?: string; topic?: string } = {},
 ): Promise<ChatReply> {
-  const empty: ChatReply = { ok: false, reply: '', en: '', suggestions: [], configured: false }
+  const empty: ChatReply = { ok: false, reply: '', en: '', suggestions: [], correction: null, configured: false }
   if (!WORKER) return empty
   try {
     const resp = await fetch(`${WORKER}/converse`, {
@@ -78,11 +82,15 @@ export async function converse(
     if (!resp.ok) return empty // 503 = secret not set, 502 = upstream error
     const json = await resp.json()
     if (!json || json.configured === false || !json.ok) return { ...empty, configured: !!json?.configured }
+    const c = json.correction
+    const correction: ChatCorrection | null =
+      c && typeof c === 'object' && c.better ? { better: String(c.better), note: String(c.note ?? '') } : null
     return {
       ok: true,
       reply: String(json.reply ?? ''),
       en: String(json.en ?? ''),
       suggestions: Array.isArray(json.suggestions) ? json.suggestions.map(String) : [],
+      correction,
       configured: true,
     }
   } catch {
