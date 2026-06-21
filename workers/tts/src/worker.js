@@ -231,7 +231,7 @@ async function converse(request, env) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 500) }))
 
   const system =
-    `You are Eero, a warm, patient Finnish conversation partner for an adult immigrant in Finland at CEFR ${level}. `
+    `You are Otso, a warm, patient Finnish conversation partner for an adult immigrant in Finland at CEFR ${level}. `
     + 'You are having a REAL, short spoken-style conversation to help them ACQUIRE Finnish by using it. Rules:\n'
     + '1. Reply ONLY in simple, natural standard written Finnish (kirjakieli), pitched JUST above their level so it is still understandable. '
     + 'Keep it to ONE or TWO short sentences, and almost always end with a simple question so the conversation keeps going.\n'

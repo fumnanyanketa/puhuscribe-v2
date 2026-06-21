@@ -129,7 +129,7 @@ export function Converse({ go, onBack }: { go?: (s: AppScreen) => void; onBack?:
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             height: '100%', gap: 16, textAlign: 'center' }}>
             <BrandMark size={96} />
-            <p className="ps-body" style={{ color: 'var(--ink-2)' }}>{bi('Eero aloittaa…', 'Eero is starting the chat…')}</p>
+            <p className="ps-body" style={{ color: 'var(--ink-2)' }}>{bi('Otso aloittaa…', 'Otso is starting the chat…')}</p>
           </div>
         )}
 
@@ -247,7 +247,7 @@ function TypingBubble() {
   return (
     <div style={{ alignSelf: 'flex-start' }}>
       <div className="ps-card" style={{ padding: '14px 16px', borderRadius: '4px 18px 18px 18px', background: '#fff' }}>
-        <StackLabel fi="EERO KIRJOITTAA…" en="Eero is typing…" color="var(--spoken)" />
+        <StackLabel fi="OTSO KIRJOITTAA…" en="Otso is typing…" color="var(--spoken)" />
       </div>
     </div>
   )
