@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lesson Extractor Dashboard</title>
+<!--
+  LESSON EXTRACTOR DASHBOARD TEMPLATE
+  ----------------------------------
+  Fill the content, keep the structure. Pick ONE accent preset below by setting
+  the three --accent* values in :root. The light tints and rules follow.
+
+  ACCENT PRESETS (subject -> colour):
+    Blue  (general / foundational / academic / technical-taught-academically)
+      --accent:#1f5fb0;  --accent-dark:#16447e;  --accent-tint:#eaf1fa;
+    Green (growth / business / data / money)
+      --accent:#1f8a54;  --accent-dark:#15663d;  --accent-tint:#e8f5ee;
+    Teal  (science / health / nature / medical)
+      --accent:#0e8a8a;  --accent-dark:#0a6566;  --accent-tint:#e4f4f4;
+    Red   (argument-driven / opinion-heavy / high-stakes)
+      --accent:#c0392b;  --accent-dark:#8f2a20;  --accent-tint:#fbeae8;
+
+  The four VERDICT colours are fixed and never tied to the accent.
+  Do NOT use em dashes anywhere in the output. Wrap every table in .table-wrap.
+-->
+<style>
+  :root{
+    /* ACTIVE ACCENT (default Blue) */
+    --accent:#1f5fb0;
+    --accent-dark:#16447e;
+    --accent-tint:#eaf1fa;
+
+    /* Fixed verdict colours (never change, never tie to accent) */
+    --v-supported:#1f8a54;
+    --v-contested:#c98a16;
+    --v-inaccurate:#c0392b;
+    --v-opinion:#6c5ce7;
+
+    --ink:#1a1c20;
+    --muted:#5d636e;
+    --line:#e4e7ec;
+    --card:#ffffff;
+    --bg:#f6f7f9;
+    --radius:14px;
+    --maxw:980px;
+    font-synthesis-weight:none;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.62;font-size:16.5px;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  section{margin:46px auto;scroll-margin-top:18px}
+  h2{font-size:1.5rem;letter-spacing:-.01em;margin:0 0 6px}
+  h3{font-size:1.12rem;margin:0 0 6px}
+  p{margin:.5em 0}
+  a{color:var(--accent-dark)}
+  .sec-kicker{text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .lede{color:var(--muted);margin-top:0}
+
+  /* Hero */
+  .hero{background:var(--accent);color:#fff;padding:54px 0 48px}
+  .hero .kicker{text-transform:uppercase;letter-spacing:.16em;font-size:.74rem;font-weight:700;opacity:.85}
+  .hero h1{font-size:2.15rem;line-height:1.18;letter-spacing:-.02em;margin:.3em 0 .35em}
+  .hero .thesis{font-size:1.08rem;max-width:46em;opacity:.96;margin:0}
+
+  /* Jump nav */
+  .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .jump a{
+    background:rgba(255,255,255,.14);color:#fff;text-decoration:none;
+    padding:6px 12px;border-radius:999px;font-size:.82rem;font-weight:600;
+    border:1px solid rgba(255,255,255,.22)
+  }
+  .jump a:hover{background:rgba(255,255,255,.26)}
+
+  /* Notes / flags */
+  .note{background:var(--accent-tint);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:14px 16px;font-size:.95rem}
+  .flag{background:#fff7e6;border:1px solid #f0d99a;border-left:4px solid var(--v-contested);
+    border-radius:10px;padding:14px 16px;font-size:.95rem;margin-top:12px}
+  .flag strong,.note strong{color:var(--ink)}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .card h3{color:var(--accent-dark)}
+  .card p{margin:.25em 0 0;color:var(--muted);font-size:.95rem}
+
+  /* Definition list / glossary + prereq */
+  .deflist{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .deflist .row{display:grid;grid-template-columns:200px 1fr;gap:0;border-top:1px solid var(--line)}
+  .deflist .row:first-child{border-top:0}
+  .deflist .term{font-weight:700;padding:11px 16px;background:var(--accent-tint);color:var(--accent-dark)}
+  .deflist .def{padding:11px 16px;color:var(--ink)}
+  @media(max-width:620px){.deflist .row{grid-template-columns:1fr}.deflist .term{background:var(--accent-tint)}}
+
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.twocol{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .panel h3{color:var(--accent-dark)}
+  .panel ul{margin:.3em 0;padding-left:1.15em}
+  .panel li{margin:.25em 0}
+
+  /* Pattern A: numbered argument blocks */
+  .lesson{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px 16px 56px;position:relative;margin:12px 0}
+  .lesson .num{position:absolute;left:14px;top:16px;width:30px;height:30px;border-radius:50%;
+    background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.92rem}
+  .lesson h3{margin-bottom:3px}
+  .lesson p{margin:.35em 0;color:var(--ink)}
+  .lesson .takeaway{color:var(--muted);font-size:.92rem;margin-top:.5em}
+
+  /* Pattern B: reference tables */
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin:10px 0}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:.93rem;background:var(--card)}
+  th,td{text-align:left;padding:10px 13px;border-top:1px solid var(--line);vertical-align:top}
+  th{background:var(--accent-tint);color:var(--accent-dark);font-weight:700;border-top:0}
+  td code,p code,li code{background:#f0f2f5;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:.86em}
+  .grouphead{margin:22px 0 4px;font-size:1.02rem;color:var(--accent-dark);font-weight:700}
+
+  /* good/warn banners (used by environment translation) */
+  .banner{border-radius:10px;padding:11px 14px;font-size:.92rem;margin:8px 0}
+  .banner.good{background:#e8f5ee;border:1px solid #b8e0c8}
+  .banner.warn{background:#fff7e6;border:1px solid #f0d99a}
+
+  /* Stage pills */
+  .stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .stages .pill{background:var(--accent-tint);border:1px solid var(--line);color:var(--accent-dark);
+    border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:600}
+  .stages .arrow{color:var(--muted);font-weight:700}
+
+  /* Corrections */
+  .claim{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);
+    border-radius:10px;padding:13px 16px;margin:10px 0}
+  .claim .tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    color:#fff;padding:2px 9px;border-radius:999px;margin-bottom:6px}
+  .claim.supported{border-left-color:var(--v-supported)} .claim.supported .tag{background:var(--v-supported)}
+  .claim.contested{border-left-color:var(--v-contested)} .claim.contested .tag{background:var(--v-contested)}
+  .claim.inaccurate{border-left-color:var(--v-inaccurate)} .claim.inaccurate .tag{background:var(--v-inaccurate)}
+  .claim.opinion{border-left-color:var(--v-opinion)} .claim.opinion .tag{background:var(--v-opinion)}
+  .claim p{margin:.25em 0}
+
+  /* Quotes */
+  .quote{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 18px;margin:10px 0;font-size:1.02rem;font-style:italic;color:var(--ink)}
+  .quote::before{content:"\201C";color:var(--accent);font-weight:700;font-style:normal;margin-right:2px}
+
+  /* Footer play button */
+  .footer{text-align:center;margin:54px 0 70px}
+  .play{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;
+    text-decoration:none;font-weight:700;padding:13px 24px;border-radius:999px;font-size:1rem}
+  .play:hover{background:var(--accent-dark)}
+  .play .tri{display:inline-block;width:0;height:0;border-left:13px solid #fff;
+    border-top:8px solid transparent;border-bottom:8px solid transparent}
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="kicker">KICKER</div>
+      <h1>TITLE</h1>
+      <p class="thesis">One-line thesis or summary.</p>
+      <!-- JUMP NAV -->
+      <nav class="jump">
+        <a href="#primer">Primer</a>
+        <a href="#prereq">Prerequisites</a>
+        <a href="#glossary">Glossary</a>
+        <a href="#takeaways">Takeaways</a>
+        <a href="#lessons">Lessons</a>
+        <a href="#flow">Flow</a>
+        <a href="#translate">Translation</a>
+        <a href="#corrections">Corrections</a>
+        <a href="#quotes">Lines</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- FORMAT NOTE + optional WARNING FLAG -->
+    <section>
+      <div class="note"><strong>Format:</strong> what this is and how to read it.</div>
+      <div class="flag"><strong>Heads up:</strong> include only when content is opinion-heavy or contestable.</div>
+    </section>
+
+    <!-- FIELD PRIMER -->
+    <section id="primer">
+      <div class="sec-kicker">New to this?</div>
+      <h2>Field primer</h2>
+      <p>Short, plain-English orientation for someone new to the subject.</p>
+    </section>
+
+    <!-- PREREQUISITES (optional) -->
+    <section id="prereq">
+      <div class="sec-kicker">Before you dive in</div>
+      <h2>Prerequisites</h2>
+      <div class="twocol">
+        <div class="panel"><h3>Essential</h3><ul><li>...</li></ul></div>
+        <div class="panel"><h3>Helpful, not required</h3><ul><li>...</li></ul></div>
+      </div>
+    </section>
+
+    <!-- GLOSSARY (optional) -->
+    <section id="glossary">
+      <div class="sec-kicker">Vocabulary</div>
+      <h2>Glossary</h2>
+      <div class="deflist">
+        <div class="row"><div class="term">Term</div><div class="def">Plain-English meaning.</div></div>
+      </div>
+    </section>
+
+    <!-- BIG-PICTURE TAKEAWAYS -->
+    <section id="takeaways">
+      <div class="sec-kicker">The big picture</div>
+      <h2>Takeaways</h2>
+      <div class="cards">
+        <div class="card"><h3>Idea</h3><p>...</p></div>
+      </div>
+    </section>
+
+    <!-- THE LESSONS -->
+    <section id="lessons">
+      <div class="sec-kicker">The core</div>
+      <h2>The lessons</h2>
+      <!-- Pattern A: numbered argument blocks -->
+      <div class="lesson"><div class="num">1</div><h3>Lesson</h3><p>...</p><p class="takeaway">Why it matters.</p></div>
+      <!-- Pattern B: grouped reference tables -->
+      <div class="grouphead">Group</div>
+      <div class="table-wrap"><table>
+        <tr><th>Col</th><th>Col</th></tr>
+        <tr><td>...</td><td>...</td></tr>
+      </table></div>
+    </section>
+
+    <!-- STRUCTURE / FLOW (optional) -->
+    <section id="flow">
+      <div class="sec-kicker">How it progresses</div>
+      <h2>Structure</h2>
+      <div class="stages">
+        <span class="pill">Stage</span><span class="arrow">&rarr;</span><span class="pill">Stage</span>
+      </div>
+    </section>
+
+    <!-- ENVIRONMENT TRANSLATION (optional) -->
+    <section id="translate">
+      <div class="sec-kicker">For your setup</div>
+      <h2>Environment translation</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Taught (original)</th><th>Your equivalent</th><th>Notes</th></tr>
+        <tr><td>...</td><td>...</td><td>...</td></tr>
+      </table></div>
+      <div class="banner good">Clean equivalent.</div>
+      <div class="banner warn">No clean equivalent: nearest real thing.</div>
+    </section>
+
+    <!-- CONTEXT AND CORRECTIONS -->
+    <section id="corrections">
+      <div class="sec-kicker">Fact check</div>
+      <h2>Context and corrections</h2>
+      <div class="claim supported"><span class="tag">Supported</span><p>...</p></div>
+      <div class="claim contested"><span class="tag">Contested</span><p>...</p></div>
+      <div class="claim inaccurate"><span class="tag">Inaccurate</span><p>...</p></div>
+      <div class="claim opinion"><span class="tag">Opinion</span><p>...</p></div>
+    </section>
+
+    <!-- LINES WORTH KEEPING -->
+    <section id="quotes">
+      <div class="sec-kicker">In their words</div>
+      <h2>Lines worth keeping</h2>
+      <div class="quote">A memorable line.</div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER: single Watch-the-original button, nothing else under it -->
+  <footer class="footer">
+    <a class="play" href="REPLACE_WITH_SOURCE_URL"><span class="tri"></span> Watch the original video</a>
+  </footer>
+
+</body>
+</html>
