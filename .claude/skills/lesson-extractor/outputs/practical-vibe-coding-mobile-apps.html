@@ -1,448 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Practical Vibe Coding: Building a Duolingo Clone with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --accent:#1f5fb0;
-    --accent-dark:#16447e;
-    --accent-tint:#eaf1fa;
-    --v-supported:#1f8a54;
-    --v-contested:#c98a16;
-    --v-inaccurate:#c0392b;
-    --v-opinion:#6c5ce7;
-    --ink:#1a1c20;
-    --muted:#5d636e;
-    --line:#e4e7ec;
-    --card:#ffffff;
-    --bg:#f6f7f9;
-    --radius:14px;
-    --maxw:980px;
-    font-synthesis-weight:none;
+    --accent:#1A4A87;
+    --accent-deep:#0F3366;
+    --accent-bright:#2E73C4;
+    --accent-soft:color-mix(in srgb, var(--accent) 46%, #ffffff);
+    --accent-wash:color-mix(in srgb, var(--accent) 7%, #ffffff);
+    --accent-wash2:color-mix(in srgb, var(--accent) 13%, #ffffff);
+    --rule:color-mix(in srgb, var(--accent) 16%, #ffffff);
+    --bg:#ffffff; --ink:#1E2733; --text-soft:#516079;
+    --sup:#3E8E5E; --con:#BE8A2E; --inc:#C0463C; --opi:#5E6B86;
+    --warn:#BE8A2E; --good:#3E8E5E;
+    --disp:'Archivo',system-ui,sans-serif;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.62;font-size:16.5px;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
-  section{margin:46px auto;scroll-margin-top:18px}
-  h2{font-size:1.5rem;letter-spacing:-.01em;margin:0 0 6px}
-  h3{font-size:1.12rem;margin:0 0 6px}
-  p{margin:.5em 0}
-  a{color:var(--accent-dark)}
-  .sec-kicker{text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:4px}
-  .lede{color:var(--muted);margin-top:0}
-  .hero{background:var(--accent);color:#fff;padding:54px 0 48px}
-  .hero .kicker{text-transform:uppercase;letter-spacing:.16em;font-size:.74rem;font-weight:700;opacity:.85}
-  .hero h1{font-size:2.15rem;line-height:1.18;letter-spacing:-.02em;margin:.3em 0 .35em}
-  .hero .thesis{font-size:1.08rem;max-width:48em;opacity:.96;margin:0}
-  .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-  .jump a{background:rgba(255,255,255,.14);color:#fff;text-decoration:none;padding:6px 12px;border-radius:999px;font-size:.82rem;font-weight:600;border:1px solid rgba(255,255,255,.22)}
-  .jump a:hover{background:rgba(255,255,255,.26)}
-  .note{background:var(--accent-tint);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;font-size:.95rem}
-  .flag{background:#fff7e6;border:1px solid #f0d99a;border-left:4px solid var(--v-contested);border-radius:10px;padding:14px 16px;font-size:.95rem;margin-top:12px}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
-  .card h3{color:var(--accent-dark)}
-  .card p{margin:.25em 0 0;color:var(--muted);font-size:.95rem}
-  .deflist{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .deflist .row{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--line)}
-  .deflist .row:first-child{border-top:0}
-  .deflist .term{font-weight:700;padding:11px 16px;background:var(--accent-tint);color:var(--accent-dark)}
-  .deflist .def{padding:11px 16px}
-  @media(max-width:620px){.deflist .row{grid-template-columns:1fr}}
-  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media(max-width:680px){.twocol{grid-template-columns:1fr}}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
-  .panel h3{color:var(--accent-dark)}
-  .panel ul{margin:.3em 0;padding-left:1.15em}
-  .panel li{margin:.25em 0}
-  .lesson{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px 16px 56px;position:relative;margin:12px 0}
-  .lesson .num{position:absolute;left:14px;top:16px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.92rem}
-  .lesson h3{margin-bottom:3px}
-  .lesson p{margin:.35em 0}
-  .lesson .takeaway{color:var(--muted);font-size:.92rem;margin-top:.5em}
-  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin:10px 0}
-  table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem;background:var(--card)}
-  th,td{text-align:left;padding:10px 13px;border-top:1px solid var(--line);vertical-align:top}
-  th{background:var(--accent-tint);color:var(--accent-dark);font-weight:700;border-top:0}
-  td code,p code,li code{background:#f0f2f5;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:.86em}
-  .grouphead{margin:22px 0 4px;font-size:1.02rem;color:var(--accent-dark);font-weight:700}
-  .banner{border-radius:10px;padding:11px 14px;font-size:.92rem;margin:8px 0}
-  .banner.good{background:#e8f5ee;border:1px solid #b8e0c8}
-  .banner.warn{background:#fff7e6;border:1px solid #f0d99a}
-  .stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .stages .pill{background:var(--accent-tint);border:1px solid var(--line);color:var(--accent-dark);border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:600}
-  .stages .arrow{color:var(--muted);font-weight:700}
-  .claim{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:10px;padding:13px 16px;margin:10px 0}
-  .claim .tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:2px 9px;border-radius:999px;margin-bottom:6px}
-  .claim.supported{border-left-color:var(--v-supported)} .claim.supported .tag{background:var(--v-supported)}
-  .claim.contested{border-left-color:var(--v-contested)} .claim.contested .tag{background:var(--v-contested)}
-  .claim.inaccurate{border-left-color:var(--v-inaccurate)} .claim.inaccurate .tag{background:var(--v-inaccurate)}
-  .claim.opinion{border-left-color:var(--v-opinion)} .claim.opinion .tag{background:var(--v-opinion)}
-  .claim p{margin:.25em 0}
-  .quote{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin:10px 0;font-size:1.02rem;font-style:italic}
-  .quote::before{content:"\201C";color:var(--accent);font-weight:700;font-style:normal;margin-right:2px}
-  .footer{text-align:center;margin:54px 0 70px}
-  .play{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:999px;font-size:1rem}
-  .play:hover{background:var(--accent-dark)}
-  .play .tri{display:inline-block;width:0;height:0;border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.72}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 72px}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--accent-wash2);border:1px solid var(--rule);border-radius:5px;padding:1px 6px;color:var(--accent-deep)}
+  td code{white-space:normal}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:18px}
+  .table-wrap table{margin-top:0}
+  .hero{position:relative;min-height:clamp(280px,42vw,400px);display:flex;align-items:flex-end;overflow:hidden;background:var(--accent)}
+  .hero-content{position:relative;z-index:2;width:100%;max-width:760px;margin:0 auto;padding:0 24px 38px;color:#fff}
+  .eyebrow{font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+  h1{font-family:var(--disp);font-weight:800;font-size:clamp(34px,7vw,58px);line-height:1.02;letter-spacing:-.015em;margin:12px 0 0;text-transform:uppercase;color:#fff}
+  .hero .thesis{font-family:var(--serif);font-size:clamp(18px,2.6vw,22px);line-height:1.42;margin:16px 0 0;max-width:46ch;color:rgba(255,255,255,.92)}
+  .hero .thesis em{font-style:italic;color:#fff;text-decoration:underline;text-decoration-color:var(--accent-soft);text-underline-offset:3px}
+  .nav{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 0}
+  .nav a{font-family:var(--disp);font-weight:600;font-size:13px;text-decoration:none;padding:9px 16px;border-radius:7px;background:var(--accent);color:#fff;border:1px solid var(--accent);transition:background .15s,transform .05s}
+  .nav a:hover{background:var(--accent-deep)}
+  .nav a:active{transform:translateY(1px)}
+  .nav a.ghost{background:#fff;color:var(--accent);border-color:var(--rule)}
+  .nav a.ghost:hover{background:var(--accent-wash);border-color:var(--accent-soft)}
+  .nav a:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+  h2{font-family:var(--disp);font-weight:700;font-size:23px;line-height:1.15;letter-spacing:-.01em;margin:0;color:var(--accent)}
+  .secnum{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.1em;color:var(--accent-bright);display:block;margin-bottom:6px}
+  p{margin:14px 0}
+  a{color:var(--accent-bright)}
+  strong{font-weight:500;color:var(--ink)}
+  section{margin:46px 0 0;scroll-margin-top:18px}
+  .lede{font-size:13px;font-family:var(--disp);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-bright);margin:0 0 14px;font-weight:700}
+  .source{font-family:var(--disp);font-size:12.5px;color:var(--text-soft);margin-top:28px;line-height:1.6}
+  .source b{color:var(--ink);font-weight:600}
+  .flag{font-family:var(--serif);font-size:15.5px;color:var(--text-soft);background:var(--accent-wash);border:1px solid var(--rule);border-radius:5px;padding:14px 16px;margin-top:18px;line-height:1.55}
+  .flag b{color:var(--ink);font-weight:600}
+  .glossary{background:var(--accent-wash);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-top:18px}
+  .glossary .row{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--rule)}
+  .glossary .row:first-child{border-top:none}
+  .glossary dt{font-family:var(--disp);font-weight:600;font-size:14px;color:var(--accent);padding:13px 16px;background:var(--accent-wash2)}
+  .glossary dd{margin:0;padding:13px 16px;font-size:15.5px;line-height:1.5;color:var(--text-soft)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+  .panel{background:var(--accent-wash);border:1px solid var(--rule);border-radius:8px;padding:16px 18px}
+  .panel h3{font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-bright);margin:0 0 8px}
+  .panel ul{margin:0;padding-left:18px}
+  .panel li{font-size:15px;line-height:1.5;color:var(--text-soft);margin:7px 0}
+  .takeaways{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-top:18px}
+  .takeaways .t{background:#fff;padding:16px 18px;font-size:16px;line-height:1.5}
+  .takeaways .t b{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-bright);display:block;margin-bottom:5px;font-weight:700}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
+  .flow .step{background:var(--accent-wash);border:1px solid var(--rule);border-radius:99px;padding:5px 12px;font-family:var(--disp);font-size:12.5px;color:var(--text-soft)}
+  .flow .arrow{color:var(--accent-soft)}
+  .arg{margin-top:40px;padding-top:28px;border-top:1px solid var(--rule)}
+  .arg:first-of-type{border-top:none;padding-top:0}
+  blockquote{margin:26px 0;padding:4px 0 4px 22px;border-left:3px solid var(--accent-bright);font-size:22px;line-height:1.38;color:var(--accent);font-style:italic;max-width:32ch}
+  .why{margin-top:14px;font-size:15.5px;line-height:1.5;color:var(--text-soft)}
+  .why b{font-family:var(--disp);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-bright);font-weight:700;margin-right:7px}
+  .pairs{margin:18px 0 0;border-top:1px solid var(--rule)}
+  .pairs .p{display:grid;grid-template-columns:160px 1fr;gap:18px;padding:13px 0;border-bottom:1px solid var(--rule)}
+  .pairs .k{font-family:var(--disp);font-weight:600;font-size:13.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;line-height:1.35}
+  .pairs .v{font-size:16px;line-height:1.5;color:var(--text-soft)}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--rule);border-radius:8px;overflow:hidden;font-size:14px;margin-top:18px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{background:var(--accent-wash2);font-family:var(--disp);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-soft);font-weight:700}
+  tr:last-child td{border-bottom:none}
+  th.colA{color:var(--accent)} th.colB{color:var(--accent-bright)}
+  td.task{font-weight:500;color:var(--ink)}
+  .grouprow td{background:var(--accent-wash);color:var(--accent);font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+  .warnband{background:color-mix(in srgb,var(--warn) 12%,#fff);border:1px solid color-mix(in srgb,var(--warn) 45%,#fff);border-radius:8px;padding:12px 15px;font-size:14px;margin-top:18px}
+  .warnband b{color:var(--warn)}
+  .goodband{background:color-mix(in srgb,var(--good) 12%,#fff);border:1px solid color-mix(in srgb,var(--good) 45%,#fff);border-radius:8px;padding:12px 15px;font-size:14px;margin-top:18px}
+  .goodband b{color:var(--good)}
+  .accuracy{margin-top:18px;display:grid;gap:10px}
+  .claim{background:var(--accent-wash);border:1px solid var(--rule);border-radius:8px;padding:15px 17px}
+  .claim .top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:7px}
+  .claim .c{font-family:var(--disp);font-weight:600;font-size:14.5px;color:var(--ink);line-height:1.3}
+  .claim .note{font-size:15px;line-height:1.5;color:var(--text-soft);margin:0}
+  .tag{font-family:var(--disp);font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#fff;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .t-sup{background:var(--sup)} .t-con{background:var(--con)} .t-inc{background:var(--inc)} .t-opi{background:var(--opi)}
+  .lines{margin-top:18px;border-top:1px solid var(--rule)}
+  .lines .q{padding:15px 0;border-bottom:1px solid var(--rule);font-size:18px;font-style:italic;color:var(--ink);line-height:1.45}
+  footer{margin-top:54px;padding-top:22px;border-top:1px solid var(--rule)}
+  .watch{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:600;font-size:13px;text-decoration:none;color:#fff;background:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:9px 15px;transition:background .15s,transform .05s}
+  .watch:hover{background:var(--accent-deep)}
+  .watch:active{transform:translateY(1px)}
+  .watch:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+  .watch .play{font-size:11px;line-height:1}
+  @media(max-width:620px){
+    body{font-size:17px}
+    .glossary .row{grid-template-columns:1fr}
+    .cols{grid-template-columns:1fr}
+    .pairs .p{grid-template-columns:1fr;gap:4px}
+    th,td{padding:8px 10px}
+    td code{overflow-wrap:anywhere;font-size:11.5px}
+  }
 </style>
 </head>
 <body>
 
   <header class="hero">
-    <div class="wrap">
-      <div class="kicker">AI-Assisted Mobile Development &middot; Full Tutorial</div>
-      <h1>Practical Vibe Coding: Building a Duolingo Clone with AI</h1>
-      <p class="thesis">Build a full React Native language-learning app end to end without writing manual code, using a repeatable workflow that keeps AI fast but stops the codebase from turning into spaghetti. The app is the demo; the workflow is the lesson.</p>
-      <nav class="jump">
-        <a href="#primer">Primer</a>
-        <a href="#prereq">Prerequisites</a>
-        <a href="#glossary">Glossary</a>
-        <a href="#takeaways">Takeaways</a>
-        <a href="#method">The method</a>
-        <a href="#build">The build</a>
-        <a href="#flow">Flow</a>
-        <a href="#translate">Your setup</a>
-        <a href="#corrections">Corrections</a>
-        <a href="#quotes">Lines</a>
-      </nav>
+    <div class="hero-content">
+      <div class="eyebrow">AI-Assisted Mobile Development &middot; Full Tutorial</div>
+      <h1>Practical Vibe Coding</h1>
+      <p class="thesis">Build a full React Native app end to end without writing manual code, using a workflow that keeps AI fast but stops the codebase turning to spaghetti. The app is the demo; the <em>workflow</em> is the lesson.</p>
     </div>
   </header>
 
-  <main class="wrap">
+  <div class="wrap">
 
-    <section>
-      <div class="note"><strong>Format:</strong> This is a learning reference for a long video tutorial from JavaScript Mastery. The first part teaches a prompting workflow ("practical vibe coding"); the second part applies it to build a Duolingo-style app called Lingua, feature by feature. The notes below capture both: the method as numbered principles, and the build as step-by-step reference tables you can scan.</div>
-      <div class="flag"><strong>Heads up, this is a sponsored tutorial.</strong> Four paid tools are woven through the build (Clerk, Stream, PostHog, CodeRabbit), plus repeated plugs for the creator's paid "playbook" and an upcoming "agentic course." The teaching is genuine and the tools are real, but the specific tool choices are partly commercial, not purely neutral. Treat them as "one good option," not "the only option." The workflow itself is tool-agnostic and is the part worth keeping.</div>
-    </section>
+    <nav class="nav">
+      <a href="#primer">Field primer</a>
+      <a href="#prereqs">Prerequisites</a>
+      <a href="#terms">The terms</a>
+      <a href="#method">The method</a>
+      <a href="#build">The build</a>
+      <a href="#translate" class="ghost">Your setup</a>
+      <a href="#corrections" class="ghost">Corrections</a>
+      <a href="#lines" class="ghost">Key lines</a>
+    </nav>
+
+    <div class="source"><b>Format:</b> a learning reference for a long JavaScript Mastery video tutorial. The first part teaches a prompting workflow ("practical vibe coding"); the second applies it to build a Duolingo-style app called Lingua, feature by feature. These notes capture both: the method as numbered principles, the build as step-by-step reference tables you can scan.</div>
+
+    <div class="flag"><b>Heads up, this is a sponsored tutorial.</b> Four paid tools are woven through the build (Clerk, Stream, PostHog, CodeRabbit), plus repeated plugs for the creator's paid "playbook" and an upcoming "agentic course." The teaching is genuine and the tools are real, but the specific tool choices are partly commercial, not neutral. Treat them as "one good option," not "the only option." The workflow itself is tool-agnostic and is the part worth keeping.</div>
 
     <section id="primer">
-      <div class="sec-kicker">New to this?</div>
-      <h2>Field primer</h2>
-      <p>This video is about building a phone app with the help of AI coding assistants. A few words on the field so the rest lands.</p>
-      <p><strong>Mobile app development</strong> is writing the software that runs on phones. <strong>React Native</strong> is a popular framework that lets you write one codebase (in JavaScript / TypeScript) that runs on both iPhone and Android, and <strong>Expo</strong> is a toolkit that makes React Native much easier to start, run, and ship. <strong>AI coding assistants</strong> (like Claude Code, Cursor, GitHub Copilot, or OpenAI Codex) are tools where you describe what you want in plain English and the AI writes and edits the code in your project for you.</p>
+      <p class="lede">Where this sits</p>
+      <p>This video is about building a phone app with the help of AI coding assistants. <strong>Mobile app development</strong> is writing the software that runs on phones. <strong>React Native</strong> is a popular framework that lets you write one codebase (in JavaScript / TypeScript) that runs on both iPhone and Android, and <strong>Expo</strong> is a toolkit that makes React Native much easier to start, run, and ship. <strong>AI coding assistants</strong> (Claude Code, Cursor, GitHub Copilot, OpenAI Codex) are tools where you describe what you want in plain English and the AI writes and edits the code in your project for you.</p>
       <p>The term in the title, <strong>vibe coding</strong>, was coined in early 2025 to mean leaning fully on AI and barely reading the code. It is fast but tends to collapse on anything serious. This tutorial pitches a disciplined middle path it calls <strong>practical vibe coding</strong>: keep AI's speed, but add just enough structure (a project rules file, scoped prompts, constant verification) that the AI always knows what it is working on and you never lose the thread. The app being built (a Duolingo clone with lessons and a talking AI language teacher) is just a realistic vehicle for showing the workflow on something bigger than a toy.</p>
     </section>
 
-    <section id="prereq">
-      <div class="sec-kicker">Before you dive in</div>
-      <h2>Prerequisites</h2>
-      <div class="twocol">
-        <div class="panel">
-          <h3>Genuinely essential</h3>
-          <ul>
-            <li>Basic comfort with a code editor and a terminal (you will run commands and edit files, even if AI writes most of the code).</li>
-            <li>Node.js and npm installed (so <code>npx</code> works).</li>
-            <li>An AI coding assistant subscription. The video uses Claude Code on the Sonnet model (about $20/mo) but says any agent works.</li>
-            <li>A phone with the free Expo Go app, for the early part of the build.</li>
-            <li>Free accounts for the services used: Clerk, Stream, PostHog, plus GitHub and CodeRabbit.</li>
-          </ul>
-        </div>
-        <div class="panel">
-          <h3>Helpful, not required</h3>
-          <ul>
-            <li>Prior React or React Native knowledge. The creator recommends his "React Native full course 2026" first if you want to understand the framework by hand.</li>
-            <li>Understanding of authentication, state, and APIs (it helps you write better constraints, but the AI fills gaps).</li>
-            <li><strong>Needed only for the later half:</strong> a native build environment. macOS + Xcode for iOS, or Windows/Linux + Android Studio. This is required only once you add Stream's audio (a native module) and is not needed for the first ~12 features that run in Expo Go.</li>
-            <li>No Python knowledge needed despite the app including a Python service: the point is that AI writes it for you.</li>
-          </ul>
-        </div>
+    <section id="prereqs">
+      <p class="lede">What you need coming in</p>
+      <div class="goodband"><b>The first half needs almost nothing.</b> Steps 0 to 14 (roughly the first dozen features) run in the free Expo Go app on any phone, with no native build, so your operating system does not matter until you add Stream's audio later.</div>
+      <div class="cols">
+        <div class="panel"><h3>Genuinely essential</h3><ul>
+          <li>Basic comfort with a code editor and terminal (you run commands and edit files, even if AI writes most of the code).</li>
+          <li>Node.js and npm installed (so <code>npx</code> works).</li>
+          <li>An AI coding assistant. The video uses Claude Code on Sonnet (~$20/mo) but says any agent works.</li>
+          <li>A phone with the free Expo Go app for the early build.</li>
+          <li>Free accounts: Clerk, Stream, PostHog, plus GitHub and CodeRabbit.</li>
+        </ul></div>
+        <div class="panel"><h3>Helpful, not required</h3><ul>
+          <li>Prior React / React Native knowledge (the creator suggests his "React Native full course 2026" first to learn the framework by hand).</li>
+          <li>A feel for auth, state, and APIs (it helps you write better constraints; the AI fills gaps).</li>
+          <li><strong>Later half only:</strong> a native build environment. macOS + Xcode for iOS, or Windows / Linux + Android Studio. Needed only once you add Stream audio.</li>
+          <li>No Python needed, despite the app including a Python service. The point is that AI writes it.</li>
+        </ul></div>
       </div>
     </section>
 
-    <section id="glossary">
-      <div class="sec-kicker">Vocabulary</div>
-      <h2>Glossary</h2>
-      <p class="lede">Plain-English meanings for the terms the video assumes. (Spellings that are garbled in the transcript are given correctly here.)</p>
-      <div class="deflist">
-        <div class="row"><div class="term">AGENTS.md</div><div class="def">A markdown file at the root of the project that tells AI agents how the project works: role, stack, folder structure, styling rules, patterns. The first file the agent reads. The backbone of this whole method.</div></div>
-        <div class="row"><div class="term">Agent / coding agent</div><div class="def">An AI assistant that can read and edit your codebase (for example Claude Code, Cursor, Copilot, OpenAI Codex, Windsurf).</div></div>
-        <div class="row"><div class="term">Agent skills</div><div class="def">An open-source standard: a reusable instruction pack that teaches your AI how to use a specific tool correctly (and on its current version). Installed with <code>npx skills add</code>.</div></div>
-        <div class="row"><div class="term">MCP</div><div class="def">Model Context Protocol. Lets AI tools query a service directly (for example asking PostHog "which screen has the highest drop-off?") and act on the answer.</div></div>
-        <div class="row"><div class="term">Context7</div><div class="def">A service that fetches the latest documentation for a library so the AI does not rely on outdated training data.</div></div>
-        <div class="row"><div class="term">React Native</div><div class="def">Framework for building iOS and Android apps from one JavaScript / TypeScript codebase.</div></div>
-        <div class="row"><div class="term">Expo</div><div class="def">A toolkit on top of React Native that simplifies setup, running, and shipping.</div></div>
-        <div class="row"><div class="term">Expo Go</div><div class="def">A free app you install on your phone to preview your project instantly by scanning a QR code. No full build needed. Works only until you add native modules.</div></div>
-        <div class="row"><div class="term">Development build</div><div class="def">A custom build of your app compiled with native code included (needed once you use native modules like Stream's audio). Same Expo experience, but built through Xcode or Android Studio.</div></div>
-        <div class="row"><div class="term">Expo Router</div><div class="def">File-based navigation for Expo. Folders and files become screens and routes.</div></div>
-        <div class="row"><div class="term">Route group</div><div class="def">A folder in parentheses like <code>(auth)</code> that organizes screens without adding to the URL path. Purely for structure.</div></div>
-        <div class="row"><div class="term">Metro bundler</div><div class="def">The tool that compiles and serves your React Native code during development.</div></div>
-        <div class="row"><div class="term">pre-build</div><div class="def">An Expo command that turns your config into a full native <code>ios</code>/<code>android</code> folder. The <code>--clean</code> flag wipes old generated code first.</div></div>
-        <div class="row"><div class="term">NativeWind</div><div class="def">A library that lets you write Tailwind CSS utility classes (like <code>flex-1</code>, <code>text-center</code>) to style React Native apps. The video uses v5.</div></div>
-        <div class="row"><div class="term">Tailwind CSS</div><div class="def">A styling system based on small utility classes instead of separate stylesheets.</div></div>
-        <div class="row"><div class="term">Zustand</div><div class="def">A small state-management library: a shared place to keep app state many components need, without prop-drilling or Redux boilerplate. (Transcript garbles it as "Zastand / Zustin".)</div></div>
-        <div class="row"><div class="term">AsyncStorage</div><div class="def">Local key-value storage on the device for small, non-sensitive data (settings, flags, cached state). Used here instead of a database for the MVP.</div></div>
-        <div class="row"><div class="term">Clerk</div><div class="def">A managed authentication and user-management service: email/password, social login, OTP, sessions, billing.</div></div>
-        <div class="row"><div class="term">OAuth / SSO</div><div class="def">"Sign in with Google / Apple / Facebook." Single sign-on through an external provider rather than a new password.</div></div>
-        <div class="row"><div class="term">OTP</div><div class="def">One-time passcode: the short numeric code emailed for verification or passwordless sign-in.</div></div>
-        <div class="row"><div class="term">JWT / JWKS</div><div class="def">A signed token proving who a user is (JWT), verified against the provider's public keys (JWKS). Used in the security fix so the server trusts the authenticated caller, not a user ID from the URL.</div></div>
-        <div class="row"><div class="term">Token provider</div><div class="def">A small server endpoint that mints a secure token for a service (here, Stream) so the secret key never ships in the app. Built with Expo API routes.</div></div>
-        <div class="row"><div class="term">Expo API routes</div><div class="def">Server-side endpoints inside an Expo app (similar to Next.js API routes). Used to keep secrets off the client.</div></div>
-        <div class="row"><div class="term">Stream</div><div class="def">A service handling real-time audio/video infrastructure: sessions, participant state, low-latency transport, connection lifecycle.</div></div>
-        <div class="row"><div class="term">Vision Agents</div><div class="def">Stream's open-source Python framework for real-time voice/video AI agents. Here it runs as a separate service that joins the call as the AI teacher.</div></div>
-        <div class="row"><div class="term">WebRTC</div><div class="def">The browser/device technology for real-time audio and video. The audio transport under the hood.</div></div>
-        <div class="row"><div class="term">VAD</div><div class="def">Voice Activity Detection: deciding when someone is speaking. "Server VAD" (energy-based) fires fast; "semantic VAD" waits to understand intent and is slower.</div></div>
-        <div class="row"><div class="term">OpenAI Realtime</div><div class="def">OpenAI's low-latency speech model. The brain of the AI teacher's spoken conversation.</div></div>
-        <div class="row"><div class="term">PostHog</div><div class="def">A product-analytics platform: event tracking, funnels, retention, session replays, feature flags, with an AI wizard that auto-instruments your project.</div></div>
-        <div class="row"><div class="term">CodeRabbit</div><div class="def">An AI code-review tool that reviews each pull request (and works in the editor), flagging bugs, security issues, and style inconsistencies.</div></div>
-        <div class="row"><div class="term">Homebrew / CocoaPods</div><div class="def">macOS tooling: Homebrew is a package manager; CocoaPods links native iOS libraries into an Xcode project (<code>pod install</code>).</div></div>
-        <div class="row"><div class="term">XP</div><div class="def">"Experience points." The gamification reward shown per lesson, Duolingo-style.</div></div>
-      </div>
+    <section id="terms">
+      <p class="lede">Start here &middot; the terms</p>
+      <dl class="glossary">
+        <div class="row"><dt>AGENTS.md</dt><dd>A markdown file at the project root that tells AI agents how the project works: role, stack, folder structure, styling rules, patterns. The first file the agent reads. The backbone of this whole method.</dd></div>
+        <div class="row"><dt>Agent / coding agent</dt><dd>An AI assistant that can read and edit your codebase (Claude Code, Cursor, Copilot, OpenAI Codex, Windsurf).</dd></div>
+        <div class="row"><dt>Agent skills</dt><dd>An open standard: a reusable instruction pack teaching your AI to use a specific tool correctly and on its current version. Installed with <code>npx skills add</code>.</dd></div>
+        <div class="row"><dt>MCP</dt><dd>Model Context Protocol. Lets AI tools query a service directly (for example asking PostHog "which screen has the highest drop-off?") and act on the answer.</dd></div>
+        <div class="row"><dt>Context7</dt><dd>A service that fetches the latest docs for a library so the AI does not rely on outdated training data.</dd></div>
+        <div class="row"><dt>React Native</dt><dd>Framework for building iOS and Android apps from one JavaScript / TypeScript codebase.</dd></div>
+        <div class="row"><dt>Expo</dt><dd>A toolkit on top of React Native that simplifies setup, running, and shipping.</dd></div>
+        <div class="row"><dt>Expo Go</dt><dd>A free phone app to preview your project instantly by scanning a QR code. No full build. Works only until you add native modules.</dd></div>
+        <div class="row"><dt>Development build</dt><dd>A custom build compiled with native code included (needed once you use native modules like Stream audio). Same Expo experience, built through Xcode or Android Studio.</dd></div>
+        <div class="row"><dt>Expo Router</dt><dd>File-based navigation for Expo. Folders and files become screens and routes.</dd></div>
+        <div class="row"><dt>Route group</dt><dd>A folder in parentheses like <code>(auth)</code> that organizes screens without adding to the URL. Purely structural.</dd></div>
+        <div class="row"><dt>Metro bundler</dt><dd>The tool that compiles and serves your React Native code during development.</dd></div>
+        <div class="row"><dt>pre-build</dt><dd>An Expo command turning your config into a full native <code>ios</code>/<code>android</code> folder. <code>--clean</code> wipes old generated code first.</dd></div>
+        <div class="row"><dt>NativeWind</dt><dd>A library to write Tailwind CSS utility classes (like <code>flex-1</code>) to style React Native apps. The video uses v5.</dd></div>
+        <div class="row"><dt>Tailwind CSS</dt><dd>A styling system based on small utility classes instead of separate stylesheets.</dd></div>
+        <div class="row"><dt>Zustand</dt><dd>A small state-management library: shared app state without prop-drilling or Redux boilerplate. (Transcript garbles it as "Zastand / Zustin".)</dd></div>
+        <div class="row"><dt>AsyncStorage</dt><dd>Local key-value storage on the device for small, non-sensitive data. Used here instead of a database for the MVP.</dd></div>
+        <div class="row"><dt>Clerk</dt><dd>A managed authentication and user-management service: email/password, social login, OTP, sessions, billing.</dd></div>
+        <div class="row"><dt>OAuth / SSO</dt><dd>"Sign in with Google / Apple / Facebook." Single sign-on through an external provider rather than a new password.</dd></div>
+        <div class="row"><dt>OTP</dt><dd>One-time passcode: the short numeric code emailed for verification or passwordless sign-in.</dd></div>
+        <div class="row"><dt>JWT / JWKS</dt><dd>A signed token proving who a user is (JWT), verified against the provider's public keys (JWKS). Central to the security fix.</dd></div>
+        <div class="row"><dt>Token provider</dt><dd>A small server endpoint that mints a secure token for a service (here Stream) so the secret key never ships in the app.</dd></div>
+        <div class="row"><dt>Expo API routes</dt><dd>Server-side endpoints inside an Expo app (similar to Next.js). Used to keep secrets off the client.</dd></div>
+        <div class="row"><dt>Stream</dt><dd>A service handling real-time audio/video infrastructure: sessions, participant state, low-latency transport, lifecycle.</dd></div>
+        <div class="row"><dt>Vision Agents</dt><dd>Stream's open-source Python framework for real-time voice/video AI agents. Here it runs as a separate service that joins the call as the AI teacher.</dd></div>
+        <div class="row"><dt>WebRTC</dt><dd>The device technology for real-time audio and video. The audio transport under the hood.</dd></div>
+        <div class="row"><dt>VAD</dt><dd>Voice Activity Detection: deciding when someone is speaking. "Server VAD" (energy-based) fires fast; "semantic VAD" waits to understand intent and is slower.</dd></div>
+        <div class="row"><dt>OpenAI Realtime</dt><dd>OpenAI's low-latency speech model. The brain of the AI teacher's spoken conversation.</dd></div>
+        <div class="row"><dt>PostHog</dt><dd>A product-analytics platform: events, funnels, retention, session replays, feature flags, with an AI wizard that auto-instruments your project.</dd></div>
+        <div class="row"><dt>CodeRabbit</dt><dd>An AI code-review tool that reviews each pull request (and works in the editor), flagging bugs, security issues, and style drift.</dd></div>
+        <div class="row"><dt>Homebrew / CocoaPods</dt><dd>macOS tooling: Homebrew is a package manager; CocoaPods links native iOS libraries into an Xcode project (<code>pod install</code>).</dd></div>
+        <div class="row"><dt>XP</dt><dd>"Experience points." The gamification reward shown per lesson, Duolingo-style.</dd></div>
+      </dl>
     </section>
 
-    <section id="takeaways">
-      <div class="sec-kicker">The big picture</div>
-      <h2>Takeaways</h2>
-      <div class="cards">
-        <div class="card"><h3>The workflow is the product</h3><p>The app is disposable; the repeatable AI-development method is the thing to carry to your next project. "The product will change, the workflow doesn't."</p></div>
-        <div class="card"><h3>Two failure modes, one middle path</h3><p>Pure vibe coding gives speed without direction; over-planning gives docs without an app. Practical vibe coding keeps the speed and adds just enough structure.</p></div>
-        <div class="card"><h3>Think behavior, not code</h3><p>You no longer write the lines. You decide architecture and describe how features should behave. Planning and clear specs matter more than syntax now.</p></div>
-        <div class="card"><h3>One task per prompt, verify each</h3><p>Scope every prompt to a single feature and test it before moving on. When something breaks, the cause is contained because you changed only one thing.</p></div>
-        <div class="card"><h3>Context beats clever prompts</h3><p>Most prompts in the build were small. What carried quality was reusable context (AGENTS.md), feature isolation, and consistency, not prompt wizardry.</p></div>
-        <div class="card"><h3>Reviewing AI code matters more</h3><p>Because you did not write it, review is more important, not less. An automated reviewer caught a real auth security hole and a committed secrets file.</p></div>
-        <div class="card"><h3>Ship MVP on hard-coded data first</h3><p>Build the full UI and features on typed, hard-coded data, then add a database later. Optimizes for iteration speed and getting to market.</p></div>
-        <div class="card"><h3>Know when to stop following</h3><p>The most underrated skill: stop copying tutorial steps and start experimenting once you understand the moving pieces. The video deliberately hands one feature to you.</p></div>
+    <section>
+      <p class="lede">The big picture</p>
+      <div class="takeaways">
+        <div class="t"><b>The workflow is the product</b>The app is disposable; the repeatable AI-development method is the thing to carry to your next project. "The product will change, the workflow doesn't."</div>
+        <div class="t"><b>Two failure modes, one middle path</b>Pure vibe coding gives speed without direction; over-planning gives docs without an app. Practical vibe coding keeps the speed and adds just enough structure.</div>
+        <div class="t"><b>Think behavior, not code</b>You no longer write the lines. You decide architecture and describe how features should behave. Planning and clear specs matter more than syntax now.</div>
+        <div class="t"><b>One task per prompt, verify each</b>Scope every prompt to a single feature and test it before moving on. When something breaks, the cause is contained because you changed only one thing.</div>
+        <div class="t"><b>Context beats clever prompts</b>Most prompts in the build were small. What carried quality was reusable context (AGENTS.md), feature isolation, and consistency, not prompt wizardry.</div>
+        <div class="t"><b>Reviewing AI code matters more</b>Because you did not write it, review is more important, not less. An automated reviewer caught a real auth security hole and a committed secrets file.</div>
+        <div class="t"><b>Ship MVP on hard-coded data first</b>Build the full UI and features on typed, hard-coded data, then add a database later. Optimizes for iteration speed and getting to market.</div>
+        <div class="t"><b>Know when to stop following</b>The most underrated skill: stop copying tutorial steps and start experimenting once you understand the moving pieces. The video deliberately hands one feature to you.</div>
       </div>
     </section>
 
     <section id="method">
-      <div class="sec-kicker">The core, part 1</div>
-      <h2>The method: practical vibe coding</h2>
-      <p class="lede">The crash-course principles, as numbered rules. These are the reusable part.</p>
+      <p class="lede">The core, part 1 &middot; the method</p>
 
-      <div class="lesson"><div class="num">1</div>
-        <h3>Avoid both extremes</h3>
+      <div class="arg">
+        <h2><span class="secnum">I</span>Avoid both extremes</h2>
         <p>Pure vibe coding (give in to AI, never read the code) flies for three features then collapses: you ask for one fix, something else breaks, and you are staring at code you cannot explain. Over-engineering is the opposite trap: days of folder structures, tokens, and architecture docs before a single screen exists, which feels productive but ships nothing.</p>
-        <p class="takeaway">The fix is a disciplined middle: AI speed plus just enough structure, building one feature at a time and verifying each before the next.</p>
+        <p class="why"><b>Why it matters</b>The fix is a disciplined middle: AI speed plus just enough structure, building one feature at a time and verifying each before the next.</p>
       </div>
 
-      <div class="lesson"><div class="num">2</div>
-        <h3>Put project context in one file: AGENTS.md</h3>
-        <p>Create <code>AGENTS.md</code> at the project root. It is written for the AI, not for you, and is the first file tools like Cursor, Claude Code, and Windsurf read. Without it you re-type the same context every prompt, and the moment you forget a line the AI invents its own choice (a different state library, folder convention, or styling approach), so across 20 prompts the codebase looks like five people built it.</p>
+      <div class="arg">
+        <h2><span class="secnum">II</span>Put project context in one file: AGENTS.md</h2>
+        <p>Create <code>AGENTS.md</code> at the project root. It is written for the AI, not for you, and is the first file tools like Cursor and Claude Code read. Without it you re-type the same context every prompt, and the moment you forget a line the AI invents its own choice (a different state library, folder convention, or styling approach), so across 20 prompts the codebase looks like five people built it.</p>
         <p>It contains: a <strong>role</strong> ("you are an expert React Native + Expo engineer, prioritize clarity over abstraction"), a one-paragraph <strong>overview</strong>, the <strong>stack</strong> (one line per library so AI stops suggesting alternatives mid-build), the <strong>folder structure</strong>, <strong>styling rules</strong> and quirks, and the <strong>patterns</strong> to follow. Do not write it perfectly up front; add a rule when a problem keeps recurring.</p>
-        <p class="takeaway">"Solve it once, document it, move on." A recurring NativeWind + SafeAreaView issue became one rule and the AI never repeated the mistake.</p>
+        <p class="why"><b>Why it matters</b>"Solve it once, document it, move on." A recurring NativeWind + SafeAreaView issue became one rule, and the AI never repeated the mistake.</p>
       </div>
 
-      <div class="lesson"><div class="num">3</div>
-        <h3>Every prompt has the same four parts, in order</h3>
-        <p><strong>1) Point to AGENTS.md:</strong> "Read AGENTS.md first and follow it strictly," every time, because agents do not remember previous sessions. <strong>2) One task:</strong> exactly one feature, screen, or integration (not "set up NativeWind and build onboarding and add auth", which is three prompts hiding as one). <strong>3) Constraints that protect what works:</strong> tell it what not to break ("do not change the screen design", "keep the existing Stream audio flow intact", "don't expose secrets"). <strong>4) Design references:</strong> attach an image when the task is visual; AI reads a layout better than a description of one.</p>
-        <p class="takeaway">"A perfect prompt is just an instruction with a defined scope": what you are building, what you are not touching, and what rules it already knows from the file.</p>
+      <div class="arg">
+        <h2><span class="secnum">III</span>Every prompt has the same four parts, in order</h2>
+        <div class="pairs">
+          <div class="p"><div class="k">1. Point to AGENTS.md</div><div class="v">"Read AGENTS.md first and follow it strictly," every time, because agents do not remember previous sessions.</div></div>
+          <div class="p"><div class="k">2. One task</div><div class="v">Exactly one feature, screen, or integration. Not "set up NativeWind and build onboarding and add auth," which is three prompts hiding as one.</div></div>
+          <div class="p"><div class="k">3. Constraints</div><div class="v">Protect what works: "do not change the screen design," "keep the existing Stream audio flow intact," "don't expose secrets."</div></div>
+          <div class="p"><div class="k">4. Design references</div><div class="v">Attach an image when the task is visual. AI reads a layout better than a description of one.</div></div>
+        </div>
+        <blockquote>"A perfect prompt is just an instruction with a defined scope."</blockquote>
       </div>
 
-      <div class="lesson"><div class="num">4</div>
-        <h3>Constraints are about behavior, not code</h3>
+      <div class="arg">
+        <h2><span class="secnum">IV</span>Constraints are about behavior, not code</h2>
         <p>The common mistake is writing a constraint that does not constrain anything, because people think about code when they should think about behavior. Do not tell the AI how to write the code; tell it how the feature should behave: what already works and must stay, what may change, what is off limits. Examples: "if anything is unclear, ask before implementing"; "do not expose any secrets"; "keep the existing Stream audio flow intact."</p>
-        <p class="takeaway">Find constraints by looking at the app like a product engineer: what could go wrong for a user, what might the AI accidentally refactor that already works.</p>
+        <p class="why"><b>Why it matters</b>Find constraints by looking at the app like a product engineer: what could go wrong for a user, what might the AI accidentally refactor that already works.</p>
       </div>
 
-      <div class="lesson"><div class="num">5</div>
-        <h3>For non-visual features, describe behavior and add a test utility</h3>
+      <div class="arg">
+        <h2><span class="secnum">V</span>For non-visual features, describe behavior and add a test utility</h2>
         <p>State management, auth logic, and backend integrations have nothing to attach. Describe the behavior instead ("store the selected language in Zustand with AsyncStorage; if an authenticated user has no language, route them to selection, then home; preserve the existing UI"). Also prompt for the infrastructure that lets you verify it, like a temporary "clear storage" button you remove later.</p>
-        <p class="takeaway">Prompt for the thing that lets you test the feature, not just the feature itself.</p>
+        <p class="why"><b>Why it matters</b>Prompt for the thing that lets you test the feature, not just the feature itself.</p>
       </div>
 
-      <div class="lesson"><div class="num">6</div>
-        <h3>Keep the AI on the current version of your tools</h3>
+      <div class="arg">
+        <h2><span class="secnum">VI</span>Keep the AI on the current version of your tools</h2>
         <p>AI training data lags by months, so it writes code using deprecated methods or old APIs that break at build time. Three fixes: <strong>paste the current docs</strong> into the prompt under a divider; install <strong>agent skills</strong> once so the AI always uses the right version (Expo, Clerk, Stream all publish them); or use <strong>Context7 / MCP</strong> to pull the latest docs on demand.</p>
-        <p class="takeaway">When unsure whether the AI knows a library's current version, assume it does not, and feed it the real docs.</p>
+        <p class="why"><b>Why it matters</b>When unsure whether the AI knows a library's current version, assume it does not, and feed it the real docs.</p>
       </div>
 
-      <div class="lesson"><div class="num">7</div>
-        <h3>When something breaks, write one targeted fix</h3>
+      <div class="arg">
+        <h2><span class="secnum">VII</span>When something breaks, write one targeted fix</h2>
         <p>Breakage is normal, not a failure of the method. Do not re-explain the feature or paste the codebase. State the problem, state the correct behavior, and add a constraint if needed: "the verification modal appears behind the keyboard on iOS; it should sit above it; don't change any other modal behavior or layout."</p>
-        <p class="takeaway">One problem, one fix, one verification. Often the simplest move is pasting the raw error message straight into the chat.</p>
+        <p class="why"><b>Why it matters</b>One problem, one fix, one verification. Often the simplest move is pasting the raw error message straight into the chat.</p>
       </div>
 
-      <div class="lesson"><div class="num">8</div>
-        <h3>Practice session hygiene</h3>
+      <div class="arg">
+        <h2><span class="secnum">VIII</span>Practice session hygiene</h2>
         <p>When you finish a feature, close the chat and start a fresh session. Stale context from earlier work leaks in, confuses the agent, and spends more tokens. Stay in the same chat only when the next step is directly tied to what you just built (for example fixing an error from the same change).</p>
-        <p class="takeaway">Fresh session per feature; same session only for tightly-coupled follow-ups.</p>
+        <p class="why"><b>Why it matters</b>Fresh session per feature; same session only for tightly-coupled follow-ups.</p>
       </div>
 
-      <div class="lesson"><div class="num">9</div>
-        <h3>The tooling is your call; spend tokens wisely</h3>
+      <div class="arg">
+        <h2><span class="secnum">IX</span>The tooling is your call; spend tokens wisely</h2>
         <p>The workflow is agent-agnostic (Copilot, Claude Code, Codex, Cursor, Windsurf all work the same once you are inside). The video uses Claude Code on Sonnet with thinking on (Claude Pro ~$20/mo), optionally topped up with OpenAI Codex Go (~$8/mo). Tip shown: you can speak prompts with the mic button instead of typing.</p>
-        <p class="takeaway">Pick the tool you already pay for; the thinking and the specs are what matter.</p>
+        <p class="why"><b>Why it matters</b>Pick the tool you already pay for; the thinking and the specs are what matter.</p>
       </div>
 
-      <div class="lesson"><div class="num">10</div>
-        <h3>Review everything, and build on hard-coded data first</h3>
+      <div class="arg">
+        <h2><span class="secnum">X</span>Review everything, and build on hard-coded data first</h2>
         <p>Run a code review on every change (the video uses CodeRabbit on each PR and in the editor); reviewing AI-generated code matters more than reviewing hand-written code. Separately, build the full UI and MVP on typed hard-coded data before adding any database, so you can iterate fast and reach market, then swap in a backend once the structure is proven.</p>
-        <p class="takeaway">"That's how good developers build: MVP the features with hard-coded data first, integrate the database after."</p>
+        <p class="why"><b>Why it matters</b>"That's how good developers build: MVP the features with hard-coded data first, integrate the database after."</p>
       </div>
 
-      <div class="lesson"><div class="num">11</div>
-        <h3>Eventually, stop following and start experimenting</h3>
+      <div class="arg">
+        <h2><span class="secnum">XI</span>Eventually, stop following and start experimenting</h2>
         <p>Near the end the creator deliberately hands one feature (live captions) to the viewer to attempt first. Once you understand the moving pieces, the real skill is guiding the AI yourself using the context it already has, not memorizing prompts.</p>
-        <p class="takeaway">"Knowing when to stop following tutorials step by step and start experimenting on your own" is called the most underrated skill in AI-assisted building.</p>
+        <p class="why"><b>Why it matters</b>"Knowing when to stop following tutorials step by step and start experimenting" is called the most underrated skill in AI-assisted building.</p>
       </div>
     </section>
 
     <section id="build">
-      <div class="sec-kicker">The core, part 2</div>
-      <h2>The build: Lingua, feature by feature</h2>
-      <p class="lede">The app is built in ~19 scoped steps, each its own prompt, commit, and review. Scan the table to see the whole arc.</p>
+      <p class="lede">The core, part 2 &middot; the build</p>
+      <p style="margin-top:0;color:var(--text-soft);font-size:16px">The app (Lingua) is built in ~19 scoped steps, each its own prompt, commit, and review. Scan the tables to see the whole arc, the stack, the commands, and the real errors hit along the way.</p>
 
-      <div class="grouphead">Build steps in order</div>
+      <p class="lede" style="margin-top:38px">Build steps in order</p>
       <div class="table-wrap"><table>
-        <tr><th>#</th><th>Feature / step</th><th>What happens</th></tr>
-        <tr><td>0</td><td>Project setup</td><td>Create an empty folder, <code>npx create-expo-app .</code>, run it via Expo Go (QR code), then <code>npm run reset-project</code> to delete boilerplate.</td></tr>
-        <tr><td>1</td><td>AGENTS.md + Expo skills</td><td>Add the project rules file at root; install Expo agent skills (<code>npx skills add</code>) so the agent uses Expo correctly.</td></tr>
-        <tr><td>2</td><td>NativeWind v5</td><td>First real prompt: set up NativeWind by pasting the v5 docs. Verify with a <code>className</code> on a view.</td></tr>
-        <tr><td>3</td><td>Design system</td><td>Feed an AI-generated design-theme image; generate <code>globals.css</code> tokens, theme folder, fonts, centralized image exports. Push to GitHub, create a <code>development</code> branch.</td></tr>
-        <tr><td>4</td><td>Onboarding screen</td><td>Implement from a design image; fix the off-center mascot and over-applied StyleSheet with corrective prompts; review and merge PR.</td></tr>
-        <tr><td>5</td><td>Auth UI (no logic)</td><td>Sign-up and sign-in screens plus a 6-digit verification modal kept above the keyboard.</td></tr>
-        <tr><td>6</td><td>Auth logic (Clerk)</td><td>Install Clerk skills, paste Clerk docs; wire email/OTP, social SSO, route guards. Fix a "install Expo OAuth session" error by pasting it.</td></tr>
-        <tr><td>7</td><td>Content data model</td><td>Typed hard-coded TypeScript: languages, units, lessons, vocabulary, phrases, AI-teacher prompts. No database yet.</td></tr>
-        <tr><td>8</td><td>Language selection</td><td>UI from design + hard-coded languages; CodeRabbit flags committing the selection and exposing unsupported languages.</td></tr>
-        <tr><td>9</td><td>State (Zustand + AsyncStorage)</td><td>Persist the selected language across reloads; add a temporary clear-storage button; fix a Babel/import.meta error.</td></tr>
-        <tr><td>10</td><td>Bottom tab navigation</td><td>Five tabs with an animated active circle; switch a bouncy spring to a smooth linear animation; rewind a change you dislike.</td></tr>
-        <tr><td>11</td><td>Home screen</td><td>Combine Clerk user + selected language + lesson data: greeting, streak, daily goal, continue-learning. CodeRabbit flags a hydration race and a divide-by-zero.</td></tr>
-        <tr><td>12</td><td>PostHog analytics</td><td>Run the PostHog AI wizard (<code>npx -y @posthog/wizard@latest</code>); auto-instruments events; optionally install the PostHog MCP.</td></tr>
-        <tr><td>13</td><td>Lesson screen</td><td>Render units/lessons from data; auto-extend lesson data; fix a cut-off banner image.</td></tr>
-        <tr><td>14</td><td>Audio lesson UI</td><td>The AI-teacher screen: mascot, mic/subtitle controls, ratings (placeholder, audio only, no video).</td></tr>
-        <tr><td>15</td><td>Native dev build</td><td>Switch off Expo Go: install Xcode (or Android Studio), Homebrew, CocoaPods; <code>expo prebuild</code>, add bundle IDs, <code>expo run ios</code>; fix missing native deps.</td></tr>
-        <tr><td>16</td><td>Stream integration</td><td>Install Stream skills; add join/mute/end audio call; mint tokens server-side via Expo API route so the secret never ships.</td></tr>
-        <tr><td>17</td><td>Vision Agent (Python)</td><td>AI writes a separate Python service (the AI teacher) using OpenAI Realtime over Stream's edge; run it with <code>uv run main.py serve</code>.</td></tr>
-        <tr><td>18</td><td>Connect agent to UI</td><td>Agent joins the same call; lesson context (goals, vocab, phrases, prompts) packed into the call so the teacher is lesson-aware.</td></tr>
-        <tr><td>19</td><td>Tune the AI teacher</td><td>Make it warm and interactive; add push-to-talk to kill the echo loop; switch to server VAD with interrupt; add live captions; stop it congratulating before you speak.</td></tr>
-        <tr><td>+</td><td>Custom analytics events</td><td>Track language-selected, lesson-started, lesson-abandoned + duration; build a PostHog dashboard by natural-language prompt; final CodeRabbit review.</td></tr>
+        <thead><tr><th class="colA">#</th><th class="colB">Feature / step</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td class="task">0</td><td class="task">Project setup</td><td>Empty folder, <code>npx create-expo-app .</code>, run via Expo Go (QR), then <code>npm run reset-project</code> to delete boilerplate.</td></tr>
+          <tr><td class="task">1</td><td class="task">AGENTS.md + Expo skills</td><td>Add the project rules file at root; install Expo agent skills (<code>npx skills add</code>).</td></tr>
+          <tr><td class="task">2</td><td class="task">NativeWind v5</td><td>First real prompt: set up NativeWind by pasting the v5 docs. Verify with a <code>className</code> on a view.</td></tr>
+          <tr><td class="task">3</td><td class="task">Design system</td><td>Feed an AI-generated theme image; generate <code>globals.css</code> tokens, fonts, centralized image exports. Push to GitHub, create a <code>development</code> branch.</td></tr>
+          <tr><td class="task">4</td><td class="task">Onboarding screen</td><td>Implement from a design image; fix the off-center mascot and over-applied StyleSheet with corrective prompts; review and merge PR.</td></tr>
+          <tr><td class="task">5</td><td class="task">Auth UI (no logic)</td><td>Sign-up and sign-in screens plus a 6-digit verification modal kept above the keyboard.</td></tr>
+          <tr><td class="task">6</td><td class="task">Auth logic (Clerk)</td><td>Install Clerk skills, paste Clerk docs; wire email/OTP, social SSO, route guards. Fix an "install Expo OAuth session" error by pasting it.</td></tr>
+          <tr><td class="task">7</td><td class="task">Content data model</td><td>Typed hard-coded TypeScript: languages, units, lessons, vocabulary, phrases, AI-teacher prompts. No database yet.</td></tr>
+          <tr><td class="task">8</td><td class="task">Language selection</td><td>UI from design + hard-coded languages; CodeRabbit flags committing the selection and exposing unsupported languages.</td></tr>
+          <tr><td class="task">9</td><td class="task">State (Zustand)</td><td>Persist the selected language across reloads with AsyncStorage; temporary clear-storage button; fix a Babel/import.meta error.</td></tr>
+          <tr><td class="task">10</td><td class="task">Bottom tab navigation</td><td>Five tabs with an animated active circle; swap a bouncy spring for a smooth linear animation; rewind a change you dislike.</td></tr>
+          <tr><td class="task">11</td><td class="task">Home screen</td><td>Combine Clerk user + language + lesson data: greeting, streak, daily goal. CodeRabbit flags a hydration race and a divide-by-zero.</td></tr>
+          <tr><td class="task">12</td><td class="task">PostHog analytics</td><td>Run the PostHog AI wizard (<code>npx -y @posthog/wizard@latest</code>); auto-instruments events; optionally install the PostHog MCP.</td></tr>
+          <tr><td class="task">13</td><td class="task">Lesson screen</td><td>Render units/lessons from data; auto-extend lesson data; fix a cut-off banner image.</td></tr>
+          <tr><td class="task">14</td><td class="task">Audio lesson UI</td><td>The AI-teacher screen: mascot, mic/subtitle controls, ratings (placeholder, audio only, no video).</td></tr>
+          <tr><td class="task">15</td><td class="task">Native dev build</td><td>Switch off Expo Go: install Xcode (or Android Studio), Homebrew, CocoaPods; <code>expo prebuild</code>, add bundle IDs, <code>expo run ios</code>; fix missing native deps.</td></tr>
+          <tr><td class="task">16</td><td class="task">Stream integration</td><td>Install Stream skills; add join/mute/end audio call; mint tokens server-side via Expo API route so the secret never ships.</td></tr>
+          <tr><td class="task">17</td><td class="task">Vision Agent (Python)</td><td>AI writes a separate Python service (the AI teacher) using OpenAI Realtime over Stream's edge; run with <code>uv run main.py serve</code>.</td></tr>
+          <tr><td class="task">18</td><td class="task">Connect agent to UI</td><td>Agent joins the same call; lesson context (goals, vocab, phrases, prompts) packed into the call so the teacher is lesson-aware.</td></tr>
+          <tr><td class="task">19</td><td class="task">Tune the AI teacher</td><td>Make it warm and interactive; push-to-talk to kill the echo loop; server VAD with interrupt; live captions; stop it congratulating before you speak.</td></tr>
+          <tr><td class="task">+</td><td class="task">Custom analytics events</td><td>Track language-selected, lesson-started, lesson-abandoned + duration; build a PostHog dashboard by natural-language prompt; final CodeRabbit review.</td></tr>
+        </tbody>
       </table></div>
 
-      <div class="grouphead">The stack and why each tool was chosen</div>
+      <p class="lede" style="margin-top:38px">The stack, and why each tool</p>
       <div class="table-wrap"><table>
-        <tr><th>Tool</th><th>Role in the app</th><th>Why the creator picked it (noting sponsorship)</th></tr>
-        <tr><td>React Native + Expo + TypeScript</td><td>The app itself</td><td>One codebase for iOS and Android; Expo simplifies setup and shipping.</td></tr>
-        <tr><td>NativeWind</td><td>Styling</td><td>Tailwind classes in React Native; same mental model as web.</td></tr>
-        <tr><td>Zustand</td><td>State management</td><td>Small, no Redux boilerplate; pairs with AsyncStorage for local persistence.</td></tr>
-        <tr><td>Clerk (sponsor)</td><td>Auth + user management</td><td>Clean Expo DX for OTP, OAuth, sessions, protected routes; generous free tier; built-in billing.</td></tr>
-        <tr><td>Stream + Vision Agents (sponsor)</td><td>Real-time voice AI teacher</td><td>Handles audio transport, participant state, low latency, so you focus on the teaching experience. Vision Agents is open-source.</td></tr>
-        <tr><td>PostHog (sponsor)</td><td>Product analytics</td><td>Analytics + session replay + feature flags in one; AI wizard auto-instruments; developer-friendly.</td></tr>
-        <tr><td>CodeRabbit (sponsor)</td><td>AI code review</td><td>Reviews every PR and in-editor; catches bugs, security holes, style drift. Especially valuable on AI-generated code.</td></tr>
-        <tr><td>OpenAI Realtime</td><td>The teacher's "brain"</td><td>Low-latency speech; noted as swappable for any AI service.</td></tr>
-        <tr><td>GitHub</td><td>Version control + PRs</td><td>Branch + PR per feature; where CodeRabbit reviews run.</td></tr>
+        <thead><tr><th class="colA">Tool</th><th class="colB">Role in the app</th><th>Why the creator picked it (noting sponsorship)</th></tr></thead>
+        <tbody>
+          <tr><td class="task">React Native + Expo + TS</td><td>The app itself</td><td>One codebase for iOS and Android; Expo simplifies setup and shipping.</td></tr>
+          <tr><td class="task">NativeWind</td><td>Styling</td><td>Tailwind classes in React Native; same mental model as web.</td></tr>
+          <tr><td class="task">Zustand</td><td>State management</td><td>Small, no Redux boilerplate; pairs with AsyncStorage for local persistence.</td></tr>
+          <tr><td class="task">Clerk (sponsor)</td><td>Auth + user management</td><td>Clean Expo DX for OTP, OAuth, sessions, protected routes; generous free tier; built-in billing.</td></tr>
+          <tr><td class="task">Stream + Vision Agents (sponsor)</td><td>Real-time voice AI teacher</td><td>Handles audio transport, participant state, low latency, so you focus on the teaching experience. Vision Agents is open-source.</td></tr>
+          <tr><td class="task">PostHog (sponsor)</td><td>Product analytics</td><td>Analytics + session replay + feature flags in one; AI wizard auto-instruments.</td></tr>
+          <tr><td class="task">CodeRabbit (sponsor)</td><td>AI code review</td><td>Reviews every PR and in-editor; catches bugs, security holes, style drift. Especially valuable on AI code.</td></tr>
+          <tr><td class="task">OpenAI Realtime</td><td>The teacher's "brain"</td><td>Low-latency speech; noted as swappable for any AI service.</td></tr>
+          <tr><td class="task">GitHub</td><td>Version control + PRs</td><td>Branch + PR per feature; where CodeRabbit reviews run.</td></tr>
+        </tbody>
       </table></div>
 
-      <div class="grouphead">Commands cheat sheet</div>
+      <p class="lede" style="margin-top:38px">Commands cheat sheet</p>
       <div class="table-wrap"><table>
-        <tr><th>Command</th><th>What it does</th></tr>
-        <tr><td><code>npx create-expo-app .</code></td><td>Create a new Expo project in the current folder.</td></tr>
-        <tr><td><code>npx expo start</code></td><td>Start the Metro bundler; shows a QR code (press <code>a</code>/<code>i</code>/<code>r</code>/<code>j</code>).</td></tr>
-        <tr><td><code>npx expo start --clear</code></td><td>Start with the cache cleared (used after Babel/config changes).</td></tr>
-        <tr><td><code>npm run reset-project</code></td><td>Remove the generated boilerplate screens.</td></tr>
-        <tr><td><code>npx skills add</code></td><td>Install agent skills for a tool (Expo, Clerk, Stream, Vision Agents).</td></tr>
-        <tr><td><code>npx -y @posthog/wizard@latest</code></td><td>Run PostHog's AI setup wizard.</td></tr>
-        <tr><td><code>npx expo prebuild --clean</code></td><td>Generate a fresh native iOS/Android project.</td></tr>
-        <tr><td><code>npx expo run ios</code> / <code>run android</code></td><td>Build and launch the native development build on a simulator/emulator.</td></tr>
-        <tr><td><code>npx expo run ios --device</code></td><td>Build onto a physical phone (needed for reliable mic testing).</td></tr>
-        <tr><td><code>brew install cocoapods</code> / <code>pod install</code></td><td>Install CocoaPods, then link native iOS libraries (run inside <code>ios/</code>).</td></tr>
-        <tr><td><code>xed ios</code></td><td>Open the iOS project in Xcode (to set the signing team).</td></tr>
-        <tr><td><code>uv run main.py serve</code></td><td>Run the Python Vision Agent service (from inside its folder, on localhost:8000).</td></tr>
-        <tr><td><code>git rm --cached .env</code></td><td>Stop tracking a secrets file already committed (then rotate the keys).</td></tr>
+        <thead><tr><th class="colA">Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>npx create-expo-app .</code></td><td>Create a new Expo project in the current folder.</td></tr>
+          <tr><td><code>npx expo start</code></td><td>Start the Metro bundler; shows a QR code (press <code>a</code>/<code>i</code>/<code>r</code>/<code>j</code>).</td></tr>
+          <tr><td><code>npx expo start --clear</code></td><td>Start with the cache cleared (after Babel/config changes).</td></tr>
+          <tr><td><code>npm run reset-project</code></td><td>Remove the generated boilerplate screens.</td></tr>
+          <tr><td><code>npx skills add</code></td><td>Install agent skills for a tool (Expo, Clerk, Stream, Vision Agents).</td></tr>
+          <tr><td><code>npx -y @posthog/wizard@latest</code></td><td>Run PostHog's AI setup wizard.</td></tr>
+          <tr><td><code>npx expo prebuild --clean</code></td><td>Generate a fresh native iOS/Android project.</td></tr>
+          <tr><td><code>npx expo run ios</code> / <code>run android</code></td><td>Build and launch the native dev build on a simulator/emulator.</td></tr>
+          <tr><td><code>npx expo run ios --device</code></td><td>Build onto a physical phone (needed for reliable mic testing).</td></tr>
+          <tr><td><code>brew install cocoapods</code> / <code>pod install</code></td><td>Install CocoaPods, then link native iOS libraries (inside <code>ios/</code>).</td></tr>
+          <tr><td><code>xed ios</code></td><td>Open the iOS project in Xcode (to set the signing team).</td></tr>
+          <tr><td><code>uv run main.py serve</code></td><td>Run the Python Vision Agent service (from inside its folder, localhost:8000).</td></tr>
+          <tr><td><code>git rm --cached .env</code></td><td>Stop tracking a secrets file already committed (then rotate the keys).</td></tr>
+        </tbody>
       </table></div>
 
-      <div class="grouphead">Real errors hit, and how they were fixed</div>
+      <p class="lede" style="margin-top:38px">Real errors hit, and the fixes</p>
       <div class="table-wrap"><table>
-        <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
-        <tr><td>Google sign-in: "Expo OAuth session and Expo web browser required for SSO"</td><td>Missing SSO dependency</td><td>Paste the error into the chat; AI installs <code>expo-auth-session</code>, restart.</td></tr>
-        <tr><td>Zustand syntax error (<code>import.meta</code>)</td><td>Babel config missing the polyfill for the devtools middleware</td><td>AI creates the Babel config; restart with <code>--clear</code>.</td></tr>
-        <tr><td>Home redirects logged-in users to language select on cold start</td><td>Redirect runs before the persisted store hydrates</td><td>Gate the redirect on <code>hasHydrated</code> for both Clerk and the store (CodeRabbit caught it).</td></tr>
-        <tr><td>Native build: missing React Native async-storage / react-native-css</td><td>Autolinker only links direct deps; NativeWind v5 split out a CSS package</td><td>Install the package explicitly, then <code>pod install</code> in <code>ios/</code>, rerun.</td></tr>
-        <tr><td>"Cannot leave a call that has already been left"</td><td>Refs nulled before the effect cleanup ran the leave again</td><td>Two-line guard so cleanup is a no-op after manual leave.</td></tr>
-        <tr><td>Agent talks but never listens; hears itself</td><td>Echo loop + slow semantic VAD</td><td>Push-to-talk (mic muted on join), switch to server VAD with interrupt-on-fire.</td></tr>
-        <tr><td>Teacher says "great job" before you speak</td><td>Prompt let it run ahead of the student</td><td>Reprompt to operate in teaching vs reacting modes and pause for input.</td></tr>
-        <tr><td>Token endpoint trusts a user ID from the query string</td><td>Anyone could impersonate a user (security hole)</td><td>Verify the Clerk JWT against JWKS server-side; send the session token, not the user ID (CodeRabbit caught it).</td></tr>
-        <tr><td><code>.env</code> committed to GitHub</td><td>Secrets file was tracked</td><td><code>git rm --cached .env</code>, purge, and rotate keys (CodeRabbit caught it).</td></tr>
+        <thead><tr><th class="colA">Symptom</th><th class="colB">Cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td class="task">Google sign-in: "Expo OAuth session required for SSO"</td><td>Missing SSO dependency</td><td>Paste the error into the chat; AI installs <code>expo-auth-session</code>, restart.</td></tr>
+          <tr><td class="task">Zustand syntax error (<code>import.meta</code>)</td><td>Babel config missing the devtools-middleware polyfill</td><td>AI creates the Babel config; restart with <code>--clear</code>.</td></tr>
+          <tr><td class="task">Home redirects logged-in users to language select on cold start</td><td>Redirect runs before the persisted store hydrates</td><td>Gate the redirect on <code>hasHydrated</code> for both Clerk and the store (CodeRabbit caught it).</td></tr>
+          <tr><td class="task">Native build: missing async-storage / react-native-css</td><td>Autolinker links only direct deps; NativeWind v5 split out a CSS package</td><td>Install the package explicitly, then <code>pod install</code> in <code>ios/</code>, rerun.</td></tr>
+          <tr><td class="task">"Cannot leave a call that has already been left"</td><td>Refs nulled before the effect cleanup ran the leave again</td><td>Two-line guard so cleanup is a no-op after a manual leave.</td></tr>
+          <tr><td class="task">Agent talks but never listens; hears itself</td><td>Echo loop + slow semantic VAD</td><td>Push-to-talk (mic muted on join), switch to server VAD with interrupt-on-fire.</td></tr>
+          <tr><td class="task">Teacher says "great job" before you speak</td><td>Prompt let it run ahead of the student</td><td>Reprompt to operate in teaching vs reacting modes and pause for input.</td></tr>
+          <tr><td class="task">Token endpoint trusts a user ID from the query string</td><td>Anyone could impersonate a user (security hole)</td><td>Verify the Clerk JWT against JWKS server-side; send the session token, not the user ID (CodeRabbit caught it).</td></tr>
+          <tr><td class="task"><code>.env</code> committed to GitHub</td><td>Secrets file was tracked</td><td><code>git rm --cached .env</code>, purge, and rotate keys (CodeRabbit caught it).</td></tr>
+        </tbody>
       </table></div>
     </section>
 
-    <section id="flow">
-      <div class="sec-kicker">How it progresses</div>
-      <h2>Structure at a glance</h2>
-      <div class="stages">
-        <span class="pill">Why the method</span><span class="arrow">&rarr;</span>
-        <span class="pill">The 4-part prompt</span><span class="arrow">&rarr;</span>
-        <span class="pill">Stack intro</span><span class="arrow">&rarr;</span>
-        <span class="pill">Setup + AGENTS.md</span><span class="arrow">&rarr;</span>
-        <span class="pill">UI screens</span><span class="arrow">&rarr;</span>
-        <span class="pill">Auth (Clerk)</span><span class="arrow">&rarr;</span>
-        <span class="pill">Data + state</span><span class="arrow">&rarr;</span>
-        <span class="pill">Analytics (PostHog)</span><span class="arrow">&rarr;</span>
-        <span class="pill">Native build</span><span class="arrow">&rarr;</span>
-        <span class="pill">Real-time AI teacher</span><span class="arrow">&rarr;</span>
-        <span class="pill">Tune + experiment</span>
+    <section>
+      <p class="lede">How it is structured</p>
+      <div class="flow">
+        <span class="step">Why the method</span><span class="arrow">&rarr;</span>
+        <span class="step">The 4-part prompt</span><span class="arrow">&rarr;</span>
+        <span class="step">Stack intro</span><span class="arrow">&rarr;</span>
+        <span class="step">Setup + AGENTS.md</span><span class="arrow">&rarr;</span>
+        <span class="step">UI screens</span><span class="arrow">&rarr;</span>
+        <span class="step">Auth</span><span class="arrow">&rarr;</span>
+        <span class="step">Data + state</span><span class="arrow">&rarr;</span>
+        <span class="step">Analytics</span><span class="arrow">&rarr;</span>
+        <span class="step">Native build</span><span class="arrow">&rarr;</span>
+        <span class="step">Real-time AI teacher</span><span class="arrow">&rarr;</span>
+        <span class="step">Tune + experiment</span>
       </div>
     </section>
 
     <section id="translate">
-      <div class="sec-kicker">For your setup</div>
-      <h2>If you are not on a Mac</h2>
-      <p>The native-build half (step 15 onward) is taught entirely on macOS + Xcode for iOS. The video tells Windows and Linux viewers to "pause and find a guide" for Android Studio. Here is that missing mapping, so you can follow along on Windows or Linux targeting Android.</p>
+      <p class="lede">For your setup &middot; if you are not on a Mac</p>
+      <p style="margin-top:0;color:var(--text-soft);font-size:16px">The native-build half (step 15 onward) is taught entirely on macOS + Xcode for iOS. The video tells Windows and Linux viewers to "pause and find a guide" for Android Studio. Here is that missing mapping, so you can follow along on Windows or Linux targeting Android.</p>
       <div class="table-wrap"><table>
-        <tr><th>Taught (macOS / iOS)</th><th>Your equivalent (Windows or Linux / Android)</th><th>Notes</th></tr>
-        <tr><td>Install Xcode from the App Store (~13 GB)</td><td>Install Android Studio (includes the Android SDK)</td><td>Clean one-to-one: both are the platform's official IDE + simulator host.</td></tr>
-        <tr><td>iOS Simulator (via Xcode &gt; Developer Tool &gt; Simulator)</td><td>Android Virtual Device (AVD) from Android Studio's Device Manager</td><td>Create a Pixel or other AVD; both let you drive the app with your mouse/keyboard.</td></tr>
-        <tr><td>Homebrew + CocoaPods + <code>pod install</code></td><td>Not used</td><td><strong>No equivalent needed.</strong> CocoaPods is iOS-only. Android links native modules through Gradle automatically, so the <code>cd ios &amp;&amp; pod install</code> steps simply do not apply to you.</td></tr>
-        <tr><td>Bundle identifier under <code>ios</code> in app config</td><td><code>android.package</code> in app config (for example <code>com.jsmastery.duolingoclone</code>)</td><td>The video adds both anyway; you set the Android one.</td></tr>
-        <tr><td><code>npx expo run ios</code></td><td><code>npx expo run android</code></td><td>Same Expo command, different target.</td></tr>
-        <tr><td>Xcode signing team + "trust developer" + iOS developer mode for a physical device</td><td>Enable Developer Options + USB debugging on the Android phone</td><td>Different mechanics, same goal: let your machine install a dev build on a real device. No Apple developer signing dance.</td></tr>
-        <tr><td>Physical iPhone over cable for reliable mic</td><td>Physical Android phone over USB</td><td>Both recommended because simulators/emulators are unreliable for WebRTC microphone. The creator notes Android emulators sometimes DO pick up the mic, in which case you can skip the physical-device step.</td></tr>
+        <thead><tr><th class="colA">Taught (macOS / iOS)</th><th class="colB">Your equivalent (Windows or Linux / Android)</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="task">Install Xcode from the App Store (~13 GB)</td><td>Install Android Studio (includes the Android SDK)</td><td>Clean one-to-one: both are the platform's official IDE + simulator host.</td></tr>
+          <tr><td class="task">iOS Simulator (Xcode &gt; Developer Tool &gt; Simulator)</td><td>Android Virtual Device from Android Studio's Device Manager</td><td>Create a Pixel or similar AVD; both let you drive the app with mouse/keyboard.</td></tr>
+          <tr><td class="task">Homebrew + CocoaPods + <code>pod install</code></td><td>Not used</td><td><strong>No equivalent needed.</strong> CocoaPods is iOS-only. Android links native modules through Gradle automatically, so the <code>cd ios &amp;&amp; pod install</code> steps do not apply.</td></tr>
+          <tr><td class="task">Bundle identifier under <code>ios</code> in app config</td><td><code>android.package</code> in app config (e.g. <code>com.jsmastery.duolingoclone</code>)</td><td>The video adds both anyway; you set the Android one.</td></tr>
+          <tr><td class="task"><code>npx expo run ios</code></td><td><code>npx expo run android</code></td><td>Same Expo command, different target.</td></tr>
+          <tr><td class="task">Xcode signing team + "trust developer" + iOS developer mode</td><td>Enable Developer Options + USB debugging on the Android phone</td><td>Different mechanics, same goal: let your machine install a dev build on a real device. No Apple signing dance.</td></tr>
+          <tr><td class="task">Physical iPhone over cable for reliable mic</td><td>Physical Android phone over USB</td><td>Both recommended because simulators are unreliable for WebRTC mic. The creator notes Android emulators sometimes DO pick up the mic, in which case you can skip this.</td></tr>
+        </tbody>
       </table></div>
-      <div class="banner good">The entire first half (steps 0 to 14, roughly the first dozen features) runs in Expo Go on any phone with no native build, so platform does not matter until you add Stream's audio.</div>
-      <div class="banner warn">No clean equivalent: if you are on Windows or Linux you cannot build for iOS at all (Apple requires macOS). Target Android, or use a cloud Mac / EAS Build if you specifically need an iOS build.</div>
+      <div class="goodband"><b>Good news:</b> the entire first half (steps 0 to 14) runs in Expo Go on any phone with no native build, so platform does not matter until you add Stream's audio.</div>
+      <div class="warnband"><b>No clean equivalent:</b> on Windows or Linux you cannot build for iOS at all (Apple requires macOS). Target Android, or use a cloud Mac / EAS Build if you specifically need an iOS build.</div>
     </section>
 
     <section id="corrections">
-      <div class="sec-kicker">Fact check</div>
-      <h2>Context and corrections</h2>
-      <p class="lede">This is a hands-on technical tutorial, so most of it is just demonstrated and self-verifying. The checkable claims are mostly the sponsor pitches; they hold up as of mid-2026, with one timing nuance.</p>
-
-      <div class="claim supported"><span class="tag">Supported</span>
-        <p><strong>"Andrej Karpathy, one of OpenAI's founding members, posted about vibe coding."</strong> Correct. Karpathy (an OpenAI co-founder) coined "vibe coding" in a February 2025 post; the term was even Collins Dictionary's 2025 Word of the Year. (The transcript's "Andre Carpathy" is just a spelling slip.)</p>
-      </div>
-
-      <div class="claim supported"><span class="tag">Supported</span>
-        <p><strong>"Clerk's free plan gives up to 50,000 monthly retained users."</strong> Accurate for when this video is set. Clerk raised its free tier from 10,000 to 50,000 monthly active users in February 2026. Worth knowing the nuance: if you are following along from materials made in 2025, the number was 10,000 then, so verify the current limit on Clerk's pricing page rather than trusting any video.</p>
-      </div>
-
-      <div class="claim supported"><span class="tag">Supported</span>
-        <p><strong>"Stream's Vision Agents is open-source."</strong> True. It is an open-source Python framework for real-time voice/video AI agents (on GitHub at GetStream/Vision-Agents), with day-one support for models like OpenAI Realtime and Gemini Live. You do use a paid OpenAI key for the model and Stream's network for transport, but the agent framework itself is genuinely open.</p>
-      </div>
-
-      <div class="claim supported"><span class="tag">Supported, with context</span>
-        <p><strong>"Nvidia's CEO said they use CodeRabbit all over Nvidia."</strong> Jensen Huang is on record saying "We're using CodeRabbit all over NVIDIA," so the quote is real. The implied argument ("good for a huge company, so good for your project") is a marketing appeal-to-authority, not evidence that it is right for your use case. Useful tool, but judge it on your own results.</p>
-      </div>
-
-      <div class="claim opinion"><span class="tag">Opinion</span>
-        <p><strong>"This is the only way to build mobile applications with AI without getting lost in spaghetti code."</strong> Presented as fact, but it is a stylized pitch. The underlying principles (project context file, scoped prompts, verify-as-you-go, review everything) are widely endorsed, yet they are not the single "only" path, and they sit inside a sponsored stack. Take the workflow; stay skeptical of "only."</p>
-      </div>
-
-      <div class="claim opinion"><span class="tag">Opinion</span>
-        <p><strong>"You don't need to learn Python; just understand the logic." / "It's not the lines of code that matter."</strong> A reasonable stance for shipping an MVP, and broadly true that AI lowers the syntax barrier. But it is a judgment call, not a settled fact: for debugging, security, and long-term maintenance, understanding the code you ship still matters, which is partly why the video itself leans so hard on automated review.</p>
+      <p class="lede">Context &amp; corrections</p>
+      <p style="margin-top:0;color:var(--text-soft);font-size:16px">This is a hands-on technical tutorial, so most of it is just demonstrated and self-verifying. The checkable claims are mostly the sponsor pitches; they hold up as of mid-2026, with one timing nuance.</p>
+      <div class="accuracy">
+        <div class="claim">
+          <div class="top"><span class="tag t-sup">Supported</span><span class="c">"Andrej Karpathy, an OpenAI founding member, posted about vibe coding."</span></div>
+          <p class="note">Correct. Karpathy (an OpenAI co-founder) coined "vibe coding" in a February 2025 post; it was even Collins Dictionary's 2025 Word of the Year. (The transcript's "Andre Carpathy" is just a spelling slip.)</p>
+        </div>
+        <div class="claim">
+          <div class="top"><span class="tag t-sup">Supported</span><span class="c">"Clerk's free plan gives up to 50,000 monthly retained users."</span></div>
+          <p class="note">Accurate for when this video is set: Clerk raised its free tier from 10,000 to 50,000 monthly active users in February 2026. Nuance: if you follow along from older materials, the number was 10,000, so check Clerk's current pricing page rather than trusting any video.</p>
+        </div>
+        <div class="claim">
+          <div class="top"><span class="tag t-sup">Supported</span><span class="c">"Stream's Vision Agents is open-source."</span></div>
+          <p class="note">True. It is an open-source Python framework for real-time voice/video AI agents (GitHub: GetStream/Vision-Agents), with day-one support for models like OpenAI Realtime and Gemini Live. You still pay for the OpenAI key and Stream's network, but the agent framework itself is genuinely open.</p>
+        </div>
+        <div class="claim">
+          <div class="top"><span class="tag t-sup">Supported, with context</span><span class="c">"Nvidia's CEO said they use CodeRabbit all over Nvidia."</span></div>
+          <p class="note">Jensen Huang is on record saying "We're using CodeRabbit all over NVIDIA," so the quote is real. The implied argument ("good for a huge company, so good for your project") is a marketing appeal-to-authority, not evidence it fits your use case. Useful tool, but judge it on your own results.</p>
+        </div>
+        <div class="claim">
+          <div class="top"><span class="tag t-opi">Opinion</span><span class="c">"This is the only way to build mobile apps with AI without spaghetti code."</span></div>
+          <p class="note">Presented as fact, but it is a stylized pitch. The underlying principles (project context file, scoped prompts, verify-as-you-go, review everything) are widely endorsed, yet they are not the single "only" path, and they sit inside a sponsored stack. Take the workflow; stay skeptical of "only."</p>
+        </div>
+        <div class="claim">
+          <div class="top"><span class="tag t-opi">Opinion</span><span class="c">"You don't need to learn Python; it's not the lines of code that matter."</span></div>
+          <p class="note">A reasonable stance for shipping an MVP, and broadly true that AI lowers the syntax barrier. But it is a judgment call, not settled fact: for debugging, security, and long-term maintenance, understanding the code you ship still matters, which is partly why the video leans so hard on automated review.</p>
+        </div>
       </div>
     </section>
 
-    <section id="quotes">
-      <div class="sec-kicker">In their words</div>
-      <h2>Lines worth keeping</h2>
-      <div class="quote">The app isn't the point, the workflow is.</div>
-      <div class="quote">A perfect prompt is just an instruction with a defined scope.</div>
-      <div class="quote">When something keeps coming up, you put it into the AGENTS.md file once and you never deal with it again.</div>
-      <div class="quote">Reviewing your code is even more important when you're generating it with AI in the first place.</div>
-      <div class="quote">Now design, architecture, and actual planning matter more than ever. You no longer have to write everything manually.</div>
-      <div class="quote">The product will change, but the workflow doesn't. That's the actual skill.</div>
+    <section id="lines">
+      <p class="lede">Lines worth keeping</p>
+      <div class="lines">
+        <div class="q">"The app isn't the point, the workflow is."</div>
+        <div class="q">"A perfect prompt is just an instruction with a defined scope."</div>
+        <div class="q">"When something keeps coming up, you put it into the AGENTS.md file once and you never deal with it again."</div>
+        <div class="q">"Reviewing your code is even more important when you're generating it with AI in the first place."</div>
+        <div class="q">"Now design, architecture, and planning matter more than ever. You no longer have to write everything manually."</div>
+        <div class="q">"The product will change, but the workflow doesn't. That's the actual skill."</div>
+      </div>
     </section>
 
-  </main>
+    <footer>
+      <a class="watch" href="https://www.youtube.com/watch?v=Q7AYc2kECDI" target="_blank" rel="noopener"><span class="play">&#9654;</span> Watch the original tutorial</a>
+    </footer>
 
-  <footer class="footer">
-    <a class="play" href="https://www.youtube.com/watch?v=Q7AYc2kECDI"><span class="tri"></span> Watch the original tutorial</a>
-  </footer>
-
+  </div>
 </body>
 </html>

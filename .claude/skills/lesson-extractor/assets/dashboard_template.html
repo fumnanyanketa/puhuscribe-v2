@@ -1,286 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lesson Extractor Dashboard</title>
 <!--
-  LESSON EXTRACTOR DASHBOARD TEMPLATE
-  ----------------------------------
-  Fill the content, keep the structure. Pick ONE accent preset below by setting
-  the three --accent* values in :root. The light tints and rules follow.
+  LESSON EXTRACTOR DASHBOARD TEMPLATE  (editorial default look)
+  -------------------------------------------------------------
+  Fill the content, keep the structure and typography. Pick ONE accent preset
+  by setting the three --accent* values in :root; the washes/rules follow via
+  color-mix. Verdicts are shown as PILL TAGS, never as left-edge colour bars.
 
   ACCENT PRESETS (subject -> colour):
     Blue  (general / foundational / academic / technical-taught-academically)
-      --accent:#1f5fb0;  --accent-dark:#16447e;  --accent-tint:#eaf1fa;
+      --accent:#1A4A87; --accent-deep:#0F3366; --accent-bright:#2E73C4;
     Green (growth / business / data / money)
-      --accent:#1f8a54;  --accent-dark:#15663d;  --accent-tint:#e8f5ee;
+      --accent:#1F6B45; --accent-deep:#124A2E; --accent-bright:#2E9E64;
     Teal  (science / health / nature / medical)
-      --accent:#0e8a8a;  --accent-dark:#0a6566;  --accent-tint:#e4f4f4;
+      --accent:#0E6E72; --accent-deep:#084E51; --accent-bright:#1AA0A2;
     Red   (argument-driven / opinion-heavy / high-stakes)
-      --accent:#c0392b;  --accent-dark:#8f2a20;  --accent-tint:#fbeae8;
+      --accent:#9E2B25; --accent-deep:#6F1C18; --accent-bright:#D24B3E;
 
-  The four VERDICT colours are fixed and never tied to the accent.
-  Do NOT use em dashes anywhere in the output. Wrap every table in .table-wrap.
+  The four VERDICT colours (--sup/--con/--inc/--opi) are fixed, never tied to
+  the accent. Do NOT use em dashes anywhere. Wrap every table in .table-wrap.
 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 <style>
   :root{
     /* ACTIVE ACCENT (default Blue) */
-    --accent:#1f5fb0;
-    --accent-dark:#16447e;
-    --accent-tint:#eaf1fa;
+    --accent:#1A4A87;
+    --accent-deep:#0F3366;
+    --accent-bright:#2E73C4;
+    --accent-soft:color-mix(in srgb, var(--accent) 46%, #ffffff);
+    --accent-wash:color-mix(in srgb, var(--accent) 7%, #ffffff);
+    --accent-wash2:color-mix(in srgb, var(--accent) 13%, #ffffff);
+    --rule:color-mix(in srgb, var(--accent) 16%, #ffffff);
 
-    /* Fixed verdict colours (never change, never tie to accent) */
-    --v-supported:#1f8a54;
-    --v-contested:#c98a16;
-    --v-inaccurate:#c0392b;
-    --v-opinion:#6c5ce7;
-
-    --ink:#1a1c20;
-    --muted:#5d636e;
-    --line:#e4e7ec;
-    --card:#ffffff;
-    --bg:#f6f7f9;
-    --radius:14px;
-    --maxw:980px;
-    font-synthesis-weight:none;
+    --bg:#ffffff; --ink:#1E2733; --text-soft:#516079;
+    /* fixed verdict colours */
+    --sup:#3E8E5E; --con:#BE8A2E; --inc:#C0463C; --opi:#5E6B86;
+    --warn:#BE8A2E; --good:#3E8E5E;
+    --disp:'Archivo',system-ui,sans-serif;
+    --serif:'Newsreader',Georgia,'Times New Roman',serif;
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.62;font-size:16.5px;-webkit-font-smoothing:antialiased;
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.72}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 72px}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--accent-wash2);
+       border:1px solid var(--rule);border-radius:5px;padding:1px 6px;color:var(--accent-deep)}
+  td code{white-space:normal}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:18px}
+  .table-wrap table{margin-top:0}
+
+  /* HERO (solid accent default; drop in <img class="hero-media"> + .hero-scrim for a photo) */
+  .hero{position:relative;min-height:clamp(280px,42vw,400px);display:flex;align-items:flex-end;overflow:hidden;background:var(--accent)}
+  .hero-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.42) 55%,rgba(0,0,0,.72))}
+  .hero-content{position:relative;z-index:2;width:100%;max-width:760px;margin:0 auto;padding:0 24px 38px;color:#fff}
+  .eyebrow{font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+  h1{font-family:var(--disp);font-weight:800;font-size:clamp(34px,7vw,58px);line-height:1.02;letter-spacing:-.015em;margin:12px 0 0;text-transform:uppercase;color:#fff}
+  .hero .thesis{font-family:var(--serif);font-size:clamp(18px,2.6vw,22px);line-height:1.42;margin:16px 0 0;max-width:44ch;color:rgba(255,255,255,.92)}
+  .hero .thesis em{font-style:italic;color:#fff;text-decoration:underline;text-decoration-color:var(--accent-soft);text-underline-offset:3px}
+
+  /* NAV BUTTONS */
+  .nav{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 0}
+  .nav a{font-family:var(--disp);font-weight:600;font-size:13px;text-decoration:none;padding:9px 16px;border-radius:7px;background:var(--accent);color:#fff;border:1px solid var(--accent);transition:background .15s,transform .05s}
+  .nav a:hover{background:var(--accent-deep)}
+  .nav a:active{transform:translateY(1px)}
+  .nav a.ghost{background:#fff;color:var(--accent);border-color:var(--rule)}
+  .nav a.ghost:hover{background:var(--accent-wash);border-color:var(--accent-soft)}
+  .nav a:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+
+  /* TYPE ROLES */
+  h2{font-family:var(--disp);font-weight:700;font-size:23px;line-height:1.15;letter-spacing:-.01em;margin:0;color:var(--accent)}
+  .secnum{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.1em;color:var(--accent-bright);display:block;margin-bottom:6px}
+  p{margin:14px 0}
+  a{color:var(--accent-bright)}
+  strong{font-weight:500;color:var(--ink)}
+  section{margin:46px 0 0;scroll-margin-top:18px}
+  .lede{font-size:13px;font-family:var(--disp);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-bright);margin:0 0 14px;font-weight:700}
+  .source{font-family:var(--disp);font-size:12.5px;color:var(--text-soft);margin-top:28px;line-height:1.6}
+  .source b{color:var(--ink);font-weight:600}
+  .flag{font-family:var(--serif);font-size:15.5px;color:var(--text-soft);background:var(--accent-wash);border:1px solid var(--rule);border-radius:5px;padding:14px 16px;margin-top:18px;line-height:1.55}
+  .flag b{color:var(--ink);font-weight:600}
+
+  /* GLOSSARY + PREREQ panels */
+  .glossary{background:var(--accent-wash);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-top:18px}
+  .glossary .row{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--rule)}
+  .glossary .row:first-child{border-top:none}
+  .glossary dt{font-family:var(--disp);font-weight:600;font-size:14px;color:var(--accent);padding:13px 16px;background:var(--accent-wash2)}
+  .glossary dd{margin:0;padding:13px 16px;font-size:15.5px;line-height:1.5;color:var(--text-soft)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+  .panel{background:var(--accent-wash);border:1px solid var(--rule);border-radius:8px;padding:16px 18px}
+  .panel h3{font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-bright);margin:0 0 8px}
+  .panel ul{margin:0;padding-left:18px}
+  .panel li{font-size:15px;line-height:1.5;color:var(--text-soft);margin:7px 0}
+
+  /* BIG-PICTURE TAKEAWAYS (hairline grid, no left bars) */
+  .takeaways{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-top:18px}
+  .takeaways .t{background:#fff;padding:16px 18px;font-size:16px;line-height:1.5}
+  .takeaways .t b{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-bright);display:block;margin-bottom:5px;font-weight:700}
+
+  /* STRUCTURE / FLOW PILLS */
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
+  .flow .step{background:var(--accent-wash);border:1px solid var(--rule);border-radius:99px;padding:5px 12px;font-family:var(--disp);font-size:12.5px;color:var(--text-soft)}
+  .flow .arrow{color:var(--accent-soft)}
+
+  /* PATTERN A: numbered argument blocks (hairline separated, no cards) */
+  .arg{margin-top:40px;padding-top:28px;border-top:1px solid var(--rule)}
+  .arg:first-of-type{border-top:none;padding-top:0}
+  blockquote{margin:26px 0;padding:4px 0 4px 22px;border-left:3px solid var(--accent-bright);font-size:22px;line-height:1.38;color:var(--accent);font-style:italic;max-width:32ch}
+  .why{margin-top:14px;font-size:15.5px;line-height:1.5;color:var(--text-soft)}
+  .why b{font-family:var(--disp);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-bright);font-weight:700;margin-right:7px}
+  .pairs{margin:18px 0 0;border-top:1px solid var(--rule)}
+  .pairs .p{display:grid;grid-template-columns:160px 1fr;gap:18px;padding:13px 0;border-bottom:1px solid var(--rule)}
+  .pairs .k{font-family:var(--disp);font-weight:600;font-size:13.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;line-height:1.35}
+  .pairs .v{font-size:16px;line-height:1.5;color:var(--text-soft)}
+
+  /* PATTERN B: reference tables */
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--rule);border-radius:8px;overflow:hidden;font-size:14px;margin-top:18px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{background:var(--accent-wash2);font-family:var(--disp);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-soft);font-weight:700}
+  tr:last-child td{border-bottom:none}
+  th.colA{color:var(--accent)} th.colB{color:var(--accent-bright)}
+  td.task{font-weight:500;color:var(--ink)}
+  .grouprow td{background:var(--accent-wash);color:var(--accent);font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+  .warnband{background:color-mix(in srgb,var(--warn) 12%,#fff);border:1px solid color-mix(in srgb,var(--warn) 45%,#fff);border-radius:8px;padding:12px 15px;font-size:14px;margin-top:18px}
+  .warnband b{color:var(--warn)}
+  .goodband{background:color-mix(in srgb,var(--good) 12%,#fff);border:1px solid color-mix(in srgb,var(--good) 45%,#fff);border-radius:8px;padding:12px 15px;font-size:14px;margin-top:18px}
+  .goodband b{color:var(--good)}
+
+  /* CONTEXT & CORRECTIONS (pill tags, uniform bordered cards, NO left bars) */
+  .accuracy{margin-top:18px;display:grid;gap:10px}
+  .claim{background:var(--accent-wash);border:1px solid var(--rule);border-radius:8px;padding:15px 17px}
+  .claim .top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:7px}
+  .claim .c{font-family:var(--disp);font-weight:600;font-size:14.5px;color:var(--ink);line-height:1.3}
+  .claim .note{font-size:15px;line-height:1.5;color:var(--text-soft);margin:0}
+  .tag{font-family:var(--disp);font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#fff;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .t-sup{background:var(--sup)} .t-con{background:var(--con)} .t-inc{background:var(--inc)} .t-opi{background:var(--opi)}
+
+  /* LINES WORTH KEEPING */
+  .lines{margin-top:18px;border-top:1px solid var(--rule)}
+  .lines .q{padding:15px 0;border-bottom:1px solid var(--rule);font-size:18px;font-style:italic;color:var(--ink);line-height:1.45}
+
+  /* FOOTER */
+  footer{margin-top:54px;padding-top:22px;border-top:1px solid var(--rule)}
+  .watch{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:600;font-size:13px;text-decoration:none;color:#fff;background:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:9px 15px;transition:background .15s,transform .05s}
+  .watch:hover{background:var(--accent-deep)}
+  .watch:active{transform:translateY(1px)}
+  .watch:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+  .watch .play{font-size:11px;line-height:1}
+
+  @media(max-width:620px){
+    body{font-size:17px}
+    .glossary .row{grid-template-columns:1fr}
+    .cols{grid-template-columns:1fr}
+    .pairs .p{grid-template-columns:1fr;gap:4px}
+    th,td{padding:8px 10px}
+    td code{overflow-wrap:anywhere;font-size:11.5px}
   }
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
-  section{margin:46px auto;scroll-margin-top:18px}
-  h2{font-size:1.5rem;letter-spacing:-.01em;margin:0 0 6px}
-  h3{font-size:1.12rem;margin:0 0 6px}
-  p{margin:.5em 0}
-  a{color:var(--accent-dark)}
-  .sec-kicker{text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:4px}
-  .lede{color:var(--muted);margin-top:0}
-
-  /* Hero */
-  .hero{background:var(--accent);color:#fff;padding:54px 0 48px}
-  .hero .kicker{text-transform:uppercase;letter-spacing:.16em;font-size:.74rem;font-weight:700;opacity:.85}
-  .hero h1{font-size:2.15rem;line-height:1.18;letter-spacing:-.02em;margin:.3em 0 .35em}
-  .hero .thesis{font-size:1.08rem;max-width:46em;opacity:.96;margin:0}
-
-  /* Jump nav */
-  .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-  .jump a{
-    background:rgba(255,255,255,.14);color:#fff;text-decoration:none;
-    padding:6px 12px;border-radius:999px;font-size:.82rem;font-weight:600;
-    border:1px solid rgba(255,255,255,.22)
-  }
-  .jump a:hover{background:rgba(255,255,255,.26)}
-
-  /* Notes / flags */
-  .note{background:var(--accent-tint);border:1px solid var(--line);border-left:4px solid var(--accent);
-    border-radius:10px;padding:14px 16px;font-size:.95rem}
-  .flag{background:#fff7e6;border:1px solid #f0d99a;border-left:4px solid var(--v-contested);
-    border-radius:10px;padding:14px 16px;font-size:.95rem;margin-top:12px}
-  .flag strong,.note strong{color:var(--ink)}
-
-  /* Cards */
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
-  .card h3{color:var(--accent-dark)}
-  .card p{margin:.25em 0 0;color:var(--muted);font-size:.95rem}
-
-  /* Definition list / glossary + prereq */
-  .deflist{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .deflist .row{display:grid;grid-template-columns:200px 1fr;gap:0;border-top:1px solid var(--line)}
-  .deflist .row:first-child{border-top:0}
-  .deflist .term{font-weight:700;padding:11px 16px;background:var(--accent-tint);color:var(--accent-dark)}
-  .deflist .def{padding:11px 16px;color:var(--ink)}
-  @media(max-width:620px){.deflist .row{grid-template-columns:1fr}.deflist .term{background:var(--accent-tint)}}
-
-  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media(max-width:680px){.twocol{grid-template-columns:1fr}}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
-  .panel h3{color:var(--accent-dark)}
-  .panel ul{margin:.3em 0;padding-left:1.15em}
-  .panel li{margin:.25em 0}
-
-  /* Pattern A: numbered argument blocks */
-  .lesson{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px 18px 16px 56px;position:relative;margin:12px 0}
-  .lesson .num{position:absolute;left:14px;top:16px;width:30px;height:30px;border-radius:50%;
-    background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.92rem}
-  .lesson h3{margin-bottom:3px}
-  .lesson p{margin:.35em 0;color:var(--ink)}
-  .lesson .takeaway{color:var(--muted);font-size:.92rem;margin-top:.5em}
-
-  /* Pattern B: reference tables */
-  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin:10px 0}
-  table{border-collapse:collapse;width:100%;min-width:520px;font-size:.93rem;background:var(--card)}
-  th,td{text-align:left;padding:10px 13px;border-top:1px solid var(--line);vertical-align:top}
-  th{background:var(--accent-tint);color:var(--accent-dark);font-weight:700;border-top:0}
-  td code,p code,li code{background:#f0f2f5;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:.86em}
-  .grouphead{margin:22px 0 4px;font-size:1.02rem;color:var(--accent-dark);font-weight:700}
-
-  /* good/warn banners (used by environment translation) */
-  .banner{border-radius:10px;padding:11px 14px;font-size:.92rem;margin:8px 0}
-  .banner.good{background:#e8f5ee;border:1px solid #b8e0c8}
-  .banner.warn{background:#fff7e6;border:1px solid #f0d99a}
-
-  /* Stage pills */
-  .stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .stages .pill{background:var(--accent-tint);border:1px solid var(--line);color:var(--accent-dark);
-    border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:600}
-  .stages .arrow{color:var(--muted);font-weight:700}
-
-  /* Corrections */
-  .claim{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);
-    border-radius:10px;padding:13px 16px;margin:10px 0}
-  .claim .tag{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
-    color:#fff;padding:2px 9px;border-radius:999px;margin-bottom:6px}
-  .claim.supported{border-left-color:var(--v-supported)} .claim.supported .tag{background:var(--v-supported)}
-  .claim.contested{border-left-color:var(--v-contested)} .claim.contested .tag{background:var(--v-contested)}
-  .claim.inaccurate{border-left-color:var(--v-inaccurate)} .claim.inaccurate .tag{background:var(--v-inaccurate)}
-  .claim.opinion{border-left-color:var(--v-opinion)} .claim.opinion .tag{background:var(--v-opinion)}
-  .claim p{margin:.25em 0}
-
-  /* Quotes */
-  .quote{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px 18px;margin:10px 0;font-size:1.02rem;font-style:italic;color:var(--ink)}
-  .quote::before{content:"\201C";color:var(--accent);font-weight:700;font-style:normal;margin-right:2px}
-
-  /* Footer play button */
-  .footer{text-align:center;margin:54px 0 70px}
-  .play{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;
-    text-decoration:none;font-weight:700;padding:13px 24px;border-radius:999px;font-size:1rem}
-  .play:hover{background:var(--accent-dark)}
-  .play .tri{display:inline-block;width:0;height:0;border-left:13px solid #fff;
-    border-top:8px solid transparent;border-bottom:8px solid transparent}
 </style>
 </head>
 <body>
 
   <!-- HERO -->
   <header class="hero">
-    <div class="wrap">
-      <div class="kicker">KICKER</div>
-      <h1>TITLE</h1>
-      <p class="thesis">One-line thesis or summary.</p>
-      <!-- JUMP NAV -->
-      <nav class="jump">
-        <a href="#primer">Primer</a>
-        <a href="#prereq">Prerequisites</a>
-        <a href="#glossary">Glossary</a>
-        <a href="#takeaways">Takeaways</a>
-        <a href="#lessons">Lessons</a>
-        <a href="#flow">Flow</a>
-        <a href="#translate">Translation</a>
-        <a href="#corrections">Corrections</a>
-        <a href="#quotes">Lines</a>
-      </nav>
+    <div class="hero-content">
+      <div class="eyebrow">EYEBROW &middot; FORMAT</div>
+      <h1>Title</h1>
+      <p class="thesis">One-line thesis with an <em>emphasised</em> idea.</p>
     </div>
   </header>
 
-  <main class="wrap">
+  <div class="wrap">
+
+    <!-- JUMP NAV -->
+    <nav class="nav">
+      <a href="#primer">Field primer</a>
+      <a href="#prereqs">Prerequisites</a>
+      <a href="#terms">The terms</a>
+      <a href="#lessons">The lessons</a>
+      <a href="#corrections" class="ghost">Context &amp; corrections</a>
+      <a href="#lines" class="ghost">Key lines</a>
+    </nav>
 
     <!-- FORMAT NOTE + optional WARNING FLAG -->
-    <section>
-      <div class="note"><strong>Format:</strong> what this is and how to read it.</div>
-      <div class="flag"><strong>Heads up:</strong> include only when content is opinion-heavy or contestable.</div>
-    </section>
+    <div class="source"><b>Format:</b> what this is and how to read it.</div>
+    <div class="flag"><b>Heads up:</b> include only when the content is opinion-heavy or contestable.</div>
 
     <!-- FIELD PRIMER -->
     <section id="primer">
-      <div class="sec-kicker">New to this?</div>
-      <h2>Field primer</h2>
+      <p class="lede">Where this sits</p>
       <p>Short, plain-English orientation for someone new to the subject.</p>
     </section>
 
     <!-- PREREQUISITES (optional) -->
-    <section id="prereq">
-      <div class="sec-kicker">Before you dive in</div>
-      <h2>Prerequisites</h2>
-      <div class="twocol">
+    <section id="prereqs">
+      <p class="lede">What you need coming in</p>
+      <div class="cols">
         <div class="panel"><h3>Essential</h3><ul><li>...</li></ul></div>
         <div class="panel"><h3>Helpful, not required</h3><ul><li>...</li></ul></div>
       </div>
     </section>
 
     <!-- GLOSSARY (optional) -->
-    <section id="glossary">
-      <div class="sec-kicker">Vocabulary</div>
-      <h2>Glossary</h2>
-      <div class="deflist">
-        <div class="row"><div class="term">Term</div><div class="def">Plain-English meaning.</div></div>
-      </div>
+    <section id="terms">
+      <p class="lede">Start here &middot; the terms</p>
+      <dl class="glossary">
+        <div class="row"><dt>Term</dt><dd>Plain-English meaning.</dd></div>
+      </dl>
     </section>
 
     <!-- BIG-PICTURE TAKEAWAYS -->
-    <section id="takeaways">
-      <div class="sec-kicker">The big picture</div>
-      <h2>Takeaways</h2>
-      <div class="cards">
-        <div class="card"><h3>Idea</h3><p>...</p></div>
+    <section>
+      <p class="lede">The big picture</p>
+      <div class="takeaways">
+        <div class="t"><b>Idea</b>One conceptual takeaway.</div>
       </div>
     </section>
 
     <!-- THE LESSONS -->
     <section id="lessons">
-      <div class="sec-kicker">The core</div>
-      <h2>The lessons</h2>
-      <!-- Pattern A: numbered argument blocks -->
-      <div class="lesson"><div class="num">1</div><h3>Lesson</h3><p>...</p><p class="takeaway">Why it matters.</p></div>
-      <!-- Pattern B: grouped reference tables -->
-      <div class="grouphead">Group</div>
+      <p class="lede">The lessons</p>
+      <div class="arg">
+        <h2><span class="secnum">I</span>Lesson title</h2>
+        <p>Body.</p>
+        <p class="why"><b>Why it matters</b>The point.</p>
+      </div>
+      <!-- Pattern B group example -->
+      <p class="lede" style="margin-top:40px">Reference group</p>
       <div class="table-wrap"><table>
-        <tr><th>Col</th><th>Col</th></tr>
-        <tr><td>...</td><td>...</td></tr>
+        <thead><tr><th class="colA">Col</th><th class="colB">Col</th></tr></thead>
+        <tbody><tr><td class="task">...</td><td>...</td></tr></tbody>
       </table></div>
     </section>
 
     <!-- STRUCTURE / FLOW (optional) -->
-    <section id="flow">
-      <div class="sec-kicker">How it progresses</div>
-      <h2>Structure</h2>
-      <div class="stages">
-        <span class="pill">Stage</span><span class="arrow">&rarr;</span><span class="pill">Stage</span>
+    <section>
+      <p class="lede">How it is structured</p>
+      <div class="flow">
+        <span class="step">Stage</span><span class="arrow">&rarr;</span><span class="step">Stage</span>
       </div>
     </section>
 
     <!-- ENVIRONMENT TRANSLATION (optional) -->
-    <section id="translate">
-      <div class="sec-kicker">For your setup</div>
-      <h2>Environment translation</h2>
+    <section>
+      <p class="lede">For your setup</p>
       <div class="table-wrap"><table>
-        <tr><th>Taught (original)</th><th>Your equivalent</th><th>Notes</th></tr>
-        <tr><td>...</td><td>...</td><td>...</td></tr>
+        <thead><tr><th class="colA">Taught</th><th class="colB">Your equivalent</th><th>Notes</th></tr></thead>
+        <tbody><tr><td class="task">...</td><td>...</td><td>...</td></tr></tbody>
       </table></div>
-      <div class="banner good">Clean equivalent.</div>
-      <div class="banner warn">No clean equivalent: nearest real thing.</div>
+      <div class="goodband"><b>Clean equivalent:</b> ...</div>
+      <div class="warnband"><b>No clean equivalent:</b> nearest real thing.</div>
     </section>
 
-    <!-- CONTEXT AND CORRECTIONS -->
+    <!-- CONTEXT & CORRECTIONS -->
     <section id="corrections">
-      <div class="sec-kicker">Fact check</div>
-      <h2>Context and corrections</h2>
-      <div class="claim supported"><span class="tag">Supported</span><p>...</p></div>
-      <div class="claim contested"><span class="tag">Contested</span><p>...</p></div>
-      <div class="claim inaccurate"><span class="tag">Inaccurate</span><p>...</p></div>
-      <div class="claim opinion"><span class="tag">Opinion</span><p>...</p></div>
+      <p class="lede">Context &amp; corrections</p>
+      <div class="accuracy">
+        <div class="claim"><div class="top"><span class="tag t-sup">Supported</span><span class="c">Claim.</span></div><p class="note">...</p></div>
+        <div class="claim"><div class="top"><span class="tag t-con">Contested</span><span class="c">Claim.</span></div><p class="note">...</p></div>
+        <div class="claim"><div class="top"><span class="tag t-inc">Inaccurate</span><span class="c">Claim.</span></div><p class="note">...</p></div>
+        <div class="claim"><div class="top"><span class="tag t-opi">Opinion</span><span class="c">Claim.</span></div><p class="note">...</p></div>
+      </div>
     </section>
 
     <!-- LINES WORTH KEEPING -->
-    <section id="quotes">
-      <div class="sec-kicker">In their words</div>
-      <h2>Lines worth keeping</h2>
-      <div class="quote">A memorable line.</div>
+    <section id="lines">
+      <p class="lede">Lines worth keeping</p>
+      <div class="lines">
+        <div class="q">"A memorable line."</div>
+      </div>
     </section>
 
-  </main>
+    <!-- FOOTER: single Watch-the-original button, nothing else under it -->
+    <footer>
+      <a class="watch" href="REPLACE_WITH_SOURCE_URL" target="_blank" rel="noopener"><span class="play">&#9654;</span> Watch the original video</a>
+    </footer>
 
-  <!-- FOOTER: single Watch-the-original button, nothing else under it -->
-  <footer class="footer">
-    <a class="play" href="REPLACE_WITH_SOURCE_URL"><span class="tri"></span> Watch the original video</a>
-  </footer>
-
+  </div>
 </body>
 </html>
